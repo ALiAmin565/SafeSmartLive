@@ -99,4 +99,12 @@ Route::middleware('SuperAdmin')->group(function () {
     Route::get('/bot-controller', [BotController::class, 'getBotStatus']);
     Route::post('/bot-controller', [BotController::class, 'updateBotStatus']);
     Route::apiResource('bot-transfer', BotTransferController::class);
+    // Get all user active his bot
+    Route::get('get-all-user-bot', [BotController::class, 'getAllUserBot']);
+    // Update On User in colum is_bot
+    Route::post('update-bot-user', [BotController::class, 'updateBotUser']);
+    // Set Bot Status For user
+    Route::post('set-bot-status', [BotController::class, 'setBotStatus']);
+    // Add Bot Status For user
+    Route::post('add-bot-status-for-user', [BotController::class, 'AddBotStatuForUser']);
 });
