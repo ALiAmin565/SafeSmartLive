@@ -1,24 +1,39 @@
 <?php
 
+use App\Models\plan;
+use App\Models\Massage;
+use Illuminate\Http\Request;
+use Illuminate\Routing\RouteGroup;
+use App\Http\Controllers\ChatActions;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\BotController;
 use App\Http\Controllers\PayController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PlanController;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\Front\adminPlan;
 use App\Http\Controllers\videoController;
 use App\Http\Controllers\bannedController;
 use App\Http\Controllers\CouponController;
+use App\Http\Controllers\PayMopController;
 use App\Http\Controllers\ArchiveController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\All_UserController;
 use App\Http\Controllers\TelegramController;
 use App\Http\Controllers\UserDataAdminPanel;
+use App\Http\Controllers\AfilliateCalculation;
 use App\Http\Controllers\ChatAdviceController;
+use App\Http\Controllers\Front\TabsController;
+use App\Http\Controllers\Binance\buyController;
 use App\Http\Controllers\BotTransferController;
+use App\Http\Controllers\Front\FrontController;
 use App\Http\Controllers\TransferManyController;
+use App\Http\Controllers\RecommendationController;
+use App\Http\Controllers\chatAdviceAdminController;
+use App\Http\Controllers\Front\ChatGroupController;
 use App\Http\Controllers\Binance\getLogesController;
 use App\Http\Controllers\NotificationPlansController;
-
+use App\Http\Controllers\Binance\transactionController;
 
 
 
@@ -36,9 +51,7 @@ Route::middleware(['SuperWithAdmin'])->group(function () {
     Route::delete('messageSuper/{id}', [ChatActions::class, 'deleteMessageSuper']);
     Route::post('banPlan', [ChatActions::class, 'banPlan']);
     Route::post('unbanPlan', [ChatActions::class, 'unbanPlan']);
-    // Get Bot Controller
-    Route::get('/bot-controller', [FrontController::class, 'getBotData']);
-    Route::post('/set-bot-controller', [FrontController::class, 'setBotData']);
+    
 });
 // routes for super  admin
 
@@ -82,5 +95,8 @@ Route::middleware('SuperAdmin')->group(function () {
     Route::apiResource('NotificationPlans', NotificationPlansController::class);
     Route::put('restoreSoftDeleteUser/{id}', [AuthController::class, 'restoreSoftDeleteUser']);
     // Bot
+    // Get Bot Controller
+    Route::get('/bot-controller', [BotController::class, 'getBotStatus']);
+    Route::post('/bot-controller', [BotController::class, 'updateBotStatus']);
     Route::apiResource('bot-transfer', BotTransferController::class);
 });

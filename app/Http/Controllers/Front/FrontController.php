@@ -14,6 +14,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\PlanResource;
 use App\Http\Requests\OrderPayRequest;
 use App\Http\Resources\PaymentResource;
+use App\Models\BotStatus;
 
 class FrontController extends Controller
 {
@@ -172,46 +173,4 @@ class FrontController extends Controller
             'stopLose'=>$recom->stop_price,
         ]);
     }
-    
-    // Get Bot Controller 
-    
-    public function getBotData()
-    {
-    $user=auth('api')->user();
-    if($user)
-    {
-    $is_bot=$user->is_bot;
-    return  $is_bot;
-    }
-    
-    return response()->json([
-            'massage' => 'Not authorized'
-    ]);
-    }
-    
-    
-    // setBotData
-    
-    public function setBotData()
-    {
-        $user=auth('api')->user();
-        if($user)
-        {
-        $botController=$user->botController;
-        if($botController == 'off' || $botController == null )
-        $user->botController='on';
-        else
-        $user->botController='off';
-        
-        $user->save();
-        $lastStatue =$user->botController;
-        return $lastStatue;
-        }
-         return response()->json([
-            'massage' => 'Not authorized'
-         ]);
-    }
-
-
-
 }
