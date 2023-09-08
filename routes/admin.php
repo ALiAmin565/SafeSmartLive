@@ -29,13 +29,13 @@ use App\Http\Controllers\BotTransferController;
 use App\Http\Controllers\Front\FrontController;
 use App\Http\Controllers\TransferManyController;
 use App\Http\Controllers\RecommendationController;
+use App\Http\Controllers\Boot\TikersUserController;
 use App\Http\Controllers\chatAdviceAdminController;
 use App\Http\Controllers\Front\ChatGroupController;
 use App\Http\Controllers\Binance\getLogesController;
 use App\Http\Controllers\NotificationPlansController;
 use App\Http\Controllers\Binance\transactionController;
-
-
+use App\Http\Controllers\TickerController;
 
 // routes for super with admin
 Route::middleware(['SuperWithAdmin'])->group(function () {
@@ -107,4 +107,12 @@ Route::middleware('SuperAdmin')->group(function () {
     Route::post('set-bot-status', [BotController::class, 'setBotStatus']);
     // Add Bot Status For user
     Route::post('add-bot-status-for-user', [BotController::class, 'AddBotStatuForUser']);
+    // Get All Tickers
+    Route::get('/all-tickers',[TickerController::class,'getAllTickers']);
+    // update Tickers
+    Route::post('/update-tickers',[TickerController::class,'updateTickers']);
+    // delete Tickers
+    Route::post('/delete-tickers',[TickerController::class,'deleteTickers']);
+    // add Tickers
+    Route::post('/add-tickers',[TickerController::class,'addTickers']);
 });
