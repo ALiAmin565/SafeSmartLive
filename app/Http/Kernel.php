@@ -43,9 +43,7 @@ class Kernel extends HttpKernel
             // \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
             'throttle:api',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
-            // Handle CORS requests
-            // \App\Http\Middleware\AllowCorsPolicyMiddleware::class,/
-            HandleCors::class,
+            // HandleCors::class,
         ],
     ];
 
@@ -71,9 +69,6 @@ class Kernel extends HttpKernel
         'CheckLogin' => \App\Http\Middleware\CheckLogin::class,
         'SuperAdmin' => \App\Http\Middleware\superadminmiddleware::class,
         'SuperWithAdmin' => \App\Http\Middleware\SuperWithAdminmiddleware::class,
-        'AllowCorsPolicyMiddleware' => \App\Http\Middleware\AllowCorsPolicyMiddleware::class,
-
-
-
+        HandleCors::class,
     ];
 }
