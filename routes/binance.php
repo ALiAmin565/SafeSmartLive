@@ -11,3 +11,5 @@ Route::get('getAllOrders', [buyController::class, 'getAllOrder']);
 Route::get('statusOrder', [buyController::class, 'getStatusOrder']);
 Route::get('canselOrder', [buyController::class, 'canselOrder']);
 Route::get('timestampBinance', [buyController::class, 'timestampBinance']);
+
+
