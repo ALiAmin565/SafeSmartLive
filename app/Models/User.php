@@ -43,7 +43,7 @@ class User extends Authenticatable implements JWTSubject
         'remember_token',
         'binanceApiKey',
         'binanceSecretKey',
-        'botController'
+        'is_bot',
 
 
     ];

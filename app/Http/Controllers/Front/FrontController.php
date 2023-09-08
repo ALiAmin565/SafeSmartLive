@@ -177,12 +177,11 @@ class FrontController extends Controller
     
     public function getBotData()
     {
-        // return 1510;
     $user=auth('api')->user();
     if($user)
     {
-    $botController=$user->botController;
-    return  $botController;
+    $is_bot=$user->is_bot;
+    return  $is_bot;
     }
     
     return response()->json([
