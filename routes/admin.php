@@ -29,7 +29,6 @@ Route::middleware(['SuperWithAdmin'])->group(function () {
     Route::post('chatAdmin', [chatAdviceAdminController::class, 'chat']);
     Route::post('adviceAdmin', [chatAdviceAdminController::class, 'Advice']);
     Route::post('adminChatPlan', [chatAdviceAdminController::class, 'StoreMassageAdmin']); // FOR SEND MASSAGE ADMIN
-
     Route::post('adminForPlan', [chatAdviceAdminController::class, 'adminForPlan']);
     Route::apiResource('post', PostController::class);
     // for chat group Delete MessageS
@@ -37,7 +36,6 @@ Route::middleware(['SuperWithAdmin'])->group(function () {
     Route::delete('messageSuper/{id}', [ChatActions::class, 'deleteMessageSuper']);
     Route::post('banPlan', [ChatActions::class, 'banPlan']);
     Route::post('unbanPlan', [ChatActions::class, 'unbanPlan']);
-
     // Get Bot Controller
     Route::get('/bot-controller', [FrontController::class, 'getBotData']);
     Route::post('/set-bot-controller', [FrontController::class, 'setBotData']);
@@ -47,7 +45,6 @@ Route::middleware(['SuperWithAdmin'])->group(function () {
 Route::middleware('SuperAdmin')->group(function () {
     Route::get('loges', [getLogesController::class, 'index']); //for binance
     Route::delete('loges/{id}', [getLogesController::class, 'deleteloges']);
-
     Route::resource('video', videoController::class);
     Route::resource('posts', PostController::class);
     Route::apiResource('plan', PlanController::class);
@@ -58,15 +55,12 @@ Route::middleware('SuperAdmin')->group(function () {
     Route::get('get_user/{id}', [All_UserController::class, 'get_user'])->name('get_user');
     Route::get('search/{id}', [All_UserController::class, 'serach'])->name('serach');
     Route::get('selectUserFromPlan/{id}', [All_UserController::class, 'selectUserFromPlan'])->name('selectUserFromPlan');
-
     Route::get('get_all_subscrib/{id}', [All_UserController::class, 'get_all_subscrib']);
     Route::apiResource('banned', bannedController::class);
-
     Route::resource('telegram', TelegramController::class);
     // Chat Advice
     Route::get('ChatAdvice', [ChatAdviceController::class, 'getChat']);
     Route::post('ChatAdvice_store', [ChatAdviceController::class, 'store']);
-
     Route::apiResource('coupons', CouponController::class);
     Route::apiResource('payment', PaymentController::class);
     // Route::apiResource('post', PostController::class);
