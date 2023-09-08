@@ -45,6 +45,15 @@ class RouteServiceProvider extends ServiceProvider
                      ->group(base_path('routes/binance.php'));
 
 
+                     Route::middleware('api')
+                     ->prefix('bot')
+                     ->group(base_path('routes/bot.php'));
+
+                    //  transaction
+                     Route::middleware('api')
+                     ->prefix('transaction')
+                     ->group(base_path('routes/transaction.php'));
+
             Route::middleware('web')
                 ->group(base_path('routes/web.php'));
         });
