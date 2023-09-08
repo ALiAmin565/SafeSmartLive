@@ -70,7 +70,6 @@ Route::group([
     Route::post('dymnamikeLink', [AuthController::class, 'dymnamikeLink']);
     Route::post('verfiy', [AuthController::class, 'verfiy']);
     Route::post('fcmToken', [AuthController::class, 'fcmToken']);
-    
     Route::post('affiliateUser', [AuthController::class, 'affiliate_user']);
 });
 
@@ -81,7 +80,7 @@ Route::middleware(['SuperWithAdmin'])->prefix('Admin')->group(function () {
     Route::post('chatAdmin',[chatAdviceAdminController::class,'chat']);
     Route::post('adviceAdmin',[chatAdviceAdminController::class,'Advice']);
     Route::post('adminChatPlan',[chatAdviceAdminController::class,'StoreMassageAdmin']); // FOR SEND MASSAGE ADMIN
-    
+
     Route::post('adminForPlan',[chatAdviceAdminController::class,'adminForPlan']);
     Route::apiResource('post', PostController::class);
     // for chat group Delete MessageS
@@ -89,13 +88,13 @@ Route::middleware(['SuperWithAdmin'])->prefix('Admin')->group(function () {
     Route::delete('messageSuper/{id}', [ChatActions::class, 'deleteMessageSuper']);
     Route::post('banPlan', [ChatActions::class, 'banPlan']);
     Route::post('unbanPlan', [ChatActions::class, 'unbanPlan']);
-    
+
     // Get Bot Controller
-    Route::get('/bot-controller', [BotController::class, 'getBotStatus']);
-    Route::post('/bot-controller', [BotController::class, 'updateBotStatus']);
-    
-});  
- 
+    Route::get('/bot-controller', [FrontController::class, 'getBotData']);
+    Route::post('/set-bot-controller', [FrontController::class, 'setBotData']);
+
+});
+
 Route::prefix('Admin')->middleware('SuperAdmin')->group(function () {
     Route::get('loges',[getLogesController::class,'index']); //for binance
     Route::delete('loges/{id}',[getLogesController::class,'deleteloges']);
@@ -134,14 +133,14 @@ Route::prefix('Admin')->middleware('SuperAdmin')->group(function () {
     Route::get('dataAdvicesCount', [UserDataAdminPanel::class, 'AdvicesCount']);
     Route::get('dataLastPaymentCount', [UserDataAdminPanel::class, 'LastPaymentCount']);
     Route::get('dataLastAdviceCount', [UserDataAdminPanel::class, 'LastAdviceCount']);
-    // for sofdelete 
+    // for sofdelete
     Route::get('softDeleteUser', [AuthController::class, 'softDeleteUser']);
-    
+
     // Admin Notification
     Route::apiResource('NotificationPlans',NotificationPlansController::class);
 Route::put('restoreSoftDeleteUser/{id}', [AuthController::class, 'restoreSoftDeleteUser']);
 
-// Bot 
+// Bot
 
 Route::apiResource('bot-transfer', BotTransferController::class);
 });
@@ -168,16 +167,13 @@ Route::put('cancel-image-binance/{ImageSubmissionBinanceId}', [TabsController::c
 Route::post('massage', [ChatGroupController::class, 'Massage']);
 Route::post('sendmassage', [ChatGroupController::class, 'StoreMassage']);
 Route::post('sendmassagesss', [ChatGroupController::class, 'StoreMassagesss']);
-// for transfar mony user
-// Route::post('withdraw_mony',[TabsController::class,'TransfarManyClient']);
-// Route::post('historywithdraw_mony',[TabsController::class,'historyTransFarMany']);
+
 
 Route::post('withDrawMoney', [TabsController::class, 'TransfarManyClient']);
 Route::post('withDrawHistroy', [TabsController::class, 'historyTransFarMany']);
 
 Route::get('plans', [FrontController::class, 'getPlan']);
 Route::post('orderpay', [FrontController::class, 'Orderpay']);
-// Route::post('historypay', [FrontController::class, 'HistroyPay']);
 Route::post('histroyPay', [FrontController::class, 'HistroyPay']);
 Route::post('paymentimage', [FrontController::class, 'UploadImagePayment']);
 
@@ -185,43 +181,19 @@ Route::post('SelectPlan', [FrontController::class, 'SelectPlan']);
 Route::post('Recommindation', [FrontController::class, 'Recommindation']);
 
 Route::get('testcalc/{id}', [AfilliateCalculation::class, 'afterPay']);
-// Route::post('Recommindation', [FrontController::class, 'Recommindation']);
 
 // deleteUser
 Route::post('delete', [AuthController::class, 'deleteUser']);
 
-//  for delete massage chat 
+//  for delete massage chat
 Route::post('messageUser/{id}', [ChatActions::class, 'deleteMessageUser']);
 
 // custom Ban User for Plan
 Route::post('banPlan/{nameChannel}', [ChatActions::class, 'banPlan']);
 Route::post('unbanPlan/{nameChannel}', [ChatActions::class, 'unbanPlan']);
-
-
-
-
 Route::get('current_datetime', [TabsController::class, 'getCurrentDateTime']);
-
-
-
-// for binance
-
-Route::post('binance', [buyController::class, 'buy']);
-Route::get('getAllOrders', [buyController::class, 'getAllOrder']);
-Route::get('statusOrder', [buyController::class, 'getStatusOrder']);
-Route::get('canselOrder', [buyController::class, 'canselOrder']);
-Route::get('timestampBinance', [buyController::class, 'timestampBinance']);
-
-
-
-
 Route::post('crybto', [TabsController::class, 'crybto']);
 
 
-// Route
 
 Route::get('get-recmo-data/{recmoId}', [TabsController::class, 'getRecmoData'])->name('get-recmo-data');
-
-
-
-
