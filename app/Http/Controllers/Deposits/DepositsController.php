@@ -5,17 +5,20 @@ namespace App\Http\Controllers\Deposits;
 
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
+use App\Models\DepositsBinance;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Helper\NotficationController;
 
 class DepositsController extends Controller
 {
+
     public function getDeposits()
     {
         $api_key = 'f0gUx4ukrKXftiay0bihaBaNMYhV9wNUls4T7O4QbHgvr2xJYKeMaaNG8DL9RSP1';
         $api_secret = 'r9u1KtFzjb5MyFNZgvWqyCMne8xiVuGWfQLK1WapbRyUKnUkNECmbSMwGNcbzbQA';
 
         // إعداد البيانات المطلوبة للتوقيع
-        $timestamp = time() * 1000;
+        $timestamp = $this->timestampBinance();
         $params = [
             'timestamp' => $timestamp,
         ];
@@ -32,13 +35,18 @@ class DepositsController extends Controller
             'query' => $query . "&signature={$signature}", // إضافة معرف التوقيع إلى الاستعلام
         ]);
 
-        return  $deposits = json_decode($response->getBody()->getContents());
+        $deposits = json_decode($response->getBody()->getContents());
 
-        foreach ($deposits as  $value) {
-
-            return $value[''];
+        foreach ($deposits as $deposit) {
+            $textid = $deposit->txId;
+            $mount = $deposit->amount;
+            $network = $deposit->network;
+            $this->insertDeposit($mount, $textid, $network); // Pass parameters here
         }
     }
+
+
+
 
     public  function createBinanceSignature($data, $apiSecret)
     {
@@ -46,4 +54,46 @@ class DepositsController extends Controller
     }
 
 
+
+
+
+    protected function timestampBinance()
+    {
+        $client = new Client();
+        $response = $client->get('https://api.binance.com/api/v3/time');
+        $serverTime = json_decode($response->getBody(), true);
+        return $serverTime['serverTime'];
+    }
+
+
+
+
+
+    public function insertDeposit($mount, $textid, $network)
+    {
+        $test=1;
+
+        $existingDeposit = DepositsBinance::where('textId', $textid)->first();
+
+        // If the record with the same textId exists, do not insert a new one
+        if ($existingDeposit) {
+            $body = "هناك خطا يرجي التاكد او هذه العنوان موجود سابقا ";
+            $notfy = new NotficationController();
+            $user = 'gg';
+            $notfy->notfication($user, $body);
+            $test=2;
+            return 'Duplicate';
+        }
+        $test = DepositsBinance::create([
+            'amount' => $mount,
+            'textId' => $textid,
+            'network' => $network,
+            'user_id' => 1,
+
+
+
+        ]);
+
+        return 'ok';
+    }
 }

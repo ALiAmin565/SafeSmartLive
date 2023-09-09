@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Binance;
 
 use Carbon\Carbon;
 use GuzzleHttp\Client;
- 
+
 use App\Models\binance;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -125,7 +125,7 @@ class buyController extends Controller
 
     protected function timestampBinance()
     {
-$response = $this->client->get('/api/v3/time');
+     $response = $this->client->get('/api/v3/time');
         $serverTime = json_decode($response->getBody(), true);
         return $serverTime['serverTime'];
     }
@@ -270,14 +270,14 @@ public function getStatusOrder($apiKey, $apiSecret, $symbol, $orderId)
 
     public function canselOrder()
     {
- 
+
         $apiKey = 'L7EdS7jSzmUE5DmBtgCnDeTLpFsfymkGmjQ8iK4UWMywvLH7R8HuxEUq7Mqb8TO8';
         $apiSecret = 'HFTGudmK7N2dbdmtdBGbYs6JA1sPsFKcDyQVkYDbmwJvUX4ehj4onpxrnqSEcGgO';
 
         $symbol = 'GLMUSDT'; // Replace with your desired trading pair
         $orderId = 16719579; // Replace with the order ID you want to cancel
 
-     
+
 
         $timestamp = $this->timestampBinance();
         $signature = hash_hmac('sha256', "symbol=GLMUSDT&orderId=$orderId&timestamp=$timestamp", $apiSecret);

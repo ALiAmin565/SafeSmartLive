@@ -22,10 +22,6 @@ Route::get('getMyAdmin',[AdminUserController::class,'getMyAdmin']);
 
 
 // for deposite
-Route::get('getDeposits',[DepositsController::class,'getDeposits']);
 
 
 
-Route::post('sendMony',[TransactionUserController::class,'oneToOne']);
-Route::post('mySelf',[TransactionUserController::class,'mySelf']);
-Route::post('historyTransaction',[TransactionUserController::class,'historyTransaction']);
