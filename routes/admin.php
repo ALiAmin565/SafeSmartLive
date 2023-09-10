@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\RouteGroup;
 use App\Http\Controllers\ChatActions;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AdsController;
 use App\Http\Controllers\BotController;
 use App\Http\Controllers\PayController;
 use App\Http\Controllers\AuthController;
@@ -16,6 +17,7 @@ use App\Http\Controllers\videoController;
 use App\Http\Controllers\bannedController;
 use App\Http\Controllers\CouponController;
 use App\Http\Controllers\PayMopController;
+use App\Http\Controllers\TickerController;
 use App\Http\Controllers\ArchiveController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\All_UserController;
@@ -35,7 +37,6 @@ use App\Http\Controllers\Front\ChatGroupController;
 use App\Http\Controllers\Binance\getLogesController;
 use App\Http\Controllers\NotificationPlansController;
 use App\Http\Controllers\Binance\transactionController;
-use App\Http\Controllers\TickerController;
 
 // routes for super with admin
 Route::middleware(['SuperWithAdmin'])->group(function () {
@@ -115,4 +116,6 @@ Route::middleware('SuperAdmin')->group(function () {
     Route::post('/delete-tickers',[TickerController::class,'deleteTickers']);
     // add Tickers
     Route::post('/add-tickers',[TickerController::class,'addTickers']);
+    // API ADS Table
+    Route::apiResource('ads', AdsController::class);
 });
