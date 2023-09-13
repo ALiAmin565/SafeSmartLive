@@ -21,8 +21,8 @@ class TickerController extends Controller
                 'message' => 'You are not authorized to perform this action'
             ], 401);
         }
-        $ticker = Tiker::where('ticker', $request->ticker)->first();
-        $ticker->ticker = $request->ticker;
+        $ticker = Tiker::where('ticker', $request->ticker_old)->first();
+        $ticker->ticker = $request->ticker_new;
         $ticker->price = $request->price ? $request->price : $ticker->price;
         $ticker->save();
         return response()->json([
