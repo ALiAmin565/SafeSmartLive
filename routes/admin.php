@@ -111,11 +111,11 @@ Route::middleware('SuperAdmin')->group(function () {
     // Get All Tickers
     Route::get('/all-tickers',[TickerController::class,'getAllTickers']);
     // update Tickers
-    Route::post('/update-tickers',[TickerController::class,'updateTickers']);
+    Route::post('/update-tickers',[TickerController::class,'updateTicker']);
     // delete Tickers
-    Route::post('/delete-tickers',[TickerController::class,'deleteTickers']);
+    Route::post('/delete-tickers',[TickerController::class,'deleteTicker']);
     // add Tickers
-    Route::post('/add-tickers',[TickerController::class,'addTickers']);
+    Route::post('/add-tickers',[TickerController::class,'addTicker']);
     // API ADS Table
     Route::apiResource('ads', AdsController::class);
 });
