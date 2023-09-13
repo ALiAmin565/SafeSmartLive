@@ -22,7 +22,7 @@ class TickerController extends Controller
             ], 401);
         }
         $ticker = Tiker::where('ticker', $request->ticker_old)->first();
-        $ticker->ticker = $request->ticker_new;
+        $ticker->ticker = $request->ticker;
         $ticker->price = $request->price ? $request->price : $ticker->price;
         $ticker->save();
         return response()->json([
