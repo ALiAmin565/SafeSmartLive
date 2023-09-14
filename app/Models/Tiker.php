@@ -11,7 +11,8 @@ class Tiker extends Model
 
     public $table='mytickers';
 
-    // protected $primaryKey = 'ticker';
+    // protected $primaryKey ='ticker';
+
     
     public $fillable=['ticker','price'];
 
