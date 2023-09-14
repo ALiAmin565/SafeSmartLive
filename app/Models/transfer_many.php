@@ -11,7 +11,7 @@ class transfer_many extends Model
 
     public $table='transfer_manies';
 
-    public $fillable=['money','Visa_number','status','transaction_id','user_id','admin_id'];
+    public $fillable=['money','Visa_number','status','transaction_id','user_id','admin_id','transaction_id_binance'];
 
     public function user()
     {

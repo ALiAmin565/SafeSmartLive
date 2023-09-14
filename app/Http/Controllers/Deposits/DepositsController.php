@@ -14,6 +14,8 @@ class DepositsController extends Controller
 
     public function getDeposits()
     {
+
+
         $api_key = 'f0gUx4ukrKXftiay0bihaBaNMYhV9wNUls4T7O4QbHgvr2xJYKeMaaNG8DL9RSP1';
         $api_secret = 'r9u1KtFzjb5MyFNZgvWqyCMne8xiVuGWfQLK1WapbRyUKnUkNECmbSMwGNcbzbQA';
 
@@ -35,13 +37,13 @@ class DepositsController extends Controller
             'query' => $query . "&signature={$signature}", // إضافة معرف التوقيع إلى الاستعلام
         ]);
 
-        $deposits = json_decode($response->getBody()->getContents());
+          $deposits = json_decode($response->getBody()->getContents());
 
         foreach ($deposits as $deposit) {
             $textid = $deposit->txId;
             $mount = $deposit->amount;
             $network = $deposit->network;
-            $this->insertDeposit($mount, $textid, $network); // Pass parameters here
+            $this->insertDeposit($mount, $textid, $network, $user_id = 1); // Pass parameters here
         }
     }
 
@@ -69,9 +71,8 @@ class DepositsController extends Controller
 
 
 
-    public function insertDeposit($mount, $textid, $network)
+    public function insertDeposit($mount, $textid, $network, $user_id)
     {
-        $test=1;
 
         $existingDeposit = DepositsBinance::where('textId', $textid)->first();
 
@@ -81,14 +82,17 @@ class DepositsController extends Controller
             $notfy = new NotficationController();
             $user = 'gg';
             $notfy->notfication($user, $body);
-            $test=2;
+
             return 'Duplicate';
         }
+
+
         $test = DepositsBinance::create([
             'amount' => $mount,
             'textId' => $textid,
             'network' => $network,
-            'user_id' => 1,
+            'user_id' => $user_id,
+
 
 
 

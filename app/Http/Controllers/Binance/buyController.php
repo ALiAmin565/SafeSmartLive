@@ -37,6 +37,7 @@ class buyController extends Controller
             $quantity = $request->input('quantity'); //quantity of curency
             $price = $request->input('price'); // CURENT PRICE IS REALTIME from Binance
             $stopPrice = $request->input('stop_price');
+            $recomindation_id=$request->input('recomindation_id');
 
 
             $timestamp = $this->timestampBinance();
@@ -47,7 +48,8 @@ class buyController extends Controller
 
               $request['orderID'] = $responseData['orderId'];
               $request['status'] = $responseData['status'];
-             $test = $this->insertTransaction($request);
+              $test = $this->insertTransaction($request);
+
 
             return response()->json([
                 'success' => true,
@@ -64,60 +66,6 @@ class buyController extends Controller
     }
 
 
-    // public function getAllOrder()
-    // {
-    //     $apiKey = $this->user->binanceApiKey;
-    //     $apiSecret = $this->user->binanceSecretKey;
-    //     $symbol = 'AMBUSDT';
-    //     try {
-    //         // Get the Binance server time
-    //         $response = $this->client->get('/api/v3/time');
-    //         $serverTime = json_decode($response->getBody(), true);
-    //         $timestamp = $serverTime['serverTime'];
-
-    //         // Build the query string with parameters
-    //         $query = http_build_query([
-    //             'symbol' => $symbol,
-    //             'timestamp' => $timestamp,
-    //         ]);
-
-    //         // Generate the signature
-    //         $signature = hash_hmac('sha256', $query, $apiSecret);
-
-    //         // Make the request
-    //         $response = $this->client->get('/api/v3/allOrders', [
-    //             'headers' => [
-    //                 'X-MBX-APIKEY' => $apiKey,
-    //             ],
-    //             'query' => [
-    //                 'symbol' => $symbol,
-    //                 'timestamp' => $timestamp,
-    //                 'signature' => $signature,
-    //             ],
-    //         ]);
-
-    //         $responseData = json_decode($response->getBody(), true);
-
-    //         return response()->json($responseData);
-    //     } catch (ClientException $e) {
-    //         // Handle Guzzle HTTP errors
-    //         $responseBody = json_decode($e->getResponse()->getBody(), true);
-    //         $errorCode = $responseBody['code'] ?? null;
-    //         $errorMessage = $responseBody['msg'] ?? 'Unknown error';
-
-    //         return response()->json([
-    //             'error' => 'Binance API error',
-    //             'message' => $errorMessage,
-    //             'code' => $errorCode,
-    //         ], $e->getCode());
-    //     } catch (\Exception $e) {
-    //         // Handle other exceptions
-    //         return response()->json([
-    //             'error' => 'Internal error',
-    //             'message' => $e->getMessage(),
-    //         ], 500); // Internal Server Error
-    //     }
-    // }
 
 
 

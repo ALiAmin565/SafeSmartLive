@@ -1,7 +1,9 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Deposits\WithdrwController;
 use App\Http\Controllers\Deposits\DepositsController;
+use App\Http\Controllers\Deposits\DepositsUserController;
 use App\Http\Controllers\TransactionUser\TransactionUserController;
 
 
@@ -11,6 +13,14 @@ Route::post('historyTransaction',[TransactionUserController::class,'historyTrans
 
 
 Route::get('getDeposits',[DepositsController::class,'getDeposits']);
+Route::post('Withdrw',[WithdrwController::class,'withdraw']);
+Route::get('getUSDTBalance',[WithdrwController::class,'getUSDTBalance']);
 
+
+
+
+// Deopsite for user
+Route::POST('checkTextID',[DepositsUserController::class,'cheakTextID']);
+Route::POST('historyDeposit',[DepositsUserController::class,'historyDeposit']);
 
 

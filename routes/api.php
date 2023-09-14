@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\plan;
+use App\Models\User;
 use App\Models\Massage;
 use Illuminate\Http\Request;
 use Illuminate\Routing\RouteGroup;
@@ -30,9 +31,9 @@ use App\Http\Controllers\Front\FrontController;
 use App\Http\Controllers\TransferManyController;
 use App\Http\Controllers\RecommendationController;
 use App\Http\Controllers\chatAdviceAdminController;
+
+
 use App\Http\Controllers\Front\ChatGroupController;
-
-
 use App\Http\Controllers\Binance\getLogesController;
 use App\Http\Controllers\NotificationPlansController;
 use App\Http\Controllers\Binance\transactionController;
@@ -108,10 +109,17 @@ Route::post('Recommindation', [FrontController::class, 'Recommindation']);
 Route::get('testcalc/{id}', [AfilliateCalculation::class, 'afterPay']);
 // deleteUser
 Route::post('delete', [AuthController::class, 'deleteUser']);
-//  for delete massage chat 
+//  for delete massage chat
 Route::post('messageUser/{id}', [ChatActions::class, 'deleteMessageUser']);
 // custom Ban User for Plan
 Route::post('banPlan/{nameChannel}', [ChatActions::class, 'banPlan']);
 Route::post('unbanPlan/{nameChannel}', [ChatActions::class, 'unbanPlan']);
 Route::get('current_datetime', [TabsController::class, 'getCurrentDateTime']);
 
+
+
+Route::get('myAdvice',[TabsController::class, 'myAdvice']);
+
+
+
+ Route::get('testbot',[TabsController::class,'testbot']);

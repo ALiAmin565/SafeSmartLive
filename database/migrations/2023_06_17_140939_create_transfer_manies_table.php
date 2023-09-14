@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('Visa_number');
             $table->string('status');
             $table->string('transaction_id')->nullable();
+            $table->string('transaction_id_binance')->nullable();
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users');
             $table->string('admin_id')->nullable();
