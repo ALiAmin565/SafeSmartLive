@@ -54,7 +54,7 @@ class TickerController extends Controller
                 'message' => 'You are not authorized to perform this action'
             ], 401);
         }
-        $ticker = Tiker::find($request->ticker)->first();
+        $ticker = Tiker::where('ticker',$request->ticker)->first();
         if ($ticker) {
             return response()->json([
                 'message' => 'Ticker Already Exists'
