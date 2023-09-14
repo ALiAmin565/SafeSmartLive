@@ -127,4 +127,15 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->hasMany(BotTransfer::class, 'user_id', 'id');
     }
+
+
+
+
+    public function BuySellBinance()
+    {
+        
+        return $this->belongsTo(Binance::class,'user_id','id');
+
+         
+    }
 }

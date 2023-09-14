@@ -36,6 +36,7 @@ use App\Http\Controllers\chatAdviceAdminController;
 use App\Http\Controllers\Front\ChatGroupController;
 use App\Http\Controllers\Binance\getLogesController;
 use App\Http\Controllers\NotificationPlansController;
+use App\Http\Controllers\Front\HistoryWalteController;
 use App\Http\Controllers\Binance\transactionController;
 
 
@@ -123,3 +124,8 @@ Route::get('myAdvice',[TabsController::class, 'myAdvice']);
 
 
  Route::get('testbot',[TabsController::class,'testbot']);
+
+
+
+
+ Route::post('all',[HistoryWalteController::class,'all']);
