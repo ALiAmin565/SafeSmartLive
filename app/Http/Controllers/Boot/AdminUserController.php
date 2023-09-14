@@ -29,15 +29,24 @@ class AdminUserController extends Controller
     {
         $user = auth('api')->user();
         $userPlanId = $user->plan_id;
+        $bossIds = $user->admins;
+
+        $bossIdsArray = json_decode($bossIds, true);
+
+        // Fetch the user IDs and names based on the boss IDs as a collection of objects
+        $adminUsers = User::whereIn('id', $bossIdsArray['boss'])
+            ->select('id', 'name', 'email')
+            ->get();
 
 
+        $Admins = Admin::with(['users:id,name,email']) // Specify the fields you want to select
+            ->where('plan_id', '<=', $userPlanId)
+            ->get();
 
-        $Admins = Admin::with(['users' => function ($query) {
-            $query->select('id', 'name', 'email');
-        }])->where('plan_id', '<=', $userPlanId)->get();
-
-
-
-        return $Admins;
+        // Combine both results into an array
+        return $responseData = [
+            'allAdmin' => $Admins,
+            'myadmin' => $adminUsers,
+        ];
     }
 }

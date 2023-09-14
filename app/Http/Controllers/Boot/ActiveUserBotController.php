@@ -11,7 +11,7 @@ class ActiveUserBotController extends Controller
     public function ActiveBot(ActiveBotRequest $request)
     {
 
-            $user = auth('api')->user();
+        $user = auth('api')->user();
 
 
         if (!$user) {
@@ -20,16 +20,23 @@ class ActiveUserBotController extends Controller
                 'message' => "Invalid token",
             ]);
         } else {
-           $user->is_bot=$request['active'];
+           $user->is_bot=1;
             $user->num_orders = $request['numOrders'];
             $user->orders_usdt = $request['ordersUsdt'];
             $user->tickers = $request['tickers'];
             $user->admins = $request['admins'];
 
-            $user->save();
-        }
+            
 
-        return $user;
+          $user->save();
+           
+
+         }
+
+          return response()->json([
+                'success' => true,
+                'message' => $user,
+            ]);
     }
 
     public function stopBot(Request $request)
