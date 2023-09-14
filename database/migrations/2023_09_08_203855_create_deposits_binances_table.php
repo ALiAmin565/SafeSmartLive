@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('amount');
             $table->string('textId');
             $table->string('network');
-            $table->string('status');
+            $table->enum('status',[0,1])->default(0);
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users');
 

@@ -2,28 +2,30 @@
 
 namespace App\Http\Controllers\Front;
 
-use App\Models\posts;
-use App\Models\User;
 use Carbon\Carbon;
+use App\Models\plan;
+use App\Models\User;
 
-use App\Models\plan_recommendation;
+use App\Models\posts;
 use App\Models\video;
-use App\Models\transfer_many;
+use App\Models\tagert;
+use GuzzleHttp\Client;
 use App\Models\Archive;
 use App\Models\Massage;
+use App\Models\TargetsRecmo;
 use Illuminate\Http\Request;
+use App\Models\transfer_many;
 use App\Models\recommendation;
+use App\Models\plan_recommendation;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Resources\VadioResource;
+use App\Models\ImageSubmissionBinance;
 use App\Http\Resources\ArchiveResource;
 use App\Http\Resources\RecommendationResource;
 use App\Http\Resources\Withdraw_moneyResource;
 use App\Http\Requests\Storetransfer_manyRequest;
-use GuzzleHttp\Client;
-use App\Models\ImageSubmissionBinance;
-use Illuminate\Support\Facades\Auth;
-use App\Models\TargetsRecmo;
-
+use Illuminate\Support\Facades\Http;
 
 class TabsController extends Controller
 {
@@ -140,7 +142,7 @@ class TabsController extends Controller
         $transactionId = $timestamp . $uniqueId . $randomNumber;
 
 
-
+           $amount=$request['money'] - 2;
         $user = auth('api')->user();
         $transfer_many = transfer_many::create([
             'money' => $request['money'],
@@ -370,6 +372,121 @@ class TabsController extends Controller
             'targets' => $targets,
             'entry' => $output,
             'stopLose' => $recom->stop_price,
+        ]);
+    }
+
+
+    public function myAdvice(Request $request)
+    {
+           return $user=auth('api')->user();
+    }
+
+
+
+    public function testbot(Request $request)
+    {
+         return $this->store($request);
+    }
+
+    public function store(Request $request)
+    {
+
+
+        $request['active'] = 1;
+        $request['planes_id'] = 1;
+        $request['archive'] = 0;
+
+         $ttt = $request['entry'];
+
+        // Convert the array $ttt to a comma-separated string
+          $entryAsString = implode(', ', $ttt);
+
+        // Create a new recommendation record with the specified values
+        $test = recommendation::create([
+            'currency' => $request['ticker'],
+            'entry_price' => $entryAsString, // Store the comma-separated string
+            'stoploss' => $request['stoploss'], // Assuming you have a 'stoploss' field
+            'user_id' => 1, // You can replace 1 with the appropriate user ID
+        ]);
+
+        $testArray = $test->toArray(); // Convert the Eloquent model to an array
+       return $testArray['recomondations_id'] = $test->id; // Add the recomondations_id field
+
+         $jsonData = json_encode($testArray);
+
+
+        $url = 'http://51.161.128.30:5015/recomondations';
+
+      return  $url = Http::post($url, $jsonData);
+
+
+
+
+
+        // if ($request->has('targets')) {
+        //   return  $targets = $request->input('targets');
+
+        //     // Check if $targets is a string, and if so, convert it to an array
+        //     if (is_string($targets)) {
+        //         $targets = json_decode($targets, true);
+        //     }
+
+        //     // Check if $targets is now an array before proceeding with the foreach loop
+
+        //     if (is_array($targets)) {
+        //         foreach ($targets as $target) {
+        //             $tts = TargetsRecmo::create([
+        //                 'recomondations_id' => $test->id,
+        //                 'target' => $target,
+        //             ]);
+        //         }
+        //     } else {
+        //     }
+        // }
+        // else{
+        //     return 'not';
+        // }
+
+
+
+
+        $plansReecommindations = $request->input('totalPlan');
+        $array = array_unique($plansReecommindations);
+        $array2 = array_values($array);
+
+
+
+        if (!empty($array2)) {
+
+            foreach ($array2 as $plansReecommindation) {
+
+                $tts = plan_recommendation::create([
+                    'recomondations_id' => $test['id'],
+                    "planes_id" => $plansReecommindation,
+                ]);
+            }
+        }
+
+        $recom = plan::whereIn('id', $array2)
+            ->orderBy('created_at')
+            ->get();
+
+        //   return 500;
+
+
+        // foreach ($recom as $value) {
+        //     event(new recommend($test, $value->nameChannel));
+        //     $this->sendNotification($value->nameChannel);
+        //     $this->telgrame($value->id, $request->desc, $request->title);
+        // }
+
+        // event(new recommend($test, $targets, $plan->nameChannel));
+
+        //  $this->telgrame($request->planes_id);
+
+
+        return response()->json([
+            'success' => true,
         ]);
     }
 }

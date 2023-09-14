@@ -19,6 +19,7 @@ Route::get('/unsubscribeTickers',[TikersUserController::class,'getAllUnsubscrib'
 
 // All Admin
 Route::get('getMyAdmin',[AdminUserController::class,'getMyAdmin']);
+Route::get('getAllAdmin',[AdminUserController::class,'getAllAdmin']);
 
 
 // for deposite
