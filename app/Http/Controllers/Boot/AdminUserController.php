@@ -27,26 +27,57 @@ class AdminUserController extends Controller
 
     public function getAllAdmin()
     {
-        $user = auth('api')->user();
-        $userPlanId = $user->plan_id;
-        $bossIds = $user->admins;
+         $user = auth('api')->user();
 
-        $bossIdsArray = json_decode($bossIds, true);
+if (!$user) {
+    return [
+        'success' => false,
+        'message' => 'Invalid token',
+    ];
+}
 
-        // Fetch the user IDs and names based on the boss IDs as a collection of objects
-        $adminUsers = User::whereIn('id', $bossIdsArray['boss'])
-            ->select('id', 'name', 'email')
-            ->get();
+$userPlanId = $user->plan_id;
+$bossIds = $user->admins;
+$bossIdsArray = json_decode($bossIds, true);
+
+try {
+    $adminUsers = User::whereIn('id', $bossIdsArray['boss'])
+        ->select('id', 'name', 'email')
+        ->get();
+
+    $Admins = Admin::with(['users:id,name,email'])
+        ->where('plan_id', '<=', $userPlanId)
+        ->get();
+
+    // Use the unique method to filter out duplicates based on user_id
+    $uniqueAdmins = $Admins->unique('user_id')->values();
+
+    return [
+        'allAdmin' => $uniqueAdmins,
+        'myadmin' => $adminUsers,
+    ];
+} catch (\Exception $e) {
+    return [
+        'success' => false,
+        'message' => 'An error occurred: ' . $e->getMessage(),
+    ];
+}
+}
 
 
-        $Admins = Admin::with(['users:id,name,email']) // Specify the fields you want to select
-            ->where('plan_id', '<=', $userPlanId)
-            ->get();
+    public function setAdmin(Request $request)
+    {
+         $user=auth('api')->user();
 
-        // Combine both results into an array
-        return $responseData = [
-            'allAdmin' => $Admins,
-            'myadmin' => $adminUsers,
-        ];
+          $user->admins=$request['admins'];
+          $user->save();
+
+            return [
+        'success' => true,
+        'message' =>$user,
+    ]; 
+
+
+           
     }
 }

@@ -10,7 +10,7 @@ class binance extends Model
     use HasFactory;
 
    
-    protected $fillable=['user_id','symbol','type','side','quantity','price','stop_price','status','orderID','massageError'];
+    protected $fillable=['user_id','symbol','type','side','quantity','price','stop_price','status','orderID','massageError','recomondations_id'];
     
     
     public function user()
