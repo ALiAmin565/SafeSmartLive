@@ -10,6 +10,8 @@ class Tiker extends Model
     use HasFactory;
 
     public $table='mytickers';
+
+    protected $primaryKey = 'ticker';
     
     public $fillable=['ticker','price'];
 
