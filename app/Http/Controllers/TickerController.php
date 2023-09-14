@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\DB;
 
 class TickerController extends Controller
 {
+    // Updated With old Date
     public function getAllTickers(Request $request)
     {
         return DB::table('mytickers')->get();
