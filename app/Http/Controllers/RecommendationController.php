@@ -24,7 +24,7 @@ use App\Models\TargetsRecmo;
 
 class RecommendationController extends Controller
 {
-   
+
 
     public function __construct()
     {
@@ -33,32 +33,31 @@ class RecommendationController extends Controller
         // $this->user = $user;
     }
 
-  public function index()
+    public function index()
     {
-     
-        
-         $user = auth('api')->user()->load('role');
+
+
+        $user = auth('api')->user()->load('role');
         if ($user->state == 'admin') {
             $planIds = $user->role->pluck('pivot')->pluck('plan_id');
 
-   
-            
+
+
 
             return RecommendationResource::collection(recommendation::orderBy('created_at', 'desc')
                 ->where('archive', 0)
                 ->whereIn('planes_id', $planIds)
-                   ->with(['user', 'target', 'Recommindation_Plan','ViewsRecomenditionnumber','tragetsRecmo'])
+                ->with(['user', 'target', 'Recommindation_Plan', 'ViewsRecomenditionnumber', 'tragetsRecmo'])
                 //  ->with(['user', 'target', 'Recommindation_Plan.plan','ViewsRecomenditionnumber'])
-            ->get());
-
+                ->get());
         } else {
 
-    
+
 
             return RecommendationResource::collection(recommendation::orderBy('created_at', 'desc')
-            ->where('archive', 0)
-             ->with(['user', 'target', 'Recommindation_Plan.plan','ViewsRecomenditionnumber','tragetsRecmo'])
-            ->get());
+                ->where('archive', 0)
+                ->with(['user', 'target', 'Recommindation_Plan.plan', 'ViewsRecomenditionnumber', 'tragetsRecmo'])
+                ->get());
         }
     }
 
@@ -66,140 +65,115 @@ class RecommendationController extends Controller
 
     public function store(Request $request)
     {
- 
-    // dd($request->has('targets'));
-// return $request['img'];
- 
+
+        // dd($request->has('targets'));
+        // return $request['img'];
+
         $request['active'] = 1;
-        $request['planes_id']=1;
+        $request['planes_id'] = 1;
         $request['archive'] = 0;
-       
-    //   return $request;
+
+        //   return $request;
         $targets = $request->file('img');
-        
-        
-           $test = recommendation::create($request->except('img'));
-        
-         //   $plan = plan::find($test->planes_id);
- 
+
+
+        $test = recommendation::create($request->except('img'));
+
+        //   $plan = plan::find($test->planes_id);
+
         if ($request->hasFile('img')) {
-             
+
             foreach ($request->file('img') as $file) {
-                 $filename = time() . '_' .Str::random(10). $file->getClientOriginalName();
+                $filename = time() . '_' . Str::random(10) . $file->getClientOriginalName();
                 $file->move(public_path('Advice'), $filename);
-                  $imageUrl = asset('Advice/' . $filename); // Assuming the images are stored in the 'Advice' directory
-            //   $this->telgrame(null,null,$imageUrl);
+                $imageUrl = asset('Advice/' . $filename); // Assuming the images are stored in the 'Advice' directory
+                //   $this->telgrame(null,null,$imageUrl);
 
                 $tt = tagert::create([
                     'recomondations_id' => $test->id,
                     'target' => $filename,
                     // 'image_path' => $path,
                 ]);
-     
             }
             // return(public_path('Advice'), $filename);
 
         }
-        
+
         // Store Targets
         // Need to Send array of targets
-     if ($request->has('targets')) {
-    $targets = $request->input('targets');
-    
-    // Check if $targets is a string, and if so, convert it to an array
-    if (is_string($targets)) {
-        $targets = json_decode($targets, true);
-    }
+        if ($request->has('targets')) {
+            $targets = $request->input('targets');
 
-    // Check if $targets is now an array before proceeding with the foreach loop
+            // Check if $targets is a string, and if so, convert it to an array
+            if (is_string($targets)) {
+                $targets = json_decode($targets, true);
+            }
 
-    if (is_array($targets)) {
-        foreach ($targets as $target) {
-            $tts = TargetsRecmo::create([
-                'recomondations_id' => $test->id,
-                'target' => $target,
-            ]);
+            // Check if $targets is now an array before proceeding with the foreach loop
+
+            if (is_array($targets)) {
+                foreach ($targets as $target) {
+                    $tts = TargetsRecmo::create([
+                        'recomondations_id' => $test->id,
+                        'target' => $target,
+                    ]);
+                }
+            } else {
+            }
         }
-    } else {
-        // Handle the case when $targets is not an array
-        // You may log an error, return a response, or perform other actions based on your application's requirements.
-    }
-}
-
-// Return 15000 after processing the targets
- 
 
 
-      
-        // if (!empty($targets)) {
 
-        //     foreach ($imgs as $img) {
-        //         $tt = tagert::create([
-        //             'recomondations_id' => $test['id'],
-        //             "target" => $target,
-        //         ]);
-        //     }
-        // }
-// dd($plansReecommindations);
 
-    //  for if admin add more
-    
-   
-          $plansReecommindations = $request->input('totalPlan');
-          $array = array_unique($plansReecommindations);
-          $array2=array_values($array);
-        
-     
- 
-         if (!empty($array2))
-        {
+        $plansReecommindations = $request->input('totalPlan');
+        $array = array_unique($plansReecommindations);
+        $array2 = array_values($array);
+
+
+
+        if (!empty($array2)) {
 
             foreach ($array2 as $plansReecommindation) {
 
                 $tts = plan_recommendation::create([
-                    'recomondations_id'=>$test['id'],
-                     "planes_id" => $plansReecommindation,
+                    'recomondations_id' => $test['id'],
+                    "planes_id" => $plansReecommindation,
                 ]);
-                 
-
             }
         }
-        
-              $recom = plan::whereIn('id', $array2)
+
+        $recom = plan::whereIn('id', $array2)
             ->orderBy('created_at')
             ->get();
-            
-                //   return 500;
 
- 
-        foreach ($recom as $value) 
-        {
-              event(new recommend($test,$value->nameChannel));
-              $this->sendNotification($value->nameChannel);
-              $this->telgrame($value->id,$request->desc,$request->title);
+        //   return 500;
+
+
+        foreach ($recom as $value) {
+            event(new recommend($test, $value->nameChannel));
+            $this->sendNotification($value->nameChannel);
+            $this->telgrame($value->id, $request->desc, $request->title);
         }
 
         // event(new recommend($test, $targets, $plan->nameChannel));
 
         //  $this->telgrame($request->planes_id);
-      
+
 
         return response()->json([
             'success' => true,
         ]);
     }
 
-  public function viewsRecmo(Request $request)
+    public function viewsRecmo(Request $request)
     {
         $user = auth('api')->user();
         // return $user->id .$request->id ;
-        $checkView=ViewsRecomendition::where('user_id',$user->id)->where('recomenditions_id',$request->id)->first();
+        $checkView = ViewsRecomendition::where('user_id', $user->id)->where('recomenditions_id', $request->id)->first();
         // return $checkView;
         if (!empty($checkView)) {
             return response()->json(['success' => false]);
-        }
-        else
-        {
+        } else {
             $setCountView = ViewsRecomendition::create(
                 [
                     'user_id' => $user->id,
@@ -224,10 +198,10 @@ class RecommendationController extends Controller
     }
 
 
-    public function update($id,Request $request)
+    public function update($id, Request $request)
     {
         return $request;
-         
+
         // $this->show($id);
         // $this->destroy($id);
         return $this->store($request);
@@ -239,13 +213,13 @@ class RecommendationController extends Controller
 
         $user = recommendation::find($id);
         if (!$user) {
-            return response()->json(['message' => 'Recommendation not found','success'=>true], 200);
+            return response()->json(['message' => 'Recommendation not found', 'success' => true], 200);
         }
         $target = tagert::where('recomondations_id', $id)->get();
         $target->each->delete();
         // for delete image if use delete not sofdelete
         // $this->deletePreviousImage($user->img,'Recommendation');
-        
+
         // Delte Targets Recmo
         $targetRecmo = TargetsRecmo::where('recomondations_id', $id)->get();
         $targetRecmo->each->delete();
@@ -253,18 +227,19 @@ class RecommendationController extends Controller
         $user->delete();
 
 
-        return response()->json(['message' => 'Recommendation and associated targets deleted successfully','success'=>true]);
+        return response()->json(['message' => 'Recommendation and associated targets deleted successfully', 'success' => true]);
     }
 
 
-    
-    function convertTextToImage($text) {
+
+    function convertTextToImage($text)
+    {
         // return $text->targets;
         $image = Image::make(public_path('Recommendation/logo/logo.jpg'));
         // $image = Image::make(public_path('images.png'));
 
         // Set the custom font file path
-          $fontFile = public_path('Cairo-VariableFont_slnt,wght.ttf');
+        $fontFile = public_path('Cairo-VariableFont_slnt,wght.ttf');
 
         // Set the text content without HTML-like formatting
 
@@ -323,53 +298,50 @@ class RecommendationController extends Controller
             });
             $y += $lineHeight;
         }
-        
-         $image_jpg = time() . '.' . 'jpg';
-        $image->save('Recommendation/logo/'.$image_jpg);
-        
-         return $image_jpg;
-       
-    
-        
+
+        $image_jpg = time() . '.' . 'jpg';
+        $image->save('Recommendation/logo/' . $image_jpg);
+
+        return $image_jpg;
     }
 
 
-public function telgrame($plan, $text, $title)
-{
-    $plan = Plan::with('telegram')->where('id', $plan)->first();
+    public function telgrame($plan, $text, $title)
+    {
+        $plan = Plan::with('telegram')->where('id', $plan)->first();
 
-    $plan->telegram->each(function ($telegram) use ($text, $title) {
-        $token = $telegram->token;
-        $merchant = $telegram->merchant;
+        $plan->telegram->each(function ($telegram) use ($text, $title) {
+            $token = $telegram->token;
+            $merchant = $telegram->merchant;
 
-        // Send text message
-        $response = Http::post(
-            "https://api.telegram.org/bot{$token}/sendMessage",
-            [
-                'chat_id' => $merchant,
-                'text' => $title . "\n" . "\n" . $text,
-            ]
-        );
-
-        // Send images
-        $recomondations = recommendation::latest()->first();
-        $targets = tagert::where('recomondations_id', $recomondations->id)->get();
-
-        foreach ($targets as $target) {
-            $imageUrl = asset('Advice/' . $target->target);
-
+            // Send text message
             $response = Http::post(
-                "https://api.telegram.org/bot{$token}/sendPhoto",
+                "https://api.telegram.org/bot{$token}/sendMessage",
                 [
                     'chat_id' => $merchant,
-                    'photo' => $imageUrl,
-                    // 'caption' => $title . "\n" . "\n" . $text,
+                    'text' => $title . "\n" . "\n" . $text,
                 ]
             );
-        }
-    });
- 
-        
+
+            // Send images
+            $recomondations = recommendation::latest()->first();
+            $targets = tagert::where('recomondations_id', $recomondations->id)->get();
+
+            foreach ($targets as $target) {
+                $imageUrl = asset('Advice/' . $target->target);
+
+                $response = Http::post(
+                    "https://api.telegram.org/bot{$token}/sendPhoto",
+                    [
+                        'chat_id' => $merchant,
+                        'photo' => $imageUrl,
+                        // 'caption' => $title . "\n" . "\n" . $text,
+                    ]
+                );
+            }
+        });
+
+
 
         // $imageUrl ='https://th.bing.com/th/id/R.4c5f4b654d397dbf388439c146fc2a43?rik=tAXLyC2QQDAW4w&riu=http%3a%2f%2fwww.tandemconstruction.com%2fsites%2fdefault%2ffiles%2fstyles%2fproject_slider_main%2fpublic%2fimages%2fproject-images%2fIMG-Student-Union_6.jpg%3fitok%3dSIO_SJym&ehk=J7Rf60RWZAMlFREdj%2f7pdLWdGMn%2bS07tQsou0pZGgIA%3d&risl=&pid=ImgRaw&r=0';
 
@@ -385,23 +357,23 @@ public function telgrame($plan, $text, $title)
     }
 
 
-     public function adminPlan()
+    public function adminPlan()
     {
-          $user = auth('api')->user()->load('role');
- 
+        $user = auth('api')->user()->load('role');
+
         if ($user->state == 'admin') {
             $planIds = $user->role->pluck('pivot')->pluck('plan_id');
             return PlanResource::collection(plan::whereIn('id', $planIds)
                 ->get());
-        }else{
+        } else {
             return RecommendationResource::collection(recommendation::orderBy('created_at', 'desc')
-            ->where('archive', 0)
-            ->with(['user', 'target'])
-            ->get());
+                ->where('archive', 0)
+                ->with(['user', 'target'])
+                ->get());
         }
     }
-    
-     public function sendNotification($plan)
+
+    public function sendNotification($plan)
     {
         $serverKey = 'AAAAdOBidSQ:APA91bGf83SZcbSaGfybST4Z7y1RHqHV0h1yKgMlB-p09IErYNDo2HXkYiq5aW-iVjgDMQaSinWQNbnJF7vs5m-JPMoILRjoX8kdezLNj54i8gcevawlskPuckqlI9NIxyMzAQKkADWk'; // Replace with your Firebase server key
 
