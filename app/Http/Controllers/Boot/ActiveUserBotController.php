@@ -24,7 +24,7 @@ class ActiveUserBotController extends Controller
             $user->num_orders = $request['numOrders'];
             $user->orders_usdt = $request['ordersUsdt'];
             $user->tickers = $request['tickers'];
-            $user->admins = $request['admins'];
+            // $user->admins = $request['admins'];
 
             
 

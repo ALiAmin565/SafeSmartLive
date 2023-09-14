@@ -12,6 +12,7 @@ class Admin extends Model
     protected $table="_admin__role";
     protected $fillable=['user_id','plan_id'];
     protected $hidden=['created_at','updated_at'];
+      
 
 
     public function users()
