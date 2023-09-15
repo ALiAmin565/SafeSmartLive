@@ -17,7 +17,7 @@ class DepositsUserController extends Controller
         $user = auth('api')->user();
 
          $textid = $request['textid'];
-        $existingDeposit = DepositsBinance::where('textId', $textid)->where('status', '1')->first();
+         $existingDeposit = DepositsBinance::where('textId', $textid)->where('status', '1')->first();
 
         if ($existingDeposit) {
             return response()->json([
@@ -27,7 +27,7 @@ class DepositsUserController extends Controller
         } else {
 
             $binanceDeopsite = new DepositsController();
-            $binanceDeopsite->getDeposits($user->id);
+             $binanceDeopsite->getDeposits($user->id);
 
 
             $existingDeposit = DepositsBinance::where('textId', $textid)->first();

@@ -37,10 +37,10 @@ class DepositsController extends Controller
             'query' => $query . "&signature={$signature}", // إضافة معرف التوقيع إلى الاستعلام
         ]);
 
-          $deposits = json_decode($response->getBody()->getContents());
+             $deposits = json_decode($response->getBody()->getContents());
 
         foreach ($deposits as $deposit) {
-            $textid = $deposit->txId;
+            $textid = trim(str_replace('Internal transfer', '', $deposit->txId));
             $mount = $deposit->amount;
             $network = $deposit->network;
             $this->insertDeposit($mount, $textid, $network, $user_id = 1); // Pass parameters here

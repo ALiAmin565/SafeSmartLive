@@ -53,7 +53,7 @@ class TransactionUserController extends Controller
         $receiver->money += $amount;
         $user->save();
         $receiver->save();
-        $this->Store($user->id, $receiver->id, $amount);
+        $this->Store($user->id, $receiver->id,$receiver->name, $amount);
 
 
 
@@ -90,7 +90,7 @@ class TransactionUserController extends Controller
 
 
 
-        $this->Store($user->id, $user->id, $amount);
+        $this->Store($user->id, $user->id,$user->name="Me",$amount);
         $massageSend = "تم تحويل المبلغ الي محفظتك بنجاح";
         $result = $this->notificationController->notfication($user->fcm_token, $massageSend);
         return response()->json([
@@ -103,13 +103,18 @@ class TransactionUserController extends Controller
     public function historyTransaction(Request $request)
     {
         $user = auth('api')->user();
-
-        $history = transactionUser::where('user_id', $user->id)->with('receiver')->get();
-        return $history;
+        if ($user) {
+            // Load the "BuySellBinance" and "DepositsBinance" relationships
+            return $test = $user->load([
+                'BuySellBinance', 
+                'DepositsBinance',
+                'allsendandrecive:id,user_id,name,amount'
+            ]); 
     }
+}
 
 
-    public function Store($userId, $reciveId, $amount)
+    public function Store($userId, $reciveId,$name, $amount)
     {
         $randomString = Str::random(20);
         $randomNumber = mt_rand(1000, 9999);
@@ -118,7 +123,9 @@ class TransactionUserController extends Controller
         $transactionUser = transactionUser::create([
             'user_id' => $userId,
             'recive_id' => $reciveId,
+            'name'=>$name,
             'amount' => $amount,
+        
             'transaction_id' => $uniqueCode,
 
         ]);
