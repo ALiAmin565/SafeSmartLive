@@ -27,57 +27,17 @@ class AdminUserController extends Controller
 
     public function getAllAdmin()
     {
-         $user = auth('api')->user();
-
-if (!$user) {
-    return [
-        'success' => false,
-        'message' => 'Invalid token',
-    ];
-}
-
-$userPlanId = $user->plan_id;
-$bossIds = $user->admins;
-$bossIdsArray = json_decode($bossIds, true);
-
-try {
-    $adminUsers = User::whereIn('id', $bossIdsArray['boss'])
-        ->select('id', 'name', 'email')
-        ->get();
-
-    $Admins = Admin::with(['users:id,name,email'])
-        ->where('plan_id', '<=', $userPlanId)
-        ->get();
-
-    // Use the unique method to filter out duplicates based on user_id
-    $uniqueAdmins = $Admins->unique('user_id')->values();
-
-    return [
-        'allAdmin' => $uniqueAdmins,
-        'myadmin' => $adminUsers,
-    ];
-} catch (\Exception $e) {
-    return [
-        'success' => false,
-        'message' => 'An error occurred: ' . $e->getMessage(),
-    ];
-}
-}
+        $user = auth('api')->user();
+        $userPlanId = $user->plan_id;
 
 
-    public function setAdmin(Request $request)
-    {
-         $user=auth('api')->user();
 
-          $user->admins=$request['admins'];
-          $user->save();
-
-            return [
-        'success' => true,
-        'message' =>$user,
-    ]; 
+        $Admins = Admin::with(['users' => function ($query) {
+            $query->select('id', 'name', 'email');
+        }])->where('plan_id', '<=', $userPlanId)->get();
 
 
-           
+
+        return $Admins ;
     }
 }
