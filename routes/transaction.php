@@ -9,7 +9,7 @@ use App\Http\Controllers\TransactionUser\TransactionUserController;
 
 Route::post('sendMony',[TransactionUserController::class,'oneToOne']);
 Route::post('mySelf',[TransactionUserController::class,'mySelf']);
-Route::post('historyTransaction',[TransactionUserController::class,'historyTransaction']);
+Route::get('historyTransaction',[TransactionUserController::class,'historyTransaction']);
 
 
 Route::get('getDeposits',[DepositsController::class,'getDeposits']);

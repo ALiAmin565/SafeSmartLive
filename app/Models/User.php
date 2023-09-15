@@ -139,8 +139,19 @@ class User extends Authenticatable implements JWTSubject
     public function BuySellBinance()
     {
         
-        return $this->belongsTo(Binance::class,'user_id','id');
+        return $this->hasMany(Binance::class,'user_id','id');
 
          
     }
+
+
+    public function allsendandrecive()
+    {
+        return $this->hasMany(transactionUser::class,'user_id','id');
+    }
+
+    public function DepositsBinance()
+{
+    return $this->hasMany(DepositsBinance::class, 'user_id', 'id');
+}
 }

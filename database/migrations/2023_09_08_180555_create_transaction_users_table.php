@@ -18,6 +18,7 @@ return new class extends Migration
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('recive_id');
             $table->string('amount');
+            $table->string('name')->nullable();
             $table->string('transaction_id');
             $table->foreign('user_id')->references('id')->on('users');
             $table->foreign('recive_id')->references('id')->on('users');

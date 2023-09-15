@@ -159,6 +159,7 @@ class FrontController extends Controller
 
     public function getRecmoData($recomId)
     {
+        return $user=auth('api')->user();
         $recom = recommendation::where('id', $recomId)->first();
         $targets=TargetsRecmo::where('recomondations_id',$recomId)->pluck('target')->toArray();
         $entry = $recom->entry_price;
