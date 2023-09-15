@@ -14,6 +14,7 @@ class recommendation extends Model
     public $table='recomondations';
 
     protected $fillable=[
+        'id',
         'title',
         'desc',
         'entry_price',
@@ -25,7 +26,8 @@ class recommendation extends Model
         'number_show',
         'user_id',
         'planes_id',
-        'created_at'
+        'created_at',
+        'recomondations_id',
 
     ];
 

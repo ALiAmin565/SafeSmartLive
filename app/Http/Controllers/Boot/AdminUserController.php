@@ -19,25 +19,8 @@ class AdminUserController extends Controller
         // Decode the JSON data to an array
         $bossIdsArray = json_decode($bossIds, true);
 
-        // Fetch the user names based on the boss IDs
-        $bossNames = User::whereIn('id', $bossIdsArray['boss'])->pluck('name')->toArray();
-
-        return $bossNames;
     }
-
-    public function getAllAdmin()
-    {
-        $user = auth('api')->user();
-        $userPlanId = $user->plan_id;
+ 
 
 
-
-        $Admins = Admin::with(['users' => function ($query) {
-            $query->select('id', 'name', 'email');
-        }])->where('plan_id', '<=', $userPlanId)->get();
-
-
-
-        return $Admins;
-    }
-}
+  

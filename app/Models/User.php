@@ -44,6 +44,11 @@ class User extends Authenticatable implements JWTSubject
         'binanceApiKey',
         'binanceSecretKey',
         'is_bot',
+        'admins',
+        'num_orders',
+        'open_orders',
+        'orders_usdt',
+        'tickers'
 
 
     ];
