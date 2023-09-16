@@ -13,6 +13,8 @@ Route::get('historyTransaction',[TransactionUserController::class,'historyTransa
 
 
 Route::get('getDeposits',[DepositsController::class,'getDeposits']);
+Route::get('wallte',[DepositsController::class,'walteaddress']);
+
 Route::post('Withdrw',[WithdrwController::class,'withdraw']);
 Route::get('getUSDTBalance',[WithdrwController::class,'getUSDTBalance']);
 
