@@ -24,7 +24,6 @@ class ActiveUserBotController extends Controller
             $user->num_orders = $request['numOrders'];
             $user->orders_usdt = $request['ordersUsdt'];
             $user->tickers = $request['tickers'];
-            // $user->admins = $request['admins'];
 
 
 
@@ -42,6 +41,8 @@ class ActiveUserBotController extends Controller
         $user = auth('api')->user();
 
         $user->is_bot = 0;
+
+        $user->save();
 
         return response()->json([
             'success' => true,
