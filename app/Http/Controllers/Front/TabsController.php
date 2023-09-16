@@ -11,6 +11,7 @@ use App\Models\video;
 use App\Models\tagert;
 use GuzzleHttp\Client;
 use App\Models\Archive;
+use App\Models\binance;
 use App\Models\Massage;
 use App\Models\TargetsRecmo;
 use Illuminate\Http\Request;
@@ -19,13 +20,13 @@ use App\Models\recommendation;
 use App\Models\plan_recommendation;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
 use App\Http\Resources\VadioResource;
 use App\Models\ImageSubmissionBinance;
 use App\Http\Resources\ArchiveResource;
 use App\Http\Resources\RecommendationResource;
 use App\Http\Resources\Withdraw_moneyResource;
 use App\Http\Requests\Storetransfer_manyRequest;
-use Illuminate\Support\Facades\Http;
 
 class TabsController extends Controller
 {
@@ -378,7 +379,11 @@ class TabsController extends Controller
 
     public function myAdvice(Request $request)
     {
-           return $user=auth('api')->user();
+             $user=auth('api')->user();
+             $binance=Binance::where('user_id',$user->id)->get();
+             $get=$binance->pluck('recomondations_id')->toArray();
+           return  $recommendation=recommendation::whereIn('id',$get)->get();
+
     }
 
 
