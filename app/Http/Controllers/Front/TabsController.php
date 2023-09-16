@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Front;
 
-use App\Events\recommend;
 use Carbon\Carbon;
 use App\Models\plan;
 use App\Models\User;
@@ -12,7 +11,6 @@ use App\Models\video;
 use App\Models\tagert;
 use GuzzleHttp\Client;
 use App\Models\Archive;
-use App\Models\binance;
 use App\Models\Massage;
 use App\Models\TargetsRecmo;
 use Illuminate\Http\Request;
@@ -21,13 +19,13 @@ use App\Models\recommendation;
 use App\Models\plan_recommendation;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Http;
 use App\Http\Resources\VadioResource;
 use App\Models\ImageSubmissionBinance;
 use App\Http\Resources\ArchiveResource;
 use App\Http\Resources\RecommendationResource;
 use App\Http\Resources\Withdraw_moneyResource;
 use App\Http\Requests\Storetransfer_manyRequest;
+use Illuminate\Support\Facades\Http;
 
 class TabsController extends Controller
 {
@@ -144,7 +142,7 @@ class TabsController extends Controller
         $transactionId = $timestamp . $uniqueId . $randomNumber;
 
 
-        $amount = $request['money'] - 2;
+        $amount=$request['money'] - 2;
         $user = auth('api')->user();
         $transfer_many = transfer_many::create([
             'money' => $request['money'],
@@ -380,23 +378,14 @@ class TabsController extends Controller
 
     public function myAdvice(Request $request)
     {
-        
-
-        $user = auth('api')->user();
-         $binances = binance::where('user_id', $user->id)->get();
-            $recomIds = $binances->pluck('recomondations_id')->toArray();
-
-     
- 
-       return     $recom = recommendation::whereIn('id',  $recomIds )->get();
-             
+           return $user=auth('api')->user();
     }
 
 
 
     public function testbot(Request $request)
     {
-        return $this->store($request);
+         return $this->store($request);
     }
 
     public function store(Request $request)
@@ -407,10 +396,10 @@ class TabsController extends Controller
         $request['planes_id'] = 1;
         $request['archive'] = 0;
 
-        $ttt = $request['entry'];
+         $ttt = $request['entry'];
 
         // Convert the array $ttt to a comma-separated string
-        $entryAsString = implode(', ', $ttt);
+          $entryAsString = implode(', ', $ttt);
 
         // Create a new recommendation record with the specified values
         $test = recommendation::create([
@@ -421,14 +410,14 @@ class TabsController extends Controller
         ]);
 
         $testArray = $test->toArray(); // Convert the Eloquent model to an array
-        return $testArray['recomondations_id'] = $test->id; // Add the recomondations_id field
+       return $testArray['recomondations_id'] = $test->id; // Add the recomondations_id field
 
-        $jsonData = json_encode($testArray);
+         $jsonData = json_encode($testArray);
 
 
         $url = 'http://51.161.128.30:5015/recomondations';
 
-        return  $url = Http::post($url, $jsonData);
+      return  $url = Http::post($url, $jsonData);
 
 
 

@@ -15,7 +15,7 @@ class PlanController extends Controller
 
     public function index()
     {
-        return PlanResource::collection(plan::with(['telegram','plan_desc'])->get());
+        return PlanResource::collection(plan::with(['telegram', 'plan_desc'])->get());
     }
 
 
@@ -67,8 +67,8 @@ class PlanController extends Controller
         // return 150;
         //  $request->has('telegram_id');
 
-         $requestss = plan::with('telegram')->find($id);
-       
+        $requestss = plan::with('telegram')->find($id);
+
 
         if (!$requestss) {
             return response()->json(['message' => 'Request not found'], 404);
@@ -79,40 +79,40 @@ class PlanController extends Controller
         } elseif ($request->has('telegram_id') == null) {
             return 150;
         }
-        
-     
-        
-     
- 
- 
-$planDescIds = $request->input('description', []);
 
-if (!empty($planDescIds)) {
-    // Update or Add the related 'plan_desc' records for the 'plan'
-    foreach ($requestss->plan_desc as $index => $planDesc) {
-        $newDesc = $planDescIds[$index] ?? null; // Get the corresponding value from the $planDescIds array
-        if ($newDesc !== null) {
-            // Assuming 'column_name' is the actual column you want to update in 'plan_desc' table
-            $planDesc->update(['desc' => $newDesc]);
+
+
+
+
+
+        $planDescIds = $request->input('description', []);
+
+        if (!empty($planDescIds)) {
+            // Update or Add the related 'plan_desc' records for the 'plan'
+            foreach ($requestss->plan_desc as $index => $planDesc) {
+                $newDesc = $planDescIds[$index] ?? null; // Get the corresponding value from the $planDescIds array
+                if ($newDesc !== null) {
+                    // Assuming 'column_name' is the actual column you want to update in 'plan_desc' table
+                    $planDesc->update(['desc' => $newDesc]);
+                } else {
+                    // If the value is null, delete the related 'plan_desc' record
+                    $planDesc->delete();
+                }
+            }
+
+            // Add any remaining new 'desc' values that were not matched with existing plan_desc records
+            $newPlanDescIds = array_slice($planDescIds, count($requestss->plan_desc));
+            foreach ($newPlanDescIds as $newDesc) {
+                // Assuming 'column_name' is the actual column you want to set in 'plan_desc' table
+                $requestss->plan_desc()->create(['desc' => $newDesc]);
+            }
         } else {
-            // If the value is null, delete the related 'plan_desc' record
-            $planDesc->delete();
+            // If the input is empty, delete all related 'plan_desc' records
+            $requestss->plan_desc()->delete();
         }
-    }
 
-    // Add any remaining new 'desc' values that were not matched with existing plan_desc records
-    $newPlanDescIds = array_slice($planDescIds, count($requestss->plan_desc));
-    foreach ($newPlanDescIds as $newDesc) {
-        // Assuming 'column_name' is the actual column you want to set in 'plan_desc' table
-        $requestss->plan_desc()->create(['desc' => $newDesc]);
-    }
-} else {
-    // If the input is empty, delete all related 'plan_desc' records
-    $requestss->plan_desc()->delete();
-}
-    
-    
-    
+
+
         $requestss->update($request->all());
 
         return response()->json([

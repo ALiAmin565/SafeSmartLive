@@ -43,6 +43,9 @@ class ActiveUserBotController extends Controller
 
         $user->is_bot = 1;
 
-        return $user;
+        return response()->json([
+            'success' => true,
+            'message' => $user,
+        ]);
     }
 }

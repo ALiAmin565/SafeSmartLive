@@ -5,6 +5,7 @@ use App\Models\User;
 use App\Models\Massage;
 use Illuminate\Http\Request;
 use Illuminate\Routing\RouteGroup;
+use Illuminate\Support\Facades\Http;
 use App\Http\Controllers\ChatActions;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BotController;
@@ -30,9 +31,9 @@ use App\Http\Controllers\BotTransferController;
 use App\Http\Controllers\Front\FrontController;
 use App\Http\Controllers\TransferManyController;
 use App\Http\Controllers\RecommendationController;
+
+
 use App\Http\Controllers\chatAdviceAdminController;
-
-
 use App\Http\Controllers\Front\ChatGroupController;
 use App\Http\Controllers\Binance\getLogesController;
 use App\Http\Controllers\NotificationPlansController;
@@ -119,13 +120,46 @@ Route::get('current_datetime', [TabsController::class, 'getCurrentDateTime']);
 
 
 
-Route::get('myAdvice',[TabsController::class, 'myAdvice']);
+Route::get('myAdvice', [TabsController::class, 'myAdvice']);
 
 
 
- Route::get('testbot',[TabsController::class,'testbot']);
+Route::get('testbot', [TabsController::class, 'testbot']);
 
 
 
 
- Route::post('all',[HistoryWalteController::class,'all']);
+Route::post('all', [HistoryWalteController::class, 'all']);
+
+
+
+
+Route::get('test2', function () {
+
+
+    // The URL where you want to send the POST request
+    $url = "https://ff9f-156-215-185-44.ngrok.io/send_data";
+
+    // Define your request data as an array
+    $ahmed = [
+        [
+            "AdminID" => "1",
+            "symbol" => "btcusdt",
+            "buying_price" => ["25881.36000000", "25882.36000000"],
+            "target_prices" => ["25763.88000000", "25763.98000000", "25764.00000000", "25764.10000000", "25764.20000000"]
+        ]
+    ];
+
+    $ahmedJson = json_encode($ahmed);
+
+
+
+    // Send the POST request with the JSON data
+    $response = Http::post($url, json_decode($ahmedJson, true)); // Using json_decode to convert JSON back to an array
+
+    // You can retrieve the response body as a string
+    $responseBody = $response->body();
+
+    // You can also retrieve the response status code
+    return  $responseCode = $response->status();
+});
