@@ -100,4 +100,12 @@ class DepositsController extends Controller
 
         return 'ok';
     }
+
+    public function walteaddress(Request $request)
+    {
+        return response()->json([
+            "success" => true,
+            "wallet" => "TLmUhwJQuvGmBfYeURLb39Pwc9LD6REsuA"
+        ]);
+    }
 }
