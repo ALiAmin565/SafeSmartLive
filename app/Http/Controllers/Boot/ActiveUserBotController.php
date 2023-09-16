@@ -41,6 +41,7 @@ class ActiveUserBotController extends Controller
         $user = auth('api')->user();
 
         $user->is_bot = 0;
+
         $user->save();
 
         return response()->json([
