@@ -122,8 +122,25 @@ class RecommendationController extends Controller
             }
         }
 
-
-
+        // Rami API Request
+        $rangeString = $test->entry_price;        // Split the range string by the '-' delimiter and trim whitespace
+        $rangeArray = explode('-', $rangeString);
+        $rangeArray = array_map('trim', $rangeArray);
+        // Convert the range values to floats (if needed)
+        $rangeArray = array_map('floatval', $rangeArray);   
+        $targets = TargetsRecmo::where('recomondations_id', $test->id)->pluck('target')->toArray();
+        // Use map to convert string values to floats
+        $targets = array_map('floatval', $targets);
+        $data = [
+            'recomondations_id' => $test->id,
+            "admin" => $test->user_id,
+            "ticker" => $test->currency,
+            "targets" => $targets,
+            "entry" => $rangeArray,
+            "stoplose" => $test->stop_price,
+            "bot_num" => 1,
+        ];
+        Http::post('http://51.161.128.30:5015/recomondations', $data);
 
         $plansReecommindations = $request->input('totalPlan');
         $array = array_unique($plansReecommindations);
