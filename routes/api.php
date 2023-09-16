@@ -5,6 +5,7 @@ use App\Models\User;
 use App\Models\Massage;
 use Illuminate\Http\Request;
 use Illuminate\Routing\RouteGroup;
+use Illuminate\Support\Facades\Http;
 use App\Http\Controllers\ChatActions;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BotController;
@@ -30,9 +31,9 @@ use App\Http\Controllers\BotTransferController;
 use App\Http\Controllers\Front\FrontController;
 use App\Http\Controllers\TransferManyController;
 use App\Http\Controllers\RecommendationController;
+
+
 use App\Http\Controllers\chatAdviceAdminController;
-
-
 use App\Http\Controllers\Front\ChatGroupController;
 use App\Http\Controllers\Binance\getLogesController;
 use App\Http\Controllers\NotificationPlansController;
@@ -123,9 +124,22 @@ Route::get('myAdvice', [TabsController::class, 'myAdvice']);
 
 
 
+
+Route::get('testbot', [TabsController::class, 'testbot']);
+
+
+
+
+
+Route::post('all', [HistoryWalteController::class, 'all']);
+
+
+
+
 Route::get('testbot', [TabsController::class, 'testbot']);
 
 
 
 
 Route::post('all', [HistoryWalteController::class, 'all']);
+

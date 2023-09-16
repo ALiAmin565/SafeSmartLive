@@ -15,4 +15,10 @@ class transactionUser extends Model
     {
         return $this->belongsTo(User::class, 'recive_id', 'id');
     }
+
+
+    public function from()
+    {
+        return $this->belongsTo(User::class, 'user_id', 'id');
+    }
 }

@@ -40,11 +40,12 @@ class PayController extends Controller
      
 
 
-    public function ActivePending(ActivePending $request)
+    public function ActivePending($transactionId, $planId)
     {
 
+          
 
-        $transactionId = $request->transaction_id;
+        // $transactionId = $request->transaction_id;
         $startPlan = gmdate('Y-m-d');
         $endPlan = Carbon::now()->addDays(30)->format('Y-m-d');
 
@@ -70,7 +71,7 @@ class PayController extends Controller
         }
 
         $user->update([
-            'plan_id' => $request->plan_id,
+            'plan_id' => $planId,
             'start_plan' => $startPlan,
             'end_plan' => $endPlan,
             'Status_Plan' =>'paid',

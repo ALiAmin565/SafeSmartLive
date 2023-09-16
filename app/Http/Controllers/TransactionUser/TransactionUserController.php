@@ -53,7 +53,7 @@ class TransactionUserController extends Controller
         $receiver->money += $amount;
         $user->save();
         $receiver->save();
-        $this->Store($user->id, $receiver->id,$receiver->name, $amount);
+        $this->Store($user->id, $receiver->id, $receiver->name, $amount);
 
 
 
@@ -69,7 +69,7 @@ class TransactionUserController extends Controller
             'success' => true,
             'message' => "Transaction successful"
         ]);
-    } 
+    }
 
     public function mySelf(Request $request)
     {
@@ -90,7 +90,7 @@ class TransactionUserController extends Controller
 
 
 
-        $this->Store($user->id, $user->id,$user->name="Me",$amount);
+        $this->Store($user->id, $user->id, $user->name = "Me", $amount);
         $massageSend = "تم تحويل المبلغ الي محفظتك بنجاح";
         $result = $this->notificationController->notfication($user->fcm_token, $massageSend);
         return response()->json([
@@ -103,18 +103,50 @@ class TransactionUserController extends Controller
     public function historyTransaction(Request $request)
     {
         $user = auth('api')->user();
-        if ($user) {
-            // Load the "BuySellBinance" and "DepositsBinance" relationships
-            return $test = $user->load([
-                'BuySellBinance', 
-                'DepositsBinance',
-                'allsendandrecive:id,user_id,name,amount'
-            ]); 
+        
+        $sentTransactions = transactionUser::where('user_id', $user->id)->get();
+
+        $receivedTransactions = transactionUser::where('recive_id', $user->id)->get();
+         
+
+        $sentTransactions->each(function ($transaction) {
+            $transaction->transaction_type = 'sent';
+            $transaction->send_name=User::find($transaction->user_id)->name;
+        });
+
+        $receivedTransactions->each(function ($transaction) {
+            $transaction->transaction_type = 'received';
+            $transaction->receiver_name = User::find($transaction->user_id)->name;
+        });
+
+
+        $mergedTransactions = $sentTransactions->concat($receivedTransactions);
+
+
+        $mergedTransactions = $mergedTransactions->sortByDesc('created_at')->values();
+
+
+        $user->load(['BuySellBinance', 'DepositsBinance', 'historypayment']);
+
+
+        $responseData = [
+            'transactions' => $mergedTransactions,
+            'historypayment' => $user->historypayment,
+            'BuySellBinance' => $user->BuySellBinance,
+            'DepositsBinance' => $user->DepositsBinance,
+        ];
+
+        return $responseData;
+    
+
+
+
     }
-}
 
 
-    public function Store($userId, $reciveId,$name, $amount)
+
+
+    public function Store($userId, $reciveId, $name, $amount)
     {
         $randomString = Str::random(20);
         $randomNumber = mt_rand(1000, 9999);
@@ -123,9 +155,9 @@ class TransactionUserController extends Controller
         $transactionUser = transactionUser::create([
             'user_id' => $userId,
             'recive_id' => $reciveId,
-            'name'=>$name,
+            'name' => $name,
             'amount' => $amount,
-        
+
             'transaction_id' => $uniqueCode,
 
         ]);

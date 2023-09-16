@@ -88,10 +88,15 @@ class User extends Authenticatable implements JWTSubject
         return [];
     }
 
-  public function binanceloges()
+    public function binanceloges()
     {
         return $this->hasMany(binance::class);
+    }
 
+
+    public function historypayment()
+    {
+        return $this->hasMany(transfer_many::class);
     }
 
 
@@ -120,14 +125,14 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->belongsToMany(plan::class, '_admin__role', 'user_id', 'plan_id');
     }
-    
-        //transaction_binance
+
+    //transaction_binance
     public function transaction_binance()
     {
-        return $this->hasMany(ImageSubmissionBinance::class , 'user_id' , 'id');
+        return $this->hasMany(ImageSubmissionBinance::class, 'user_id', 'id');
     }
-    
-        // for bot transfer
+
+    // for bot transfer
     public function bot_transfer()
     {
         return $this->hasMany(BotTransfer::class, 'user_id', 'id');
@@ -138,20 +143,26 @@ class User extends Authenticatable implements JWTSubject
 
     public function BuySellBinance()
     {
-        
-        return $this->hasMany(binance::class,'user_id','id');
 
-         
+        return $this->hasMany(binance::class, 'user_id', 'id');
     }
 
 
     public function allsendandrecive()
     {
-        return $this->hasMany(transactionUser::class,'user_id','id');
+        return $this->hasMany(transactionUser::class, 'user_id', 'id');
     }
 
+    public function receivedTransactions()
+    {
+        return $this->hasMany(transactionUser::class, 'recive_id', 'id');
+    }
     public function DepositsBinance()
-{
-    return $this->hasMany(DepositsBinance::class, 'user_id', 'id');
-}
+    {
+        return $this->hasMany(DepositsBinance::class, 'user_id', 'id');
+    }
+
+
+
+ 
 }
