@@ -119,13 +119,13 @@ Route::get('current_datetime', [TabsController::class, 'getCurrentDateTime']);
 
 
 
-Route::get('myAdvice',[TabsController::class, 'myAdvice']);
+Route::get('myAdvice', [TabsController::class, 'myAdvice']);
 
 
 
- Route::get('testbot',[TabsController::class,'testbot']);
+Route::get('testbot', [TabsController::class, 'testbot']);
 
 
 
 
- Route::post('all',[HistoryWalteController::class,'all']);
+Route::post('all', [HistoryWalteController::class, 'all']);
