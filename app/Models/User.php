@@ -90,7 +90,7 @@ class User extends Authenticatable implements JWTSubject
 
     public function binanceloges()
     {
-        return $this->hasMany(binance::class);
+        return $this->hasMany(Binance::class);
     }
 
 
