@@ -124,6 +124,7 @@ Route::get('myAdvice', [TabsController::class, 'myAdvice']);
 
 
 Route::get('testbot', [TabsController::class, 'testbot']);
+Route::post('testAdvice', [RecommendationController::class, 'storeApiRequest']);
 
 
 
