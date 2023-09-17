@@ -12,8 +12,7 @@ class recommendation extends Model
     use SoftDeletes;
 
     public $table='recomondations';
-
-    protected $fillable=[
+     protected $fillable=[
         'id',
         'title',
         'desc',

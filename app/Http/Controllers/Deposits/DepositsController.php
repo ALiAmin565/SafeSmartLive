@@ -37,7 +37,7 @@ class DepositsController extends Controller
             'query' => $query . "&signature={$signature}", // إضافة معرف التوقيع إلى الاستعلام
         ]);
 
-             $deposits = json_decode($response->getBody()->getContents());
+              $deposits = json_decode($response->getBody()->getContents());
 
         foreach ($deposits as $deposit) {
             $textid = trim(str_replace('Internal transfer', '', $deposit->txId));
@@ -99,5 +99,13 @@ class DepositsController extends Controller
         ]);
 
         return 'ok';
+    }
+
+    public function walteaddress(Request $request)
+    {
+        return response()->json([
+            "success" => true,
+            "wallet" => "TLmUhwJQuvGmBfYeURLb39Pwc9LD6REsuA"
+        ]);
     }
 }
