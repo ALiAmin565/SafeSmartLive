@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Deposits\WithdrwController;
 use App\Http\Controllers\Deposits\DepositsController;
 use App\Http\Controllers\Deposits\DepositsUserController;
+use App\Http\Controllers\Deposits\subscribPlanByDepositsController;
 use App\Http\Controllers\TransactionUser\TransactionUserController;
 
 
@@ -26,3 +27,7 @@ Route::POST('checkTextID',[DepositsUserController::class,'cheakTextID']);
 Route::POST('historyDeposit',[DepositsUserController::class,'historyDeposit']);
 
 
+// subscrib to plan by feez
+
+
+Route::post('subplan',[subscribPlanByDepositsController::class,'subscrib']);

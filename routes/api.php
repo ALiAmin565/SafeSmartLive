@@ -21,6 +21,7 @@ use App\Http\Controllers\PayMopController;
 use App\Http\Controllers\ArchiveController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\All_UserController;
+use App\Http\Controllers\Front\SubscripPlan;
 use App\Http\Controllers\TelegramController;
 use App\Http\Controllers\UserDataAdminPanel;
 use App\Http\Controllers\AfilliateCalculation;
@@ -30,9 +31,9 @@ use App\Http\Controllers\Binance\buyController;
 use App\Http\Controllers\BotTransferController;
 use App\Http\Controllers\Front\FrontController;
 use App\Http\Controllers\TransferManyController;
+
+
 use App\Http\Controllers\RecommendationController;
-
-
 use App\Http\Controllers\chatAdviceAdminController;
 use App\Http\Controllers\Front\ChatGroupController;
 use App\Http\Controllers\Binance\getLogesController;
@@ -102,12 +103,7 @@ Route::post('sendmassage', [ChatGroupController::class, 'StoreMassage']);
 Route::post('sendmassagesss', [ChatGroupController::class, 'StoreMassagesss']);
 Route::post('withDrawMoney', [TabsController::class, 'TransfarManyClient']);
 Route::post('withDrawHistroy', [TabsController::class, 'historyTransFarMany']);
-Route::get('plans', [FrontController::class, 'getPlan']);
-Route::post('orderpay', [FrontController::class, 'Orderpay']);
-Route::post('histroyPay', [FrontController::class, 'HistroyPay']);
-Route::post('paymentimage', [FrontController::class, 'UploadImagePayment']);
-Route::post('SelectPlan', [FrontController::class, 'SelectPlan']);
-Route::post('Recommindation', [FrontController::class, 'Recommindation']);
+
 Route::get('testcalc/{id}', [AfilliateCalculation::class, 'afterPay']);
 // deleteUser
 Route::post('delete', [AuthController::class, 'deleteUser']);
@@ -121,25 +117,26 @@ Route::get('current_datetime', [TabsController::class, 'getCurrentDateTime']);
 
 
 Route::get('myAdvice', [TabsController::class, 'myAdvice']);
-
-
-
+Route::get('testbot', [TabsController::class, 'testbot']);
+Route::post('all', [HistoryWalteController::class, 'all']);
 
 Route::get('testbot', [TabsController::class, 'testbot']);
-
-
-
-
-
 Route::post('all', [HistoryWalteController::class, 'all']);
 
 
 
 
-Route::get('testbot', [TabsController::class, 'testbot']);
+// subscrib plan 
+Route::get('plans', [SubscripPlan::class, 'getPlan']);
+Route::post('orderpay', [SubscripPlan::class, 'Orderpay']);
+Route::post('histroyPay', [SubscripPlan::class, 'HistroyPay']);
+Route::post('paymentimage', [SubscripPlan::class, 'UploadImagePayment']);
+Route::post('SelectPlan', [SubscripPlan::class, 'SelectPlan']);
+Route::post('Recommindation', [SubscripPlan::class, 'Recommindation']);
 
 
 
 
-Route::post('all', [HistoryWalteController::class, 'all']);
-
+// Route::get('test',function() {
+//     return User::get();
+// });
