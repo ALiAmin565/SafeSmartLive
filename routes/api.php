@@ -126,6 +126,10 @@ Route::post('all', [HistoryWalteController::class, 'all']);
 
 
 
+Route::get('testbot', [TabsController::class, 'testbot']);
+Route::post('testAdvice', [RecommendationController::class, 'storeApiRequest']);
+
+
 // subscrib plan 
 Route::get('plans', [SubscripPlan::class, 'getPlan']);
 Route::post('orderpay', [SubscripPlan::class, 'Orderpay']);

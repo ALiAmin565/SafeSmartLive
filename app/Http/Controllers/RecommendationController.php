@@ -62,6 +62,85 @@ class RecommendationController extends Controller
     }
 
 
+    public function storeApiRequest(Request $request)
+    {
+        $data = $request->all();
+        $targets = $data['targets'];
+        $entry = $data['entry'];
+        $floatArray = array_map('floatval', $entry);
+        // Get the minimum and maximum values
+        $minValue = min($floatArray);
+        $maxValue = max($floatArray);
+        // Format the result as "minValue - maxValue"
+        $result = $minValue . ' - ' . $maxValue;
+        $test = recommendation::create([
+            'currency' => $data['ticker'],
+            'entry_price' => $result,
+            'stop_price' => $data['stoplose'],
+            'desc' => "Created by API",
+            'title' => "Bot Recommendation",
+            'active' => 1,
+            'planes_id' => 1,
+            'archive' => 0,
+            'user_id' => 6,
+        ]);
+        foreach ($targets as $target) {
+            $tts = TargetsRecmo::create([
+                'recomondations_id' => $test->id,
+                'target' => $target,
+            ]);
+        }
+        // Rami API Request
+        // $rangeString = $test->entry_price;        // Split the range string by the '-' delimiter and trim whitespace
+        // $rangeArray = explode('-', $rangeString);
+        // $rangeArray = array_map('trim', $rangeArray);
+        // // Convert the range values to floats (if needed)
+        // $rangeArray = array_map('floatval', $rangeArray);
+        // $targets = TargetsRecmo::where('recomondations_id', $test->id)->pluck('target')->toArray();
+        // // Use map to convert string values to floats
+        // $targets = array_map('floatval', $targets);
+        // $data = [
+        //     'recomondations_id' => $test->id,
+        //     "admin" => 0,
+        //     "ticker" => $test->currency,
+        //     "targets" => $targets,
+        //     "entry" => $rangeArray,
+        //     "stoplose" => $test->stop_price,
+        //     "bot_num" => $data['bot_num'],
+        // ];
+        // Http::post('http://51.161.128.30:5015/recomondations', $data);
+
+        $this->sendDataAfterBot($test,$data['bot_num']);
+
+        return response()->json([
+            'success' => true,
+            'data' => 'Recommendation created successfully',
+        ]);
+    }
+
+    public function sendDataAfterBot($test, $bot_num )
+    {
+        // Rami API Request
+        $rangeString = $test->entry_price;        // Split the range string by the '-' delimiter and trim whitespace
+        $rangeArray = explode('-', $rangeString);
+        $rangeArray = array_map('trim', $rangeArray);
+        // Convert the range values to floats (if needed)
+        $rangeArray = array_map('floatval', $rangeArray);
+        $targets = TargetsRecmo::where('recomondations_id', $test->id)->pluck('target')->toArray();
+        // Use map to convert string values to floats
+        $targets = array_map('floatval', $targets);
+        $data = [
+            'recomondations_id'=> $test->id,
+            "admin" => 0,
+            "ticker" => $test->currency,
+            "targets" => $targets,
+            "entry" => $rangeArray,
+            "stoplose" => $test->stop_price,
+            "bot_num" => $bot_num,
+        ];
+        Http::post('http://51.161.128.30:5015/recomondations', $data);
+    }
+
 
     public function store(Request $request)
     {
@@ -127,7 +206,7 @@ class RecommendationController extends Controller
         $rangeArray = explode('-', $rangeString);
         $rangeArray = array_map('trim', $rangeArray);
         // Convert the range values to floats (if needed)
-        $rangeArray = array_map('floatval', $rangeArray);   
+        $rangeArray = array_map('floatval', $rangeArray);
         $targets = TargetsRecmo::where('recomondations_id', $test->id)->pluck('target')->toArray();
         // Use map to convert string values to floats
         $targets = array_map('floatval', $targets);
