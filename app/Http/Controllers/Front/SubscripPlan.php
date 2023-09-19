@@ -7,6 +7,7 @@ use App\Models\plan;
 use App\Models\User;
 use App\Models\Payment;
 use App\Models\BotStatus;
+use App\Models\TargetsRecmo;
 use Illuminate\Http\Request;
 use App\Models\recommendation;
 use App\Models\DepositsBinance;
@@ -20,7 +21,7 @@ use App\Http\Resources\PaymentResource;
 use App\Http\Controllers\Deposits\DepositsController;
 use App\Http\Controllers\Helper\NotficationController;
 
-class FrontController extends Controller
+class SubscripPlan extends Controller
 {
     public function getPlan()
     {
@@ -73,6 +74,8 @@ class FrontController extends Controller
         ]);
     }
 
+     
+
     public function HistroyPay(Request $request)
     {
         $header = $request->header('Authorization');
@@ -91,32 +94,30 @@ class FrontController extends Controller
 
     public function UploadImagePayment(imageRequest $request)
     {
+        
         $user = auth('api')->user();
-
         if (!$user) {
             return response()->json([
-                'Success' => false,
+                'Success' => false, 
                 'Massage' => "Invalid token",
             ]);
         }
 
-        $Payment = Payment::where('user_id', $user->id)->latest()->first();
+         $Payment = Payment::where('user_id', $user->id)->latest()->first();
 
         if (!$request->textId) {
             return response()->json([
                 'Success' => false,
-                'Massage' => "Text ID or image not provided",
+                'Massage' => "Text ID  not provided",
             ]);
         }
 
-        // Handle image upload
-
-
-        
         $Payment->update([
             'image_payment' => $request->textId,
         ]);
         return $this->complate($request->textId, $Payment);
+
+
         return response()->json([
             'Success' => true,
             'Massage' => "Uploaded Image",
@@ -127,7 +128,7 @@ class FrontController extends Controller
     {
         $user = auth('api')->user();
 
-        $existingDeposit = DepositsBinance::where('textId', $textId)->where('status', '1')->first();
+           $existingDeposit = DepositsBinance::where('textId', $textId)->where('status', '1')->first();
 
         if ($existingDeposit) {
             return response()->json([
@@ -136,53 +137,57 @@ class FrontController extends Controller
             ]);
         }
 
-        $existingDeposit = DepositsBinance::where('textId', $textId)->first();
+         $existingDeposit = DepositsBinance::where('textId', $textId)->first();
 
         if (!$existingDeposit) {
             return response()->json([
                 'success' => false,
                 'massage' => "The deposit has not been made to Binance, please check this",
             ]);
-        }
+        } else {
 
-        // Found deposit, continue processing
+            $binanceDeopsite = new DepositsController();
+             $binanceDeopsite->getDeposits();
 
-        $getplanPrice = Plan::where('id', $Payment['plan_id'])->first();
 
-        if ($existingDeposit->amount < $getplanPrice['price']) {
-            return response()->json([
-                'success' => false,
-                'massage' => "You don't have enough money ",
-            ]);
-        } elseif ($existingDeposit->amount == $getplanPrice['price']) {
-            $new = new PayController();
-            $new->ActivePending($Payment['transaction_id'], $Payment['plan_id']);
+            $getplanPrice = Plan::where('id', $Payment['plan_id'])->first();
 
-            $notfication = new NotficationController();
-            $body = "تم الاشتراك بنجاح";
-            $notfication->notfication($user->fcm_token, $body);
-            $bodyManger = "تم اشترك شخص جديد";
-            $notfication->notficationManger($bodyManger);
-        } elseif ($existingDeposit->amount > $getplanPrice['price']) {
+            if ($existingDeposit->amount < $getplanPrice['price']) {
+                return response()->json([
+                    'success' => false,
+                    'massage' => "You don't have enough money ",
+                ]);
+            } elseif ($existingDeposit->amount == $getplanPrice['price']) {
 
-            $coolect = $existingDeposit->amount - $getplanPrice['price'];
+                $new = new PayController();
+                $new->ActivePending($Payment['transaction_id'], $Payment['plan_id']);
 
-            $addMony = $user->money += $coolect;
-            $notfication = new NotficationController();
-            $body = "تم الاشتراك بنجاح كذلك تمت اضافه الباقي اللي محفظتك 
+                $notfication = new NotficationController();
+                $body = "تم الاشتراك بنجاح";
+                $notfication->notfication($user->fcm_token, $body);
+                $bodyManger = "تم اشترك شخص جديد";
+                $notfication->notficationManger($bodyManger);
+            } elseif ($existingDeposit->amount > $getplanPrice['price']) {
+
+                 $coolect = $existingDeposit->amount - $getplanPrice['price'];
+
+                $addMony = $user->money += $coolect;
+                $notfication = new NotficationController();
+                $body = "تم الاشتراك بنجاح كذلك تمت اضافه الباقي اللي محفظتك 
             رصيدك اصبح $addMony ";
-            $notfication->notfication($user->fcm_token, $body);
-            $bodyManger = "تم اشترك شخص جديد";
-            $notfication->notficationManger($bodyManger);
+                $notfication->notfication($user->fcm_token, $body);
+                $bodyManger = "تم اشترك شخص جديد";
+                $notfication->notficationManger($bodyManger);
 
 
 
 
-            return response()->json([
-                'success' => true,
-                'message' => "Amount is greater than the plan price",
+                return response()->json([
+                    'success' => false,
+                    'message' => "Amount is greater than the plan price",
 
-            ]);
+                ]);
+            }
         }
     }
 
