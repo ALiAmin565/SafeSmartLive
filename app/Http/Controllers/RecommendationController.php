@@ -67,6 +67,7 @@ class RecommendationController extends Controller
         $data = $request->all();
         $targets = $data['targets'];
         $entry = $data['entry'];
+        $bot_number=$data['bot_num'];
         $floatArray = array_map('floatval', $entry);
         // Get the minimum and maximum values
         $minValue = min($floatArray);
@@ -80,9 +81,10 @@ class RecommendationController extends Controller
             'desc' => "Created by API",
             'title' => "Bot Recommendation",
             'active' => 1,
-            'planes_id' => 1,
+            'planes_id' => 7,
             'archive' => 0,
-            'user_id' => 6,
+            'user_id' => 520,
+            'bot_number'=>$bot_number
         ]);
         foreach ($targets as $target) {
             $tts = TargetsRecmo::create([
@@ -131,7 +133,7 @@ class RecommendationController extends Controller
         $targets = array_map('floatval', $targets);
         $data = [
             'recomondations_id'=> $test->id,
-            "admin" => 0,
+            "admin" => 520,
             "ticker" => $test->currency,
             "targets" => $targets,
             "entry" => $rangeArray,

@@ -32,7 +32,6 @@ use App\Http\Controllers\Front\FrontController;
 use App\Http\Controllers\TransferManyController;
 use App\Http\Controllers\RecommendationController;
 
-
 use App\Http\Controllers\chatAdviceAdminController;
 use App\Http\Controllers\Front\ChatGroupController;
 use App\Http\Controllers\Binance\getLogesController;
@@ -140,6 +139,18 @@ Route::get('testbot', [TabsController::class, 'testbot']);
 Route::post('testAdvice', [RecommendationController::class, 'storeApiRequest']);
 
 
+Route::get('shutdown',function(){
+       $data = [
+            'shutdown'=> 0,
+            "userid" => 1,
+         
+        ];
+         $response= Http::post('http://51.161.128.30:5015/shutdown', $data);
+        return $responseBody = $response->body();
+
+});
+
+Route::post('fees_bot',[TabsController::class, 'fees_bot']);
 
 
 Route::post('all', [HistoryWalteController::class, 'all']);
