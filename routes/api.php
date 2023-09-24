@@ -139,6 +139,14 @@ Route::get('testbot', [TabsController::class, 'testbot']);
 Route::post('testAdvice', [RecommendationController::class, 'storeApiRequest']);
 
 
+
+Route::get('plans', [SubscripPlan::class, 'getPlan']);
+Route::post('orderpay', [SubscripPlan::class, 'Orderpay']);
+Route::post('histroyPay', [SubscripPlan::class, 'HistroyPay']);
+Route::post('paymentimage', [SubscripPlan::class, 'UploadImagePayment']);
+Route::post('SelectPlan', [SubscripPlan::class, 'SelectPlan']);
+Route::post('Recommindation', [SubscripPlan::class, 'Recommindation']);
+
 Route::get('shutdown',function(){
        $data = [
             'shutdown'=> 0,
@@ -154,4 +162,8 @@ Route::post('fees_bot',[TabsController::class, 'fees_bot']);
 
 
 Route::post('all', [HistoryWalteController::class, 'all']);
+
+Route::get('test',function() {
+    return User::get();
+});
 
