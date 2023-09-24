@@ -62,7 +62,8 @@ class AuthController extends Controller
             return response()->json($response, 200);
         }
 
-
+        // Get Default affiliate code  if $request['comming_afflite'] is null
+        // 1544687
 
 
         User::create([
@@ -517,7 +518,7 @@ class AuthController extends Controller
 
 
     public function dymnamikeLink($code)
-    {
+    {   
 
         // $code=$data0['code'];
 
