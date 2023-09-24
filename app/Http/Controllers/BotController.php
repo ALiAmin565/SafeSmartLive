@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Bots;
 use App\Models\User;
 use App\Models\BotStatus;
 use Illuminate\Http\Request;
@@ -94,6 +95,14 @@ class BotController extends Controller
         $botStatus->save();
         return response()->json([
             'botStatus' => $botStatus->first()->is_active,
+        ]);
+    }
+
+    // getAllHavingBots
+    public function getAllHavingBots()
+    {
+        return response()->json([
+            'bots' => Bots::all(),
         ]);
     }
 }

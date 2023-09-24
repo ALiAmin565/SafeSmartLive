@@ -118,4 +118,6 @@ Route::middleware('SuperAdmin')->group(function () {
     Route::post('/add-tickers',[TickerController::class,'addTicker']);
     // API ADS Table
     Route::apiResource('ads', AdsController::class);
+    // API To Get All Bots
+    Route::get('/get-all-bots',[BotController::class,'getAllHavingBots']);
 });
