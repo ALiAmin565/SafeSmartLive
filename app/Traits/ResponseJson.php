@@ -11,9 +11,10 @@ trait ResponseJson
     {
         return response()->json(
             [
-                'status' => $status,
                 'success' => true,
                 'message' => $message,
+                'status' => $status,
+
 
 
             ]
