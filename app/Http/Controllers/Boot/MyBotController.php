@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Boot;
 
 use App\Models\binance;
 use App\Models\bots_usdt;
+use App\Traits\ResponseJson;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Http;
@@ -11,6 +12,7 @@ use Illuminate\Support\Facades\Http;
 
 class MyBotController extends Controller
 {
+    use ResponseJson;
     public function AllMyBot(Request $request)
     {
         $user = auth('api')->user();
