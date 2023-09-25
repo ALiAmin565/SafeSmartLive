@@ -16,7 +16,8 @@ use App\Http\Controllers\Boot\ActiveUserBotController;
 Route::get('AllBot',[BootController::class,'AllBot']);
 Route::get('oneBot',[BootController::class,'oneBot']);
 Route::get('myBots',[MyBotController::class,'AllMyBot']);
-Route::post('storeMyBot',[BootController::class,'storeMyBot']);
+Route::post('storeMyBot',[MyBotController::class,'storeMyBot']);
+Route::post('historyMyBot',[MyBotController::class,'historyMyBot']);
 
 
 
