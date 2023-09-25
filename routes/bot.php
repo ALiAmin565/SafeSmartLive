@@ -33,8 +33,7 @@ Route::get('/allTikers',[TikersUserController::class,'getAllTikers']);
 Route::get('/unsubscribeTickers',[TikersUserController::class,'getAllUnsubscrib']);
 
 // All Admin
-Route::get('getMyAdmin',[AdminUserController::class,'getMyAdmin']);
-Route::get('getAllAdmin',[AdminUserController::class,'getAllAdminAndMyAdmin']);
+ Route::get('getAllAdmin',[AdminUserController::class,'getAllAdminAndMyAdmin']);
 Route::post('setAdmin',[AdminUserController::class,'setAdmin']);
 
 

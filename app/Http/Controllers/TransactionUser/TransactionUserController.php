@@ -151,7 +151,6 @@ class TransactionUserController extends Controller
         $transactionUser = transactionUser::create([
             'user_id' => $userId,
             'recive_id' => $reciveId,
-            'name' => $name,
             'amount' => $amount,
 
             'transaction_id' => $uniqueCode,

@@ -11,7 +11,7 @@ use GuzzleHttp\Exception\ClientException;
 
 class WithdrwController extends Controller
 {
-    public function withdraw($address,$mony)
+    public function withdraw($address, $mony)
     {
 
 
@@ -27,7 +27,7 @@ class WithdrwController extends Controller
             'coin' => 'USDT', // The asset symbol you want to withdraw
             'network' => 'TRX', //trc20
             'address' => $address, // Replace with the recipient's external wallet address
-            'amount' =>$mony,
+            'amount' => $mony,
             'timestamp' => $this->timestampBinance() // Timestamp for the request
         ];
 
@@ -49,7 +49,7 @@ class WithdrwController extends Controller
             ]);
 
             // Handle the response as needed
-                $response_data = json_decode($response->getBody(), true);
+            $response_data = json_decode($response->getBody(), true);
             // You can check $response_data to ensure the withdrawal request was successful or handle errors.
 
             // Log the successful withdrawal request

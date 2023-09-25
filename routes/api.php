@@ -83,8 +83,7 @@ Route::post('viewsRecmo', [RecommendationController::class, 'viewsRecmo']);
 Route::get('videos', [TabsController::class, 'videos']);
 Route::get('archive', [TabsController::class, 'Archive']);
 Route::post('advice', [TabsController::class, 'Advice']);
-Route::post('goo', [TabsController::class, 'goo']);
-Route::get('getPosts', [TabsController::class, 'getPosts']);
+ Route::get('getPosts', [TabsController::class, 'getPosts']);
 Route::post('adminPlan', [adminPlan::class, 'adminPlan']);
 Route::get('userExpire', [TabsController::class, 'userExpire']);
 Route::post('/add-value-binance', [TabsController::class, 'addValueToBinance']);
@@ -117,23 +116,10 @@ Route::post('banPlan/{nameChannel}', [ChatActions::class, 'banPlan']);
 Route::post('unbanPlan/{nameChannel}', [ChatActions::class, 'unbanPlan']);
 Route::get('current_datetime', [TabsController::class, 'getCurrentDateTime']);
 
-
-
 Route::get('myAdvice', [TabsController::class, 'myAdvice']);
-
-
-
-
 Route::get('testbot', [TabsController::class, 'testbot']);
 
-
-
-
-
 Route::post('all', [HistoryWalteController::class, 'all']);
-
-
-
 
 Route::get('testbot', [TabsController::class, 'testbot']);
 Route::post('testAdvice', [RecommendationController::class, 'storeApiRequest']);
