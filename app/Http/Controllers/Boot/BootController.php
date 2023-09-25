@@ -32,18 +32,9 @@ class BootController extends Controller
                 $totleDay = $maxCreatedAt->diffInDays($minCreatedAt);
 
                 $bot->totalDays = $totleDay . " " . "days";
+                $totalProfit = $bot->bot_order->where('side', 'sell')->sum('profit');
 
-                // Calculate the total profit
-                $totalProfit = $bot->bot_order->sum('profit');
-                $totalBuy = $bot->bot_order->where('side', 'buy')->sum('price');
-
-                if ($totalBuy > 0) {
-                    $profitPercentage = ($totalProfit / $totalBuy) * 100;
-                } else {
-                    $profitPercentage = 0; // Handle the case where totalBuy is zero to avoid division by zero error.
-                }
-
-                $bot->profitPercentage = number_format($profitPercentage, 2) . "" . "%"; // Approximate to two decimal places
+                $bot->profitPercentage = number_format($totalProfit, 2) . "" . "%"; // Approximate to two decimal places
 
             } else {
                 $bot->totalDays = null; // Handle the case when there are no valid dates.
@@ -75,30 +66,6 @@ class BootController extends Controller
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         $botProfit = $singleBot->bot_order->sum('profit'); // all sum profit
         $totalBuy = $singleBot->bot_order->where('side', 'buy')->sum('price');
         $chart = $singleBot->bot_order->where('side', 'sell')->pluck('profit'); //chart
@@ -124,7 +91,7 @@ class BootController extends Controller
             // for add in singlebot
 
 
-            $singleBot->profitPercentage = number_format($profitPercentage, 2) . "" . "%"; // Approximate to two decimal places
+            $singleBot->profitPercentage = number_format($botProfit, 2) . "" . "%"; // Approximate to two decimal places
 
             $singleBot->averagePerDay = number_format($averagePerDay, 2) . "" . "%";
             $singleBot->averagePerMonth = number_format($averagePerMonth, 2) . "" . "%";
