@@ -147,23 +147,21 @@ Route::post('paymentimage', [SubscripPlan::class, 'UploadImagePayment']);
 Route::post('SelectPlan', [SubscripPlan::class, 'SelectPlan']);
 Route::post('Recommindation', [SubscripPlan::class, 'Recommindation']);
 
-Route::get('shutdown',function(){
-       $data = [
-            'shutdown'=> 0,
-            "userid" => 1,
-         
-        ];
-         $response= Http::post('http://51.161.128.30:5015/shutdown', $data);
-        return $responseBody = $response->body();
+Route::get('shutdown', function () {
+    $data = [
+        'shutdown' => 0,
+        "userid" => 1,
 
+    ];
+    $response = Http::post('http://51.161.128.30:5015/shutdown', $data);
+    return $responseBody = $response->body();
 });
 
-Route::post('fees_bot',[TabsController::class, 'fees_bot']);
+Route::post('fees_bot', [TabsController::class, 'fees_bot']);
 
 
 Route::post('all', [HistoryWalteController::class, 'all']);
 
-Route::get('test',function() {
+Route::get('test', function () {
     return User::get();
 });
-

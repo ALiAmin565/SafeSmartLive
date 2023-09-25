@@ -3,17 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Validator;
 use App\Mail\OtpMail;
+use Tymon\JWTAuth\Token;
+use Illuminate\Http\Request;
 use App\Mail\ResetPasswordOtp;
+use App\Models\commingAfllite;
+use Tymon\JWTAuth\Facades\JWTAuth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
-use App\Http\Resources\affiliate_userRsource;
+use Illuminate\Support\Facades\Validator;
 use App\Http\Requests\affiliate_userRequest;
-use Tymon\JWTAuth\Facades\JWTAuth;
-use Tymon\JWTAuth\Token;
+use App\Http\Resources\affiliate_userRsource;
 
 
 
@@ -38,6 +39,7 @@ class AuthController extends Controller
 
     public function create(Request $request)
     {
+
         $validator = Validator::make(
             $request->all(),
             [
@@ -45,7 +47,6 @@ class AuthController extends Controller
                 'email' => 'required|unique:users|email',
                 'password' => 'required|min:8',
                 'phone' => 'required',
-                 'comming_afflite'=>'required|exists:users,affiliate_code',
 
             ]
         );
@@ -62,20 +63,57 @@ class AuthController extends Controller
             return response()->json($response, 200);
         }
 
+
+
         // Get Default affiliate code  if $request['comming_afflite'] is null
         // 1544687
+
+        if ($request['comming_afflite'] == null) {
+            $money = 0;
+            $getcomming = commingAfllite::where('status', 1)->first();
+            $comming = $request['comming_afflite'] = $getcomming['comming_affliate'];
+            $getcomming->subscrib += 1;
+            $getcomming->save();
+        } else {
+            $rules = [
+            ];
+
+            $validator = Validator::make(
+                $request->all(),
+                [
+                 
+                    'comming_afflite' => 'required|exists:users,affiliate_code',
+                   
+    
+                ]
+            );
+    
+            if ($validator->fails()) {
+                // return json of errors object
+                $response = [
+                    'success' => false,
+                    "errors" => $validator->errors()
+                ];
+                return response()->json($response, 200);
+            }
+    
+
+            $comming = $request['comming_afflite'] = $request['comming_afflite'];
+            $money = 10;
+        }
 
 
         User::create([
             'name' => $request['name'],
             'email' => $request['email'],
             'phone' => $request['phone'],
-            'comming_afflite' => $request['comming_afflite'],
-            'plan_id'=>1,
+            'comming_afflite' => $comming,
+            'plan_id' => 1,
             'password' => Hash::make($request['password']),
+            'money' => $money,
         ]);
         $this->verifyEmail($request);
-         
+
 
 
         return $this->login($request);
@@ -208,15 +246,14 @@ class AuthController extends Controller
 
         return response()->json($response);
     }
-      public function verfiy(Request $request)
+    public function verfiy(Request $request)
     {
-        
-        $user=auth('api')->user();
-       
-        $otp=$request->otp;
+
+        $user = auth('api')->user();
+
+        $otp = $request->otp;
         //  return $otp;
-        if($otp == $user->otp)
-        {
+        if ($otp == $user->otp) {
             $user->verified = true;
             $user->otp = null;
             $code = $this->generate_affiliate_code();
@@ -235,19 +272,14 @@ class AuthController extends Controller
                 'success' => true,
                 'message' => 'OTP is valid'
             ];
-        }
-        else{
+        } else {
 
             $response = [
                 'success' => false,
                 'message' => 'Invalid OTP'
             ];
-
-
-
         }
         return response()->json($response);
-
     }
 
     function generate_affiliate_code()
@@ -309,28 +341,27 @@ class AuthController extends Controller
                 'message' => 'Wrong Password'
             ], 200);
         }
-        $remToken= $user0->remember_token;
+        $remToken = $user0->remember_token;
 
-        if($remToken!=null){
+        if ($remToken != null) {
             // return $remToken;
-            if($user0->state=="user"){
+            if ($user0->state == "user") {
 
-            JWTAuth::manager()->invalidate(new Token($remToken));
+                JWTAuth::manager()->invalidate(new Token($remToken));
             }
         }
 
         $user = auth('api')->user();
         // return $user;
-        if(!$user){
+        if (!$user) {
             return response()->json([
                 'success' => false,
                 'message' => 'invalid token'
             ], 200);
-
         }
-        $user->remember_token=$token;
+        $user->remember_token = $token;
         $user->save();
-        $user->token= $token;
+        $user->token = $token;
 
 
         $user->load(['plan' => function ($query) {
@@ -363,20 +394,18 @@ class AuthController extends Controller
                 'message' => 'invalid token'
             ], 200);
         }
-        if($user->affiliate_code == null){
-               $code = $this->generate_affiliate_code();
-                    $user->affiliate_code = $code;
-                    $user->email_verified_at = time();
-                    // return $code;
+        if ($user->affiliate_code == null) {
+            $code = $this->generate_affiliate_code();
+            $user->affiliate_code = $code;
+            $user->email_verified_at = time();
+            // return $code;
 
-                    $user->affiliate_link = $this->dymnamikeLink($code);
+            $user->affiliate_link = $this->dymnamikeLink($code);
 
-                    $user->save();
-                    $user2 = User::where('affiliate_code', $user->comming_afflite)->first();
-                    $user2->number_of_user = $user2->number_of_user + 1;
-                    $user2->save();
-        
-            
+            $user->save();
+            $user2 = User::where('affiliate_code', $user->comming_afflite)->first();
+            $user2->number_of_user = $user2->number_of_user + 1;
+            $user2->save();
         }
         $user->load(['plan' => function ($query) {
             $query->orderBy('id', 'desc');
@@ -518,59 +547,58 @@ class AuthController extends Controller
 
 
     public function dymnamikeLink($code)
-    {   
+    {
 
         // $code=$data0['code'];
 
-                $jsonData = [
-                    'dynamicLinkInfo' => [
-                        'domainUriPrefix' => 'https://upvela.page.link',
-                        'link' => 'https://upvela.com/register?code='.$code,
-                        'androidInfo' => [
-                            'androidPackageName' => 'com.upvela.upvela',
-                        ],
-                        'iosInfo' => [
-                            'iosBundleId' => 'com.upvela.upvela',
-                        ],
+        $jsonData = [
+            'dynamicLinkInfo' => [
+                'domainUriPrefix' => 'https://upvela.page.link',
+                'link' => 'https://upvela.com/register?code=' . $code,
+                'androidInfo' => [
+                    'androidPackageName' => 'com.upvela.upvela',
+                ],
+                'iosInfo' => [
+                    'iosBundleId' => 'com.upvela.upvela',
+                ],
 
-                    ],
-                ];
-
-
+            ],
+        ];
 
 
-        $response0=Http::post('https://firebasedynamiclinks.googleapis.com/v1/shortLinks?key=AIzaSyAa9-l9PJ2zONYEsqsN84c7JD_9Aue8_pc',$jsonData);
+
+
+        $response0 = Http::post('https://firebasedynamiclinks.googleapis.com/v1/shortLinks?key=AIzaSyAa9-l9PJ2zONYEsqsN84c7JD_9Aue8_pc', $jsonData);
 
         // return $response0;
 
-        $data=json_decode($response0);
+        $data = json_decode($response0);
         return $data->shortLink;
     }
 
     public function deleteUser(Request $request)
     {
-        $user=auth('api')->user();
+        $user = auth('api')->user();
         $user->delete();
         return response()->json(['success' => true, 'message' => "User Deleted"]);
     }
 
     public function affiliate_user(affiliate_userRequest $request)
     {
-        $user=User::where('id',$request['user_id'])->first();
+        $user = User::where('id', $request['user_id'])->first();
         if (!$user) {
             return response()->json([
                 'success' => false,
                 'message' => 'invalid token'
             ], 200);
         }
-        $affiliate_code=$user->affiliate_code;
+        $affiliate_code = $user->affiliate_code;
 
 
-     return affiliate_userRsource::collection(User::with('plan')->where('comming_afflite',$affiliate_code)->get());
-
+        return affiliate_userRsource::collection(User::with('plan')->where('comming_afflite', $affiliate_code)->get());
     }
-    
-        public function softDeleteUser()
+
+    public function softDeleteUser()
     {
         $deletedUsers = User::onlyTrashed()
             ->where('deleted_at', '!=', null)
@@ -591,20 +619,19 @@ class AuthController extends Controller
         return response()->json(['success' => true, 'message' => "User Restored"]);
     }
 
-// for fcm token
-         public function fcmToken(Request $request)
-            {
-                
-             $user = auth('api')->user();  // Get the authenticated user using the 'api' guard
-             $user['fcm_token'] = $request['fcm'];
-            $user->save();
-             
-        
-        return response()->json([
-            'success'=>true,
-            'user'=>$user,
-            'message' => 'FCM token updated successfully']);
+    // for fcm token
+    public function fcmToken(Request $request)
+    {
 
-        
-            }
+        $user = auth('api')->user();  // Get the authenticated user using the 'api' guard
+        $user['fcm_token'] = $request['fcm'];
+        $user->save();
+
+
+        return response()->json([
+            'success' => true,
+            'user' => $user,
+            'message' => 'FCM token updated successfully'
+        ]);
+    }
 }
