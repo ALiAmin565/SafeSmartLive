@@ -18,11 +18,20 @@ Route::get('oneBot',[BootController::class,'oneBot']);
 Route::get('myBots',[MyBotController::class,'AllMyBot']);
 Route::post('storeMyBot',[MyBotController::class,'storeMyBot']);
 Route::post('historyMyBot',[MyBotController::class,'historyMyBot']);
+Route::post('shutdown',[MyBotController::class,'shutdownBot']);
 
 
 
 
+// Route::get('shutdown', function () {
+//     $data = [
+//         'shutdown' => 0,
+//         "userid" => 1,
 
+//     ];
+//     $response = Http::post('http://51.161.128.30:5015/shutdown', $data);
+//     return $responseBody = $response->body();
+// });
 
 // Active Bot and Stop it
 Route::post('/activeBot',[ActiveUserBotController::class,'ActiveBot']);

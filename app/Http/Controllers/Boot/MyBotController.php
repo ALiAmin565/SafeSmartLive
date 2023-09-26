@@ -76,11 +76,10 @@ class MyBotController extends Controller
         $user = auth('api')->user();
         $bot_id = $request['bot_id'];
 
-         $gethistory = Binance::where('user_id', $user->id)->where('bot_num', $bot_id)->get();
-        if($gethistory->isEmpty())
-        {
+        $gethistory = Binance::where('user_id', $user->id)->where('bot_num', $bot_id)->get();
+        if ($gethistory->isEmpty()) {
             return $this->error('You not  subscribed');
-        }else{
+        } else {
             $totleSell = $gethistory->where('side', 'sell')->sum('buy_price_sell');
             $totleBuy = $gethistory->where('side', 'buy')->sum('price');
 
@@ -99,7 +98,21 @@ class MyBotController extends Controller
 
             return $result;
         }
+    }
 
+    public function shutdownBot(Request $request)
+    {
+        $user = auth('api')->user();
+        $shutdown = $request['shutdown'];
+        $data = [
+            'shutdown' => $shutdown,
+            "userid" => $user->id,
 
+        ];
+
+        $response = Http::post('http://51.161.128.30:5015/shutdown', $data);
+          $responseBody = $response->body();
+
+          return $this->success('operation accomplished successfully');
     }
 }
