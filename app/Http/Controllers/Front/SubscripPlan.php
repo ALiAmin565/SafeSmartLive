@@ -31,7 +31,7 @@ class SubscripPlan extends Controller
     // for user slect plan
     public function Orderpay(planIdRequest $request)
     {
-        $timestamp = time(); // Get the current timestamp
+         $timestamp = time(); // Get the current timestamp
         $uniqueId = uniqid(); // Generate a unique identifier
         $randomNumber = mt_rand(1000, 9999); // Generate a random number
         $transactionId = $timestamp . $uniqueId . $randomNumber;
@@ -74,7 +74,7 @@ class SubscripPlan extends Controller
         ]);
     }
 
-     
+
 
     public function HistroyPay(Request $request)
     {
@@ -94,11 +94,11 @@ class SubscripPlan extends Controller
 
     public function UploadImagePayment(imageRequest $request)
     {
-        
+
         $user = auth('api')->user();
         if (!$user) {
             return response()->json([
-                'Success' => false, 
+                'Success' => false,
                 'Massage' => "Invalid token",
             ]);
         }
@@ -173,7 +173,7 @@ class SubscripPlan extends Controller
 
                 $addMony = $user->money += $coolect;
                 $notfication = new NotficationController();
-                $body = "تم الاشتراك بنجاح كذلك تمت اضافه الباقي اللي محفظتك 
+                $body = "تم الاشتراك بنجاح كذلك تمت اضافه الباقي اللي محفظتك
             رصيدك اصبح $addMony ";
                 $notfication->notfication($user->fcm_token, $body);
                 $bodyManger = "تم اشترك شخص جديد";
