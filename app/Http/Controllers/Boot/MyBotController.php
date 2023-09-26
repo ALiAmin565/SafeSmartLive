@@ -22,7 +22,7 @@ class MyBotController extends Controller
             $bot = $data->bot;
             $data->currency = explode('_', $bot->bot_name)[0] . "-USDT";
             $data->nameBot = $bot->bot_name;
-            //   for profit 
+            //   for profit
             $data->profit = "12.3%";
             $data->makeHidden('bot');
         });
@@ -76,24 +76,30 @@ class MyBotController extends Controller
         $user = auth('api')->user();
         $bot_id = $request['bot_id'];
 
-        $gethistory = Binance::where('user_id', $user->id)->where('bot_num', $bot_id)->get();
+         $gethistory = Binance::where('user_id', $user->id)->where('bot_num', $bot_id)->get();
+        if($gethistory->isEmpty())
+        {
+            return $this->error('You not  subscribed');
+        }else{
+            $totleSell = $gethistory->where('side', 'sell')->sum('buy_price_sell');
+            $totleBuy = $gethistory->where('side', 'buy')->sum('price');
 
-        $totleSell = $gethistory->where('side', 'sell')->sum('buy_price_sell');
-        $totleBuy = $gethistory->where('side', 'buy')->sum('price');
+            if ($totleBuy != 0) {
+                $profit = ($totleSell / $totleBuy) * 100;
+            } else {
+                $profit = 0; // To avoid division by zero if there are no 'buy' records.
+            }
 
-        if ($totleBuy != 0) {
-            $profit = ($totleSell / $totleBuy) * 100;
-        } else {
-            $profit = 0; // To avoid division by zero if there are no 'buy' records.
+            // Create an array or an object to return both $gethistory and $profit
+            $result = [
+                'profit' => $profit,
+                'gethistory' => $gethistory,
+
+            ];
+
+            return $result;
         }
 
-        // Create an array or an object to return both $gethistory and $profit
-        $result = [
-            'profit' => $profit,
-            'gethistory' => $gethistory,
 
-        ];
-
-        return $result;
     }
 }
