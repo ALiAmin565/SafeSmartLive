@@ -18,7 +18,7 @@ class MyBotController extends Controller
     public function AllMyBot(Request $request)
     {
         $user = auth('api')->user();
-$bots = bots_usdt::where('user_id', $user->id)->distinct("bot_id")->get();
+        $bots = bots_usdt::where('user_id', $user->id)->distinct("bot_id")->get();
 
 $uniqueBots = $bots->unique('bot_id');
 
@@ -31,6 +31,7 @@ $valuesOnly = $uniqueBots->values();
 
         $valuesOnly->each(function ($data) {
             $bot = $data->bot;
+            $data->nameBot=$bot->bot_name;
             $data->currency = explode('_', $bot->bot_name)[0] . "-USDT";
             //   for profit
             $data->profit = "12.3%";

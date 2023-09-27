@@ -144,7 +144,7 @@ class SubscripPlan extends Controller
             $getplanPrice = Plan::where('id', $Payment['plan_id'])->first();
 
             if ($existingDeposit->amount < $getplanPrice['price']) {
-                return $this->error("You don't have enough money ");
+                return $this->error("You don't have enough number_points ");
             } elseif ($existingDeposit->amount == $getplanPrice['price']) {
 
                 $new = new PayController();
@@ -173,10 +173,10 @@ class SubscripPlan extends Controller
 
                 $coolect = $existingDeposit->amount - $getplanPrice['price'];
 
-                $addMony = $user->money += $coolect;
+                $addMony = $user->number_points += $coolect;
                 // updata user mony
                 $user->update([
-                    'money' =>  $addMony,
+                    'number_points' =>  $addMony,
                 ]);
                 // update text id
 
@@ -237,11 +237,11 @@ class SubscripPlan extends Controller
         $plan = plan::where('id', $planPayment)->first();
         $pricePlan = $plan->price;
 
-        if ($user->money >= $pricePlan) {
+        if ($user->number_points >= $pricePlan) {
             $new = new PayController();
             $new->ActivePending($Payment['transaction_id'], $Payment['plan_id']);
 
-            $user->money -= $pricePlan;
+            $user->number_points -= $pricePlan;
 
             // Save the updated user object to the database
             $user->save();
@@ -254,7 +254,7 @@ class SubscripPlan extends Controller
 
             return $this->success('You have successfully subscribed');
         } else {
-            return $this->error("You don't have enough money ");
+            return $this->error("You don't have enough number_points ");
         }
     }
 }
