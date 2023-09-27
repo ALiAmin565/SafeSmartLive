@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\Payment;
 use App\Models\BotStatus;
 use App\Models\TargetsRecmo;
+use App\Traits\ResponseJson;
 use Illuminate\Http\Request;
 use App\Models\recommendation;
 use App\Models\DepositsBinance;
@@ -23,6 +24,7 @@ use App\Http\Controllers\Helper\NotficationController;
 
 class SubscripPlan extends Controller
 {
+    use ResponseJson;
     public function getPlan()
     {
         return PlanResource::collection(plan::with('plan_desc')->get());
@@ -31,7 +33,7 @@ class SubscripPlan extends Controller
     // for user slect plan
     public function Orderpay(planIdRequest $request)
     {
-         $timestamp = time(); // Get the current timestamp
+        $timestamp = time(); // Get the current timestamp
         $uniqueId = uniqid(); // Generate a unique identifier
         $randomNumber = mt_rand(1000, 9999); // Generate a random number
         $transactionId = $timestamp . $uniqueId . $randomNumber;
@@ -97,24 +99,19 @@ class SubscripPlan extends Controller
 
         $user = auth('api')->user();
         if (!$user) {
-            return response()->json([
-                'Success' => false,
-                'Massage' => "Invalid token",
-            ]);
+            return $this->error('Invalid token');
         }
-
-         $Payment = Payment::where('user_id', $user->id)->latest()->first();
+        $Payment = Payment::where('user_id', $user->id)->latest()->first();
 
         if (!$request->textId) {
-            return response()->json([
-                'Success' => false,
-                'Massage' => "Text ID  not provided",
-            ]);
+            return $this->error('Text ID  not provided');
         }
 
         $Payment->update([
             'image_payment' => $request->textId,
         ]);
+
+
         return $this->complate($request->textId, $Payment);
 
 
@@ -128,50 +125,67 @@ class SubscripPlan extends Controller
     {
         $user = auth('api')->user();
 
-           $existingDeposit = DepositsBinance::where('textId', $textId)->where('status', '1')->first();
+        $existingDeposits = DepositsBinance::where('textId', $textId)->where('status', '1')->first();
 
-        if ($existingDeposit) {
-            return response()->json([
-                'success' => false,
-                'massage' => "The Text ID found or wrong",
-            ]);
+        if ($existingDeposits) {
+            return $this->error('The Text ID found or wrong');
         }
 
-         $existingDeposit = DepositsBinance::where('textId', $textId)->first();
+        $existingDeposit = DepositsBinance::where('textId', $textId)->first();
 
         if (!$existingDeposit) {
-            return response()->json([
-                'success' => false,
-                'massage' => "The deposit has not been made to Binance, please check this",
-            ]);
+            return $this->error('The deposit has not been made to Binance, please check this');
         } else {
 
             $binanceDeopsite = new DepositsController();
-             $binanceDeopsite->getDeposits();
+            $binanceDeopsite->getDeposits();
 
 
             $getplanPrice = Plan::where('id', $Payment['plan_id'])->first();
 
             if ($existingDeposit->amount < $getplanPrice['price']) {
-                return response()->json([
-                    'success' => false,
-                    'massage' => "You don't have enough money ",
-                ]);
+                return $this->error("You don't have enough money ");
             } elseif ($existingDeposit->amount == $getplanPrice['price']) {
 
                 $new = new PayController();
                 $new->ActivePending($Payment['transaction_id'], $Payment['plan_id']);
+
+                // for updata stata textid =1
+                $existingDeposit->update([
+                    'status' => 1,
+                ]);
+
+
 
                 $notfication = new NotficationController();
                 $body = "تم الاشتراك بنجاح";
                 $notfication->notfication($user->fcm_token, $body);
                 $bodyManger = "تم اشترك شخص جديد";
                 $notfication->notficationManger($bodyManger);
+
+                return $this->success('You have successfully subscribed');
             } elseif ($existingDeposit->amount > $getplanPrice['price']) {
 
-                 $coolect = $existingDeposit->amount - $getplanPrice['price'];
+
+
+                $new = new PayController();
+                $new->ActivePending($Payment['transaction_id'], $Payment['plan_id']);
+
+                $coolect = $existingDeposit->amount - $getplanPrice['price'];
 
                 $addMony = $user->money += $coolect;
+                // updata user mony
+                $user->update([
+                    'money' =>  $addMony,
+                ]);
+                // update text id
+
+
+                $existingDeposit->status = '1';
+                $existingDeposit->save();
+
+
+
                 $notfication = new NotficationController();
                 $body = "تم الاشتراك بنجاح كذلك تمت اضافه الباقي اللي محفظتك
             رصيدك اصبح $addMony ";
@@ -179,14 +193,7 @@ class SubscripPlan extends Controller
                 $bodyManger = "تم اشترك شخص جديد";
                 $notfication->notficationManger($bodyManger);
 
-
-
-
-                return response()->json([
-                    'success' => false,
-                    'message' => "Amount is greater than the plan price",
-
-                ]);
+                return $this->success('You have successfully subscribed and the rest has been transferred to your wallet');
             }
         }
     }
@@ -211,5 +218,43 @@ class SubscripPlan extends Controller
             'entry' => $output,
             'stopLose' => $recom->stop_price,
         ]);
+    }
+
+    // for subscribe by fess
+
+    public function subByFess()
+    {
+        $user = auth('api')->user();
+        if (!$user) {
+            return $this->error('Invalid token');
+        }
+        $Payment = Payment::where('user_id', $user->id)->where('status', 'pending')->latest()->first();
+        if (!$Payment) {
+            return $this->error('Subscrib First');
+        }
+        $planPayment = $Payment->plan_id;
+
+        $plan = plan::where('id', $planPayment)->first();
+        $pricePlan = $plan->price;
+
+        if ($user->money >= $pricePlan) {
+            $new = new PayController();
+            $new->ActivePending($Payment['transaction_id'], $Payment['plan_id']);
+
+            $user->money -= $pricePlan;
+
+            // Save the updated user object to the database
+            $user->save();
+
+            $notfication = new NotficationController();
+            $body = "تم الاشتراك بنجاح ";
+            $notfication->notfication($user->fcm_token, $body);
+            $bodyManger = "تم اشترك شخص جديد";
+            $notfication->notficationManger($bodyManger);
+
+            return $this->success('You have successfully subscribed');
+        } else {
+            return $this->error("You don't have enough money ");
+        }
     }
 }
