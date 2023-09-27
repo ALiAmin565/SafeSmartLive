@@ -69,7 +69,7 @@ class MyBotController extends Controller
             }
             // get totle binanace
             $totleNumberOrder = $user->num_orders * $user->orders_usdt;
-            $totleUsdMyBot = bots_usdt::where('user_id', $user->id)->sum('orders_usdt');
+            $totleUsdMyBot = bots_usdt::where('user_id', $user->id)->where('bot_status','1')->sum('orders_usdt');
              $finletotle = $totleUsdMyBot + $totleNumberOrder + $myusdt;
 
 
