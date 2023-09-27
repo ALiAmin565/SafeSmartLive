@@ -27,7 +27,7 @@ class DepositsUserController extends Controller
         } else {
 
             $binanceDeopsite = new DepositsController();
-             $binanceDeopsite->getDeposits($user->id);
+              $binanceDeopsite->getDeposits($user->id);
 
 
             $existingDeposit = DepositsBinance::where('textId', $textid)->first();
@@ -56,9 +56,9 @@ class DepositsUserController extends Controller
             }
         }
 
-        return response()->json(['suucess' => true, 
+        return response()->json(['suucess' => true,
         "amount"=>$existingDeposit->amount,
-        "massage" => 
+        "massage" =>
         "operation accomplished successfully"]);
     }
 
