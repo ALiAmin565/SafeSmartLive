@@ -18,20 +18,26 @@ class MyBotController extends Controller
     public function AllMyBot(Request $request)
     {
         $user = auth('api')->user();
-        $bots = bots_usdt::where('user_id', $user->id)->get();
+$bots = bots_usdt::where('user_id', $user->id)->distinct("bot_id")->get();
 
-        $bots->each(function ($data) {
+$uniqueBots = $bots->unique('bot_id');
+
+// قم بإزالة المفاتيح غير المرغوب فيها
+$uniqueBots->forget('0'); // إزالة المفتاح "0"
+$uniqueBots->forget('2'); // إزالة المفتاح "2"
+
+$valuesOnly = $uniqueBots->values();
+
+
+        $valuesOnly->each(function ($data) {
             $bot = $data->bot;
             $data->currency = explode('_', $bot->bot_name)[0] . "-USDT";
-            $data->nameBot = $bot->bot_name;
             //   for profit
             $data->profit = "12.3%";
             $data->makeHidden('bot');
         });
 
-        unset($bots->bot);
-
-        return $bots;
+        return $valuesOnly;
     }
 
     public function storeMyBot(StoreMyBotRequest $request)
@@ -40,7 +46,7 @@ class MyBotController extends Controller
         $user = auth('api')->user();
 
 
-         //  info plan bots
+        //  info plan bots
         $planid = $user->plan_id;
         $plan = plan::where('id', $planid)->first();
         $numberBpt = $plan->number_bot;
@@ -69,8 +75,8 @@ class MyBotController extends Controller
             }
             // get totle binanace
             $totleNumberOrder = $user->num_orders * $user->orders_usdt;
-            $totleUsdMyBot = bots_usdt::where('user_id', $user->id)->where('bot_status','1')->sum('orders_usdt');
-             $finletotle = $totleUsdMyBot + $totleNumberOrder + $myusdt;
+            $totleUsdMyBot = bots_usdt::where('user_id', $user->id)->where('bot_status', '1')->sum('orders_usdt');
+            $finletotle = $totleUsdMyBot + $totleNumberOrder + $myusdt;
 
 
 
