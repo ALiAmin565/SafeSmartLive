@@ -20,7 +20,7 @@ class DepositsController extends Controller
         $api_secret=env('KEY_SECRT_DEPOSITE');
 
         // إعداد البيانات المطلوبة للتوقيع
-          $timestamp = $this->timestampBinance();
+         $timestamp = $this->timestampBinance();
         $params = [
             'timestamp' => $timestamp,
         ];
@@ -37,7 +37,7 @@ class DepositsController extends Controller
             'query' => $query . "&signature={$signature}", // إضافة معرف التوقيع إلى الاستعلام
         ]);
 
-          return  $deposits = json_decode($response->getBody()->getContents());
+            $deposits = json_decode($response->getBody()->getContents());
 
         foreach ($deposits as $deposit) {
             $textid = trim(str_replace('Internal transfer', '', $deposit->txId));
@@ -63,7 +63,7 @@ class DepositsController extends Controller
     {
         $client = new Client();
         $response = $client->get('https://api.binance.com/api/v3/time');
-        $serverTime = json_decode($response->getBody(), true);
+      return  $serverTime = json_decode($response->getBody(), true);
         return $serverTime['serverTime'];
     }
 

@@ -13,8 +13,8 @@ class DepositsUserController extends Controller
     public function cheakTextID(Request $request)
     {
 
-        // return 150;
-        $user = auth('api')->user();
+        //  return 150;
+         $user = auth('api')->user();
 
          $textid = $request['textid'];
          $existingDeposit = DepositsBinance::where('textId', $textid)->where('status', '1')->first();
@@ -25,9 +25,9 @@ class DepositsUserController extends Controller
                 "massage" => "The Text ID found or wrong",
             ]);
         } else {
-    //  return 150;
+
             $binanceDeopsite = new DepositsController();
-              $binanceDeopsite->getDeposits($user->id);
+             $binanceDeopsite->getDeposits($user->id);
 
 
             $existingDeposit = DepositsBinance::where('textId', $textid)->first();
@@ -56,9 +56,9 @@ class DepositsUserController extends Controller
             }
         }
 
-        return response()->json(['suucess' => true,
+        return response()->json(['suucess' => true, 
         "amount"=>$existingDeposit->amount,
-        "massage" =>
+        "massage" => 
         "operation accomplished successfully"]);
     }
 
