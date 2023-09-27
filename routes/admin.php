@@ -35,6 +35,7 @@ use App\Http\Controllers\Boot\TikersUserController;
 use App\Http\Controllers\chatAdviceAdminController;
 use App\Http\Controllers\Front\ChatGroupController;
 use App\Http\Controllers\Binance\getLogesController;
+use App\Http\Controllers\AffiliateCreationController;
 use App\Http\Controllers\NotificationPlansController;
 use App\Http\Controllers\Binance\transactionController;
 
@@ -118,4 +119,6 @@ Route::middleware('SuperAdmin')->group(function () {
     Route::post('/add-tickers',[TickerController::class,'addTicker']);
     // API ADS Table
     Route::apiResource('ads', AdsController::class);
+    // Affiliate CRUD
+    Route::apiResource('affiliate-default', AffiliateCreationController::class);
 });
