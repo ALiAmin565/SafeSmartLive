@@ -147,6 +147,11 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasMany(binanceUser::class, 'user_id', 'id');
     }
 
+    public function fessBot()
+    {
+        return $this->hasMany(feesBot::class, 'user_id', 'id');
+    }
+
 
     public function allsendandrecive()
     {
@@ -161,8 +166,4 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->hasMany(DepositsBinance::class, 'user_id', 'id');
     }
-
-
-
-
 }

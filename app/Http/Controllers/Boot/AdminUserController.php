@@ -13,19 +13,7 @@ use App\Http\Controllers\Controller;
 class AdminUserController extends Controller
 {
     use ResponseJson;
-    // public function getMyAdmin(Request $request)
-    // {
-    //     $user = auth('api')->user();
-    //     $bossIds = $user->admins; // Assuming $user->boss is the JSON-encoded array {"boss": [520, 600, 700]}
 
-    //     // Decode the JSON data to an array
-    //     $bossIdsArray = json_decode($bossIds, true);
-
-    //     // Fetch the user names based on the boss IDs
-    //     $bossNames = User::whereIn('id', $bossIdsArray['boss'])->pluck('name')->toArray();
-
-    //     return $bossNames;
-    // }
 
     public function getAllAdminAndMyAdmin()
     {

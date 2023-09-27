@@ -126,11 +126,12 @@ Route::get('testbot', [TabsController::class, 'testbot']);
 Route::post('testAdvice', [RecommendationController::class, 'storeApiRequest']);
 
 
-
+// for plan
 Route::get('plans', [SubscripPlan::class, 'getPlan']);
 Route::post('orderpay', [SubscripPlan::class, 'Orderpay']);
 Route::post('histroyPay', [SubscripPlan::class, 'HistroyPay']);
 Route::post('paymentimage', [SubscripPlan::class, 'UploadImagePayment']);
+Route::post('subByFess', [SubscripPlan::class, 'subByFess']);
 Route::post('SelectPlan', [SubscripPlan::class, 'SelectPlan']);
 Route::post('Recommindation', [SubscripPlan::class, 'Recommindation']);
 

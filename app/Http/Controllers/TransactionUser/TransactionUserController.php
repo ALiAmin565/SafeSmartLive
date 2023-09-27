@@ -118,22 +118,29 @@ class TransactionUserController extends Controller
             $transaction->transaction_type = 'received';
             $transaction->receiver_name = User::find($transaction->user_id)->name;
         });
-
-
         $mergedTransactions = $sentTransactions->concat($receivedTransactions);
-
-
         $mergedTransactions = $mergedTransactions->sortByDesc('created_at')->values();
 
+        // for fess Bot
+        $is_Deposits = $user->DepositsBinance->each(function ($define) {
+            $define->type = "is_Deposits";
+        });
+        $is_fess = $user->fessBot->each(function ($define) {
+            $define->type = "is_fess";
+        });
 
-        $user->load(['BuySellBinance', 'DepositsBinance', 'historypayment']);
+        $fess = $is_Deposits->concat($is_fess);
+        $sendfess = $fess->sortByDesc('created_at')->values();
+
+
+        $user->load(['BuySellBinance', 'DepositsBinance', 'historypayment', 'fessBot']);
 
 
         $responseData = [
             'transactions' => $mergedTransactions,
             'historypayment' => $user->historypayment,
             'BuySellBinance' => $user->BuySellBinance,
-            'DepositsBinance' => $user->DepositsBinance,
+            'DepositsBinance' => $sendfess,
         ];
 
         return $responseData;

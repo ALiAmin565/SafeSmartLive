@@ -16,8 +16,8 @@ class DepositsController extends Controller
     {
 
 
-        $api_key = 'f0gUx4ukrKXftiay0bihaBaNMYhV9wNUls4T7O4QbHgvr2xJYKeMaaNG8DL9RSP1';
-        $api_secret = 'r9u1KtFzjb5MyFNZgvWqyCMne8xiVuGWfQLK1WapbRyUKnUkNECmbSMwGNcbzbQA';
+        $api_key=env('API_KEY_DEPOSITE');
+        $api_secret=env('KEY_SECRT_DEPOSITE');
 
         // إعداد البيانات المطلوبة للتوقيع
          $timestamp = $this->timestampBinance();
@@ -37,7 +37,7 @@ class DepositsController extends Controller
             'query' => $query . "&signature={$signature}", // إضافة معرف التوقيع إلى الاستعلام
         ]);
 
-           $deposits = json_decode($response->getBody()->getContents());
+            $deposits = json_decode($response->getBody()->getContents());
 
         foreach ($deposits as $deposit) {
             $textid = trim(str_replace('Internal transfer', '', $deposit->txId));
