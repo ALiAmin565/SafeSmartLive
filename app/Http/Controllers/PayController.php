@@ -20,30 +20,29 @@ class PayController extends Controller
     public function pending()
     {
 
-      $payment=Payment::where('status', 'pending')->with(['plan','user'])->orderBy('id', 'desc')->get();
-      return PaymentResource::collection($payment);
-    
-    return UserPlanResource::collection(User::where('Status_Plan', 'pending')->with(['plan', 'imgPay' => function ($query) {
-        $query->orderBy('id', 'desc')->first();
-    }])->get());
+        $payment = Payment::where('status', 'pending')->with(['plan', 'user'])->orderBy('id', 'desc')->get();
+        return PaymentResource::collection($payment);
 
-    }
-    
-    
-    public function returnFree(Request $request){
-     $user=auth('api')->user();    
-     $user->plan_id=1;
-     $user->save();
-
+        return UserPlanResource::collection(User::where('Status_Plan', 'pending')->with(['plan', 'imgPay' => function ($query) {
+            $query->orderBy('id', 'desc')->first();
+        }])->get());
     }
 
-     
+
+    public function returnFree(Request $request)
+    {
+        $user = auth('api')->user();
+        $user->plan_id = 1;
+        $user->save();
+    }
+
+
 
 
     public function ActivePending($transactionId, $planId)
     {
 
-          
+
 
         // $transactionId = $request->transaction_id;
         $startPlan = gmdate('Y-m-d');
@@ -74,9 +73,9 @@ class PayController extends Controller
             'plan_id' => $planId,
             'start_plan' => $startPlan,
             'end_plan' => $endPlan,
-            'Status_Plan' =>'paid',
+            'Status_Plan' => 'paid',
         ]);
-        
+
         $this->afterPay($user->id);
 
         return response()->json([
@@ -84,7 +83,7 @@ class PayController extends Controller
             'message' => 'Request is successful',
         ]);
     }
-      function afterPay($id)
+    function afterPay($id)
     {
         $user_comming = User::find($id);
         $user_comming_affiliate = $user_comming->comming_afflite;
@@ -135,8 +134,4 @@ class PayController extends Controller
         $user->money = $user_money;
         $user->save();
     }
-
-
-
-
 }
