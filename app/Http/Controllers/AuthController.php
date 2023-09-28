@@ -82,7 +82,7 @@ class AuthController extends Controller
                 $request->all(),
                 [
 
-                    'comming_afflite' =>'required|exists:users,affiliate_code',
+                    'comming_afflite' =>  'required|exists:users,affiliate_code',
 
 
                 ]
