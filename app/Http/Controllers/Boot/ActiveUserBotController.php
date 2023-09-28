@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Boot;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Http;
 use App\Http\Requests\ActiveBotRequest;
 
 class ActiveUserBotController extends Controller
@@ -38,15 +39,28 @@ class ActiveUserBotController extends Controller
 
     public function stopBot(Request $request)
     {
+
         $user = auth('api')->user();
 
-        $user->is_bot = 0;
+        $data = [
+            'shutdown' => 1,
+            "userid" => $user->id,
 
-        $user->save();
+        ];
+
+        $response = Http::post('http://51.161.128.30:5015/shutdown', $data);
+        $responseBody = $response->body();
 
         return response()->json([
             'success' => true,
             'message' => $user,
         ]);
     }
+
+
+
+
+
+
+
 }
