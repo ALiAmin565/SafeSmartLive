@@ -112,6 +112,8 @@ class AuthController extends Controller
             'password' => Hash::make($request['password']),
             'number_points' => $money,
         ]);
+
+
         $this->verifyEmail($request);
 
 
