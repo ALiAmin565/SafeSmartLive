@@ -22,7 +22,7 @@ class DepositsUserController extends Controller
         if ($existingDeposit) {
             return response()->json([
                 'success' => false,
-                "massage" => "The Text ID found or wrong",
+                "message" => "The Text ID found or wrong",
             ]);
         } else {
 
@@ -33,7 +33,7 @@ class DepositsUserController extends Controller
             if (!$existingDeposit) {
                 return response()->json([
                     'success' => false,
-                    "massage" => "The deposit has not been made to Binance, please check this",
+                    "message" => "The deposit has not been made to Binance, please check this",
                 ]);
             } else {  //found it
 
@@ -58,14 +58,14 @@ class DepositsUserController extends Controller
         return response()->json([
             'success' => true,
             "amount" => $existingDeposit->amount,
-            "massage" =>
+            "message" =>
             "operation accomplished successfully"
         ]);
 
         return response()->json([
             'success' => true,
             "amount" => $existingDeposit->amount,
-            "massage" =>
+            "message" =>
             "operation accomplished successfully"
         ]);
     }
