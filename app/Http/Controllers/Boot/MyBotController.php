@@ -127,17 +127,17 @@ class MyBotController extends Controller
 
 
         $user = auth('api')->user();
-        $bot_id = $request['bot_id'];
+         $bot_id = $request['bot_id'];
 
-        $gethistory = Binance::where('user_id', $user->id)->where('bot_num', $bot_id)->get();
+         $gethistory = Binance::where('user_id', $user->id)->where('bot_num', $bot_id)->get();
         if ($gethistory->isEmpty()) {
             return $this->error('You not  subscribed');
         } else {
-            $totleSell = $gethistory->where('side', 'sell')->sum('buy_price_sell');
+            $totleSell = $gethistory->where('side', 'sell')->sum('profit_per');
             $totleBuy = $gethistory->where('side', 'buy')->sum('price');
 
             if ($totleBuy != 0) {
-                $profit = ($totleSell / $totleBuy) * 100;
+                $profit = $totleSell;
             } else {
                 $profit = 0; // To avoid division by zero if there are no 'buy' records.
             }
@@ -149,7 +149,7 @@ class MyBotController extends Controller
 
             ];
 
-            return $result;
+            return $profit;
         }
     }
 
