@@ -124,9 +124,18 @@ class TransactionUserController extends Controller
         // for fess Bot it
         $is_Deposits = $user->DepositsBinance->each(function ($define) {
             $define->type = "is_Deposits";
+
         });
         $is_fess = $user->fessBot->each(function ($define) {
             $define->type = "is_fess";
+            if($define->number_bot == null)
+            {
+                $define->side = "plan";
+
+            }else{
+                $define->side = "bot";
+
+            }
         });
 
         $fess = $is_Deposits->concat($is_fess);
