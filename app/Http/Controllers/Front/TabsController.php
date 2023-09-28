@@ -143,11 +143,11 @@ class TabsController extends Controller
 
         $transactionId = $timestamp . $uniqueId . $randomNumber;
 
-// 50 -2 = 48
+        // 50 -2 = 48
 
 
-         $amount = $request['money'] - 2;
-          $user = auth('api')->user();
+        $amount = $request['money'] - 2;
+        $user = auth('api')->user();
         $transfer_many = transfer_many::create([
             'money' => $amount,
             'Visa_number' => $request['Visa_number'],

@@ -102,19 +102,19 @@ class TransactionUserController extends Controller
 
     public function historyTransaction(Request $request)
     {
-        $user = auth('api')->user();
+         $user = auth('api')->user();
 
-        $sentTransactions = transactionUser::where('user_id', $user->id)->get();
+          $sentTransactions = transactionUser::where('user_id', $user->id)->get();
 
-        $receivedTransactions = transactionUser::where('recive_id', $user->id)->get();
+                $receivedTransactions = transactionUser::where('recive_id', $user->id)->get();
 
 
-        $sentTransactions->each(function ($transaction) {
+                 return         $sentTransactions->each(function ($transaction) {
             $transaction->transaction_type = 'sent';
-            $transaction->send_name = User::find($transaction->user_id)->name;
+            $transaction->send_name = User::find($transaction->recive_id)->name;
         });
 
-        $receivedTransactions->each(function ($transaction) {
+            $receivedTransactions->each(function ($transaction) {
             $transaction->transaction_type = 'received';
             $transaction->receiver_name = User::find($transaction->user_id)->name;
         });
