@@ -82,7 +82,7 @@ class AuthController extends Controller
                 $request->all(),
                 [
 
-                    'comming_afflite' => 'required|exists:users,affiliate_code',
+                    'comming_afflite' =>'required|exists:users,affiliate_code',
 
 
                 ]
@@ -112,6 +112,8 @@ class AuthController extends Controller
             'password' => Hash::make($request['password']),
             'number_points' => $money,
         ]);
+
+
         $this->verifyEmail($request);
 
 
