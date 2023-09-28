@@ -147,7 +147,7 @@ class TabsController extends Controller
         $amount = $request['money'] - 2;
         $user = auth('api')->user();
         $transfer_many = transfer_many::create([
-            'money' => $request['money'],
+            'money' => $amount,
             'Visa_number' => $request['Visa_number'],
             'status' => 'pending',
             'transaction_id' => $transactionId,
