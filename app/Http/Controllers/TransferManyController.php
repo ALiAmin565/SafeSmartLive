@@ -78,7 +78,7 @@ class TransferManyController extends Controller
     public function update(Updatetransfer_manyRequest $request)
     {
 
-              $transactionId = $request['transaction_id'];
+        $transactionId = $request['transaction_id'];
 
         $transferMany = transfer_many::where('transaction_id', $transactionId)->first();
 
@@ -90,10 +90,12 @@ class TransferManyController extends Controller
         $user_id = User::find($transferMany->user_id);
 
         if ($request['status'] == "success") {
+
+
             $withdraw = new WithdrwController();
             // $transferMany['Visa_number'] = "TKpWhCrupWsRs82PMqFbWVNPEXs5cPWNpA";
             // $transferMany['money'] = 2;
-            $response = $withdraw->withdraw($transferMany['Visa_number'], $transferMany['money']);
+             $response = $withdraw->withdraw($transferMany['Visa_number'], $transferMany['money']);
 
             if (is_object($response)) {
                 // Handle the object response here
@@ -181,7 +183,6 @@ class TransferManyController extends Controller
                 // Handle unexpected response type here
                 return 'Unexpected response type';
             }
-
         } elseif ($request['status'] == "declined") {
             $transferMany->status = 'declined';
             $transferMany->save();
@@ -190,11 +191,14 @@ class TransferManyController extends Controller
             // Get money of user
             $usermodel = User::where('id', $transferMany->user_id)->first();
             $userMony = $usermodel->money;
-            $total = $userMony + $transferMany->mony +2;
+            $transferMany->money;
+            $total = ($userMony += $transferMany->money) + 2;
 
             $usermodel->update([
                 'money' => $total,
             ]);
+
+
             $body = "تم رفض العمليه يرجي التواصل مع قسم الدعم";
             $notfication = new NotficationController();
 

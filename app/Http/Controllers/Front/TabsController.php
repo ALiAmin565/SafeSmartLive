@@ -143,9 +143,11 @@ class TabsController extends Controller
 
         $transactionId = $timestamp . $uniqueId . $randomNumber;
 
+// 50 -2 = 48
 
-        $amount = $request['money'] - 2;
-        $user = auth('api')->user();
+
+         $amount = $request['money'] - 2;
+          $user = auth('api')->user();
         $transfer_many = transfer_many::create([
             'money' => $amount,
             'Visa_number' => $request['Visa_number'],
@@ -155,10 +157,11 @@ class TabsController extends Controller
 
         ]);
 
+
         if ($request['money'] > $user->money) {
             return response()->json(['success' => false, 'message' => 'You dont have all that money']);
         } else {
-            $check = +$user->money - +$request['money'];
+            $check = $user->money -= $request['money'];
             $user->money = $check;
             $user->save();
         }
