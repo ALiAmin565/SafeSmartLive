@@ -18,7 +18,7 @@ class MyBotController extends Controller
     public function AllMyBot(Request $request)
     {
 
-         $user = auth('api')->user();
+        $user = auth('api')->user();
         $bots = bots_usdt::where('user_id', $user->id)->orderBy('created_at', 'desc')->get();
 
         $botMap = [];
@@ -29,7 +29,7 @@ class MyBotController extends Controller
             }
         }
 
-      $uniqueBots = collect(array_values($botMap));
+        $uniqueBots = collect(array_values($botMap));
 
         $uniqueBots->each(function ($data) {
 
@@ -37,8 +37,12 @@ class MyBotController extends Controller
             $data->nameBot = $bot->bot_name;
             $data->currency = explode('_', $bot->bot_name)[0] . "-USDT";
             //   for profit
-$binance=binance::where('user_id',$data->user_id)->where('bot_num',$data->bot_id)->where('side','sell')->sum('profit_per');
-            $data->profit =$binance;
+            $binance = binance::where('user_id', $data->user_id)->where('bot_num', $data->bot_id)->where('side', 'sell')->sum('profit_per');
+            $test =  $bot->profit = number_format($binance, 2) . "" . "%"; // Approximate to two decimal places
+
+            $data->profit = strval($test);
+
+
 
 
 
@@ -54,7 +58,7 @@ $binance=binance::where('user_id',$data->user_id)->where('bot_num',$data->bot_id
     public function storeMyBot(StoreMyBotRequest $request)
     {
 
-             $user = auth('api')->user();
+        $user = auth('api')->user();
 
 
         //  info plan bots
