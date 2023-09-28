@@ -102,7 +102,7 @@ class TransactionUserController extends Controller
 
     public function historyTransaction(Request $request)
     {
-        $user = auth('api')->user();
+         $user = auth('api')->user();
 
         $sentTransactions = transactionUser::where('user_id', $user->id)->get();
 

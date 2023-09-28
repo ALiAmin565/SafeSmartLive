@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Front;
 use auth;
 use App\Models\plan;
 use App\Models\User;
+use App\Models\feesBot;
 use App\Models\Payment;
 use App\Models\BotStatus;
 use App\Models\TargetsRecmo;
@@ -252,9 +253,27 @@ class SubscripPlan extends Controller
             $bodyManger = "تم اشترك شخص جديد";
             $notfication->notficationManger($bodyManger);
 
+
+
+
+           $this->storeSubPlan($pricePlan);
+
+
             return $this->success('You have successfully subscribed');
         } else {
             return $this->error("You don't have enough number_points ");
         }
+    }
+
+    public function storeSubPlan($pricePlan)
+    {
+        $user=auth('api')->user();
+        $feesBot=feesBot::create([
+        'user_id'=>$user->id,
+        'fees'=>$pricePlan,
+        'status'=>"success",
+        ]);
+
+
     }
 }
