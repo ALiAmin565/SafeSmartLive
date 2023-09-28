@@ -21,7 +21,7 @@ class DepositsUserController extends Controller
 
         if ($existingDeposit) {
             return response()->json([
-                'suucess' => false,
+                'success' => false,
                 "massage" => "The Text ID found or wrong",
             ]);
         } else {
@@ -32,7 +32,7 @@ class DepositsUserController extends Controller
             $existingDeposit = DepositsBinance::where('textId', $textid)->first();
             if (!$existingDeposit) {
                 return response()->json([
-                    'suucess' => false,
+                    'success' => false,
                     "massage" => "The deposit has not been made to Binance, please check this",
                 ]);
             } else {  //found it
@@ -63,7 +63,7 @@ class DepositsUserController extends Controller
         ]);
 
         return response()->json([
-            'suucess' => true,
+            'success' => true,
             "amount" => $existingDeposit->amount,
             "massage" =>
             "operation accomplished successfully"
