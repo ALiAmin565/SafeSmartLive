@@ -78,9 +78,9 @@ class TransferManyController extends Controller
     public function update(Updatetransfer_manyRequest $request)
     {
 
-        $transactionId = $request['transaction_id'];
+              $transactionId = $request['transaction_id'];
 
-       return $transferMany = transfer_many::where('transaction_id', $transactionId)->first();
+        $transferMany = transfer_many::where('transaction_id', $transactionId)->first();
 
         if (!$transferMany) {
             // Handle transfer_many record not found
@@ -107,7 +107,7 @@ class TransferManyController extends Controller
 
                     // Call notification
                     $notfication = new NotficationController();
-                    $body = "تم تحويل المبلغ الى محفظتك بنجاح 
+                    $body = "تم تحويل المبلغ الى محفظتك بنجاح
                                  upvale شكرا لاستخدامك";
                     $notfication->notfication($user_id->fcm_token, $body);
                     $body = " تم تحويل الرصيد بنجاح شكرا لانك القائد";
@@ -122,7 +122,7 @@ class TransferManyController extends Controller
 
                     $notfication = new NotficationController();
                     $body = "مطلوب  $transferMany->money
-                        لم تتم عملية التحويل 
+                        لم تتم عملية التحويل
                         لا يوجد رصيد كافي في محفظتك يرجى الشحن في أقرب وقت ";
                     $notfication->notficationManger($body);
 
@@ -146,7 +146,7 @@ class TransferManyController extends Controller
 
                     // Call notification
                     $notfication = new NotficationController();
-                    $body = "تم تحويل المبلغ الى محفظتك بنجاح 
+                    $body = "تم تحويل المبلغ الى محفظتك بنجاح
                              upvale شكرا لاستخدامك";
                     $notfication->notfication($user_id->fcm_token, $body);
                     $body = " تم تحويل الرصيد بنجاح شكرا لانك القائد";
@@ -163,7 +163,7 @@ class TransferManyController extends Controller
 
                     $notfication = new NotficationController();
                     $body = "مطلوب  $transferMany->money
-                    لم تتم عملية التحويل 
+                    لم تتم عملية التحويل
                     لا يوجد رصيد كافي في محفظتك يرجى الشحن في أقرب وقت ";
                     $notfication->notficationManger($body);
 
