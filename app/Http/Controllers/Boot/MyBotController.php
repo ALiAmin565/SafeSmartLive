@@ -149,7 +149,7 @@ class MyBotController extends Controller
 
             ];
 
-            return $profit;
+            return $result;
         }
     }
 
