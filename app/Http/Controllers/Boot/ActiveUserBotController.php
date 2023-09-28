@@ -25,9 +25,6 @@ class ActiveUserBotController extends Controller
             $user->num_orders = $request['numOrders'];
             $user->orders_usdt = $request['ordersUsdt'];
             $user->tickers = $request['tickers'];
-
-
-
             $user->save();
         }
 
@@ -58,11 +55,4 @@ class ActiveUserBotController extends Controller
 
         // return 555;
     }
-
-
-
-
-
-
-
 }

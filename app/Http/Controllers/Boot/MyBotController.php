@@ -29,6 +29,19 @@ class MyBotController extends Controller
             }
         }
 
+        if ($user->is_bot == 1) {
+            // Add fake or static data here
+            $fakeBot = new bots_usdt();
+            $fakeBot->bot_id = 1; // Choose a unique ID
+            $fakeBot->user_id = $user->id;
+            $fakeBot->bot_status = 0; // Example status
+            $fakeBot->nameBot = 'Fake Bot';
+            $fakeBot->currency = 'Fake Currency';
+            $fakeBot->profit = '10.0%'; // Example profit
+            $fakeBot->bot_name="Currency_usdt";
+            $botMap[999] = $fakeBot; // Add the fake bot to the map
+        }
+
         $uniqueBots = collect(array_values($botMap));
 
         $uniqueBots->each(function ($data) {
@@ -38,21 +51,15 @@ class MyBotController extends Controller
             $data->currency = explode('_', $bot->bot_name)[0] . "-USDT";
             //   for profit
             $binance = binance::where('user_id', $data->user_id)->where('bot_num', $data->bot_id)->where('side', 'sell')->sum('profit_per');
-            $test =  $bot->profit = number_format($binance, 2) . "" . "%"; // Approximate to two decimal places
+            $test = $bot->profit = number_format($binance, 2) . "" . "%"; // Approximate to two decimal places
 
             $data->profit = strval($test);
-
-
-
-
-
-
-
 
             $data->makeHidden('bot');
         });
 
         return $uniqueBots;
+
     }
 
     public function storeMyBot(StoreMyBotRequest $request)
