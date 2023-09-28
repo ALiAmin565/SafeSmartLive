@@ -256,7 +256,7 @@ class SubscripPlan extends Controller
 
 
 
-           $this->storeSubPlan($pricePlan);
+            $this->storeSubPlan($pricePlan);
 
 
             return $this->success('You have successfully subscribed');
@@ -267,7 +267,7 @@ class SubscripPlan extends Controller
 
     public function storeSubPlan($pricePlan)
     {
-        $user=auth('api')->user();
+         $user = auth('api')->user();
         $feesBot=feesBot::create([
         'user_id'=>$user->id,
         'fees'=>$pricePlan,

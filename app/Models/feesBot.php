@@ -11,5 +11,5 @@ class feesBot extends Model
 
     protected $table='fees_bots';
 
-    protected $fillable=['user_id ','fees','number_bot','ticker','profusdt','status'];
+    protected $fillable=['user_id','fees','number_bot','ticker','profusdt','status'];
 }
