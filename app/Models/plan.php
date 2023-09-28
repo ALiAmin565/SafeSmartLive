@@ -22,6 +22,7 @@ class plan extends Model
         'percentage1',
         'percentage2',
         'percentage3',
+        'number_bot',
         'created_at'
     ];
 
