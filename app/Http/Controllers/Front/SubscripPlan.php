@@ -193,7 +193,7 @@ class SubscripPlan extends Controller
                 $bodyManger = "تم اشترك شخص جديد";
                 $notfication->notficationManger($bodyManger);
 
-                return $this->success('You have successfully subscribed and the rest has been transferred to your wallet');
+                return $this->success('You have successfully subscribed and the rest has been transferred to your wallet'); 
             }
         }
     }

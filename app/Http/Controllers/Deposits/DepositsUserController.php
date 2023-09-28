@@ -14,7 +14,7 @@ class DepositsUserController extends Controller
     {
 
         //  return 150;
-         $user = auth('api')->user();
+        $user = auth('api')->user();
 
         $textid = $request['textid'];
         $existingDeposit = DepositsBinance::where('textId', $textid)->where('status', '1')->first();
@@ -25,16 +25,9 @@ class DepositsUserController extends Controller
                 "massage" => "The Text ID found or wrong",
             ]);
         } else {
-<<<<<<< HEAD
-            //  return 150;
+
             $binanceDeopsite = new DepositsController();
             $binanceDeopsite->getDeposits($user->id);
-=======
-
-            $binanceDeopsite = new DepositsController();
-             $binanceDeopsite->getDeposits($user->id);
->>>>>>> 2d28734f27e193998c2fa21f9011f13eec0eac30
-
 
             $existingDeposit = DepositsBinance::where('textId', $textid)->first();
             if (!$existingDeposit) {
@@ -49,7 +42,7 @@ class DepositsUserController extends Controller
                 $existingDeposit->save();
 
                 // Update the user's balance
-                $user->money += $existingDeposit->amount;
+                $user->number_points += $existingDeposit->amount;
                 $user->save();
 
 
@@ -62,19 +55,19 @@ class DepositsUserController extends Controller
             }
         }
 
-<<<<<<< HEAD
         return response()->json([
             'suucess' => true,
             "amount" => $existingDeposit->amount,
             "massage" =>
             "operation accomplished successfully"
         ]);
-=======
-        return response()->json(['suucess' => true, 
-        "amount"=>$existingDeposit->amount,
-        "massage" => 
-        "operation accomplished successfully"]);
->>>>>>> 2d28734f27e193998c2fa21f9011f13eec0eac30
+
+        return response()->json([
+            'suucess' => true,
+            "amount" => $existingDeposit->amount,
+            "massage" =>
+            "operation accomplished successfully"
+        ]);
     }
 
 
