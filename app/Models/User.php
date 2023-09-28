@@ -48,7 +48,8 @@ class User extends Authenticatable implements JWTSubject
         'num_orders',
         'open_orders',
         'orders_usdt',
-        'tickers'
+        'tickers',
+        'number_points'
 
 
     ];
