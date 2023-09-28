@@ -20,18 +20,18 @@ class MyBotController extends Controller
         $user = auth('api')->user();
         $bots = bots_usdt::where('user_id', $user->id)->distinct("bot_id")->get();
 
-$uniqueBots = $bots->unique('bot_id');
+        $uniqueBots = $bots->unique('bot_id');
 
-// قم بإزالة المفاتيح غير المرغوب فيها
-$uniqueBots->forget('0'); // إزالة المفتاح "0"
-$uniqueBots->forget('2'); // إزالة المفتاح "2"
+        // قم بإزالة المفاتيح غير المرغوب فيها
+        $uniqueBots->forget('0'); // إزالة المفتاح "0"
+        $uniqueBots->forget('2'); // إزالة المفتاح "2"
 
-$valuesOnly = $uniqueBots->values();
+        $valuesOnly = $uniqueBots->values();
 
 
         $valuesOnly->each(function ($data) {
             $bot = $data->bot;
-            $data->nameBot=$bot->bot_name;
+            $data->nameBot = $bot->bot_name;
             $data->currency = explode('_', $bot->bot_name)[0] . "-USDT";
             //   for profit
             $data->profit = "12.3%";
