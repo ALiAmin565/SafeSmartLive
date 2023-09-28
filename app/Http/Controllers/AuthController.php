@@ -81,13 +81,13 @@ class AuthController extends Controller
             $validator = Validator::make(
                 $request->all(),
                 [
-                 
+
                     'comming_afflite' => 'required|exists:users,affiliate_code',
-                   
-    
+
+
                 ]
             );
-    
+
             if ($validator->fails()) {
                 // return json of errors object
                 $response = [
@@ -96,7 +96,7 @@ class AuthController extends Controller
                 ];
                 return response()->json($response, 200);
             }
-    
+
 
             $comming = $request['comming_afflite'] = $request['comming_afflite'];
             $money = 10;
@@ -110,7 +110,7 @@ class AuthController extends Controller
             'comming_afflite' => $comming,
             'plan_id' => 1,
             'password' => Hash::make($request['password']),
-            'money' => $money,
+            'number_points' => $money,
         ]);
         $this->verifyEmail($request);
 

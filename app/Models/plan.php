@@ -46,6 +46,6 @@ class plan extends Model
 
     public function plan_desc()
     {
-        return $this->hasMany(plan_desc::class, 'plan_id','id');
+        return $this->hasMany(plan_desc::class, 'plan_id', 'id');
     }
 }

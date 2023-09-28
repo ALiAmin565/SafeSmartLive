@@ -13,11 +13,11 @@ class DepositsUserController extends Controller
     public function cheakTextID(Request $request)
     {
 
-        // return 150;
+        //  return 150;
         $user = auth('api')->user();
 
-         $textid = $request['textid'];
-         $existingDeposit = DepositsBinance::where('textId', $textid)->where('status', '1')->first();
+        $textid = $request['textid'];
+        $existingDeposit = DepositsBinance::where('textId', $textid)->where('status', '1')->first();
 
         if ($existingDeposit) {
             return response()->json([
@@ -25,10 +25,9 @@ class DepositsUserController extends Controller
                 "massage" => "The Text ID found or wrong",
             ]);
         } else {
-    //  return 150;
-            $binanceDeopsite = new DepositsController();
-              $binanceDeopsite->getDeposits($user->id);
 
+            $binanceDeopsite = new DepositsController();
+            $binanceDeopsite->getDeposits($user->id);
 
             $existingDeposit = DepositsBinance::where('textId', $textid)->first();
             if (!$existingDeposit) {
@@ -43,7 +42,7 @@ class DepositsUserController extends Controller
                 $existingDeposit->save();
 
                 // Update the user's balance
-                $user->money += $existingDeposit->amount;
+                $user->number_points += $existingDeposit->amount;
                 $user->save();
 
 
@@ -56,19 +55,26 @@ class DepositsUserController extends Controller
             }
         }
 
-        return response()->json(['suucess' => true,
-        "amount"=>$existingDeposit->amount,
-        "massage" =>
-        "operation accomplished successfully"]);
+        return response()->json([
+            'suucess' => true,
+            "amount" => $existingDeposit->amount,
+            "massage" =>
+            "operation accomplished successfully"
+        ]);
+
+        return response()->json([
+            'suucess' => true,
+            "amount" => $existingDeposit->amount,
+            "massage" =>
+            "operation accomplished successfully"
+        ]);
     }
 
 
     public function historyDeposit(Request $request)
     {
-          $user=auth('api')->user();
+        $user = auth('api')->user();
 
-          return $existingDeposit = DepositsBinance::where('user_id', $user->id)->get();
-
+        return $existingDeposit = DepositsBinance::where('user_id', $user->id)->get();
     }
-
 }

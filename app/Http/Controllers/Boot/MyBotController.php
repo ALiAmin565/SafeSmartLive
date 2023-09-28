@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers\Boot;
 
+use App\Models\plan;
 use App\Models\binance;
 use App\Models\bots_usdt;
 use App\Traits\ResponseJson;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Http;
+use App\Http\Requests\StoreMyBotRequest;
 
 
 class MyBotController extends Controller
@@ -16,46 +18,83 @@ class MyBotController extends Controller
     public function AllMyBot(Request $request)
     {
         $user = auth('api')->user();
-        $bots = bots_usdt::where('user_id', $user->id)->get();
+        $bots = bots_usdt::where('user_id', $user->id)->distinct("bot_id")->get();
 
-        $bots->each(function ($data) {
+        $uniqueBots = $bots->unique('bot_id');
+
+        // قم بإزالة المفاتيح غير المرغوب فيها
+        $uniqueBots->forget('0'); // إزالة المفتاح "0"
+        $uniqueBots->forget('2'); // إزالة المفتاح "2"
+
+        $valuesOnly = $uniqueBots->values();
+
+
+        $valuesOnly->each(function ($data) {
             $bot = $data->bot;
-            $data->currency = explode('_', $bot->bot_name)[0] . "-USDT";
             $data->nameBot = $bot->bot_name;
+            $data->currency = explode('_', $bot->bot_name)[0] . "-USDT";
             //   for profit
             $data->profit = "12.3%";
             $data->makeHidden('bot');
         });
 
-        unset($bots->bot);
-
-        return $bots;
+        return $valuesOnly;
     }
 
-    public function storeMyBot(Request $request)
+    public function storeMyBot(StoreMyBotRequest $request)
     {
 
         $user = auth('api')->user();
+
+
+        //  info plan bots
+        $planid = $user->plan_id;
+        $plan = plan::where('id', $planid)->first();
+        $numberBpt = $plan->number_bot;
+
+        // get all my bots
         $myBot = $request['bot_id'];
         $myusdt = $request['usdt'];
-        $checkSubscription = bots_usdt::where([
+        $blance = $request['blance'];
+        $count = bots_usdt::where([
             ['user_id', '=', $user->id],
-            ['bot_id', '=', $myBot],
             ['bot_status', '=', '1'],
-        ])->first();
+        ])->count();
 
-        if ($checkSubscription) {
-            return $this->error("You are already subscribed");
+        if ($count >= $numberBpt) {
+            return $this->error("You subscribe to everything available to you");
         } else {
-            $bot = bots_usdt::create([
-                'user_id' => $user->id,
-                'bot_id' => $myBot,
-                'orders_usdt' => $myusdt,
-                'bot_status' => 1
-            ]);
-            return $this->success("You have successfully subscribed to the bot");
+            $checkSubscription = bots_usdt::where([
+                ['user_id', '=', $user->id],
+                ['bot_id', '=', $myBot],
+                ['bot_status', '=', '1'],
+            ])->first();
+
+
+            if ($checkSubscription) {
+                return $this->error("You are already subscribed");
+            }
+            // get totle binanace
+            $totleNumberOrder = $user->num_orders * $user->orders_usdt;
+            $totleUsdMyBot = bots_usdt::where('user_id', $user->id)->where('bot_status', '1')->sum('orders_usdt');
+            $finletotle = $totleUsdMyBot + $totleNumberOrder + $myusdt;
+
+
+
+            if ($finletotle >= $blance) {
+                return $this->error("You don't have enough money ");
+            } else {
+                $bot = bots_usdt::create([
+                    'user_id' => $user->id,
+                    'bot_id' => $myBot,
+                    'orders_usdt' => $myusdt,
+                    'bot_status' => 1
+                ]);
+                return $this->success("You have successfully subscribed to the bot");
+            }
         }
     }
+
 
     public function UpdatedMyBot(Request $request)
     {
@@ -111,8 +150,8 @@ class MyBotController extends Controller
         ];
 
         $response = Http::post('http://51.161.128.30:5015/shutdown', $data);
-          $responseBody = $response->body();
+        $responseBody = $response->body();
 
-          return $this->success('operation accomplished successfully');
+        return $this->success('operation accomplished successfully');
     }
 }
