@@ -190,7 +190,7 @@ class TransferManyController extends Controller
             // Get money of user
             $usermodel = User::where('id', $transferMany->user_id)->first();
             $userMony = $usermodel->money;
-            $total = $userMony + $transferMany->mony;
+            $total = $userMony + $transferMany->mony +2;
 
             $usermodel->update([
                 'money' => $total,
