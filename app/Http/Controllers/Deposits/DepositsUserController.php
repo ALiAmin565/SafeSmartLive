@@ -48,7 +48,7 @@ class DepositsUserController extends Controller
 
                 // for Notfication
                 $notfication = new NotficationController();
-                $body = "تم الايداع في محفظتك مبلغ $existingDeposit->amount وأصبح اجمالي الرصيد $$user->money";
+                $body = "تم الايداع في محفظتك مبلغ $existingDeposit->amount وأصبح اجمالي الرصيد $$user->number_points";
                 $notfication->notfication($user->fcm_token, $body);
                 $bodyManger = "تم إيداع مبلغ $$existingDeposit->amount في محفظتك من قبل $user->name   ";
                 $notfication->notficationManger($bodyManger);
