@@ -28,7 +28,7 @@ class SubscripPlan extends Controller
     use ResponseJson;
     public function getPlan()
     {
-        return PlanResource::collection(plan::with('plan_desc')->get());
+        return PlanResource::collection(plan::with('plan_desc')->where('id', '!=', 7)->get());
     }
 
     // for user slect plan
