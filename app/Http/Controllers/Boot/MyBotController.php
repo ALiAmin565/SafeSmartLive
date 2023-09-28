@@ -23,25 +23,25 @@ class MyBotController extends Controller
 
         $botMap = [];
 
-        foreach ($bots as $bot) {
-            if (!isset($botMap[$bot->bot_id]) || $bot->bot_status == 1) {
-                $botMap[$bot->bot_id] = $bot;
-            }
-        }
 
-        if ($user->is_bot == 1) {
+
+
             // Add fake or static data here
             $fakeBot = new bots_usdt();
             $fakeBot->bot_id = 1; // Choose a unique ID
             $fakeBot->user_id = $user->id;
-            $fakeBot->bot_status = 0; // Example status
+            $fakeBot->bot_status = 1; // Example status
             $fakeBot->nameBot = 'Fake Bot';
             $fakeBot->currency = 'Fake Currency';
             $fakeBot->profit = '10.0%'; // Example profit
             $fakeBot->bot_name="Currency_usdt";
             $botMap[999] = $fakeBot; // Add the fake bot to the map
-        }
 
+            foreach ($bots as $bot) {
+                if (!isset($botMap[$bot->bot_id]) || $bot->bot_status == 1) {
+                    $botMap[$bot->bot_id] = $bot;
+                }
+            }
         $uniqueBots = collect(array_values($botMap));
 
         $uniqueBots->each(function ($data) {
