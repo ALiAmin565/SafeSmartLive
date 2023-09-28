@@ -30,7 +30,7 @@ class MyBotController extends Controller
             $fakeBot = new bots_usdt();
             $fakeBot->bot_id = 1; // Choose a unique ID
             $fakeBot->user_id = $user->id;
-            $fakeBot->bot_status = 1; // Example status
+            $fakeBot->bot_status =$user->is_bot ; // Example status
             $fakeBot->nameBot = 'Fake Bot';
             $fakeBot->currency = 'Fake Currency';
             $fakeBot->profit = '10.0%'; // Example profit
@@ -172,7 +172,6 @@ class MyBotController extends Controller
 
         $response = Http::post('http://51.161.128.30:5015/shutdown', $data);
         $responseBody = $response->body();
-
-        return $this->success('operation accomplished successfully');
+        return $this->success("operation accomplished successfully");
     }
 }
