@@ -112,7 +112,7 @@ class TransferManyController extends Controller
                     $body = "تم تحويل المبلغ الى محفظتك بنجاح
                                  upvale شكرا لاستخدامك";
                     $notfication->notfication($user_id->fcm_token, $body);
-                    $body = " تم تحويل الرصيد بنجاح شكرا لانك القائد";
+                    $body = " تم خصم  الرصيد بنجاح   ";
                     $notfication->notficationManger($body);
 
                     return response()->json([
