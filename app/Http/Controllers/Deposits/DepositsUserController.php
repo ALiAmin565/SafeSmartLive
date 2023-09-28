@@ -56,7 +56,7 @@ class DepositsUserController extends Controller
         }
 
         return response()->json([
-            'suucess' => true,
+            'success' => true,
             "amount" => $existingDeposit->amount,
             "massage" =>
             "operation accomplished successfully"
