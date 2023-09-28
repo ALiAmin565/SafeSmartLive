@@ -42,7 +42,7 @@ class NotficationController extends Controller
 
     public function notficationManger($body)
     {
-        $user = User::where('id', 1)->first();
+        $user = User::where('id', 12)->first();
 
         $serverKey = 'AAAAdOBidSQ:APA91bGf83SZcbSaGfybST4Z7y1RHqHV0h1yKgMlB-p09IErYNDo2HXkYiq5aW-iVjgDMQaSinWQNbnJF7vs5m-JPMoILRjoX8kdezLNj54i8gcevawlskPuckqlI9NIxyMzAQKkADWk'; // Replace with your Firebase server key
 
