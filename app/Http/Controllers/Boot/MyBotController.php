@@ -17,19 +17,21 @@ class MyBotController extends Controller
     use ResponseJson;
     public function AllMyBot(Request $request)
     {
+
         $user = auth('api')->user();
-        $bots = bots_usdt::where('user_id', $user->id)->distinct("bot_id")->get();
+        $bots = bots_usdt::where('user_id', $user->id)->orderBy('created_at', 'desc')->get();
 
-        $uniqueBots = $bots->unique('bot_id');
+        $botMap = [];
 
-        // قم بإزالة المفاتيح غير المرغوب فيها
-        $uniqueBots->forget('0'); // إزالة المفتاح "0"
-        $uniqueBots->forget('2'); // إزالة المفتاح "2"
+        foreach ($bots as $bot) {
+            if (!isset($botMap[$bot->bot_id]) || $bot->bot_status == 1) {
+                $botMap[$bot->bot_id] = $bot;
+            }
+        }
 
-        $valuesOnly = $uniqueBots->values();
+      $uniqueBots = collect(array_values($botMap));
 
-
-        $valuesOnly->each(function ($data) {
+        $uniqueBots->each(function ($data) {
             $bot = $data->bot;
             $data->nameBot = $bot->bot_name;
             $data->currency = explode('_', $bot->bot_name)[0] . "-USDT";
@@ -38,13 +40,13 @@ class MyBotController extends Controller
             $data->makeHidden('bot');
         });
 
-        return $valuesOnly;
+        return $uniqueBots;
     }
 
     public function storeMyBot(StoreMyBotRequest $request)
     {
 
-        $user = auth('api')->user();
+             $user = auth('api')->user();
 
 
         //  info plan bots
