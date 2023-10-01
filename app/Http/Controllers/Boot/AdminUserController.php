@@ -76,19 +76,8 @@ class AdminUserController extends Controller
             );
         }
 
-        $requestData = json_decode($request->getContent(), true);
-
-        if (isset($requestData['admins']['boss']) && is_array($requestData['admins']['boss'])) {
-            $intValues = array_map('intval', $requestData['admins']['boss']);
-
-            // Update the values in the original request data
-            $requestData['admins']['boss'] = $intValues;
-
-            // Store the updated request data
-            $user->admins = $requestData['admins'];
-            $user->save();
-        }
-
+        $user->admins = $request['admins'];
+        $user->save();
 
         return $this->success($user);
     }
