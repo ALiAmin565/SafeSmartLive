@@ -49,8 +49,7 @@ class BootController extends Controller
 
     public function oneBot(Request $request)
     {
-          $user=auth('api')->user();
-          
+            $user = auth('api')->user();
         $singleBot = Bot::find($request['bot_id']);
 
         $currency = explode('_', $singleBot->bot_name)[0] . "-USDT"; //currency
@@ -65,6 +64,16 @@ class BootController extends Controller
         // end for total days
 
         // for totle precantage per day and peer month and peer years
+        // check if active bot or not
+
+         $checkActive = bots_usdt::where('user_id', $user->id)->where('bot_id', $request['bot_id'])->first();
+           if(!empty($checkActive))
+           {
+            $singleBot->activeBot=1;
+           }else{
+            $singleBot->activeBot=0;
+
+           }
 
 
 

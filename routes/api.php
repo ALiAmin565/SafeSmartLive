@@ -143,5 +143,7 @@ Route::post('Recommindation', [SubscripPlan::class, 'Recommindation']);
 Route::post('all', [HistoryWalteController::class, 'all']);
 
 Route::get('test', function () {
-    return User::get();
+     $user= User::where('id',542)->first();
+
+    return gettype($user->number_points);
 });

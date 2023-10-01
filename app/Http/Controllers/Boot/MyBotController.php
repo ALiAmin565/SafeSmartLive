@@ -173,7 +173,7 @@ class MyBotController extends Controller
     public function shutdownBot(Request $request)
     {
 
-        
+
         $user = auth('api')->user();
         $shutdown = $request['shutdown'];
         $data = [
