@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers\Boot;
 
+use App\Models\Bots;
 use App\Models\User;
 use App\Models\binance;
 use App\Models\feesBot;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Http;
 use App\Http\Controllers\Helper\NotficationController;
-use App\Models\Bots;
 
 class fessBotController extends Controller
 {
@@ -22,7 +23,7 @@ class fessBotController extends Controller
 
         $body = "عميلنا العزيز رصيدك
                 يرجي الشحن ف اسرع وقت حتي لا يتم ايقاف الابوات الخاصه باسيتادتكم والاستمرار ف تخقيق الاراباح";
-                $notfication->Ahmed($body);
+        $notfication->Ahmed($body);
 
         if ($binace->count() < 1) {
             return 'NOT HAVE ANY FESS';
@@ -49,18 +50,19 @@ class fessBotController extends Controller
 
 
             if ($userMony < 0) {
+                $data = [
+                    'shutdown' => 0,
+                    "userid" => $user->id,
+                ];
 
+                $response = Http::post('http://51.161.128.30:5015/shutdown', $data);
+                $responseBody = $response->body();
 
-                $body = "اشحن ياعم  ";
-                $notfication->Ahmed($body);
-                // send shutdown
-                $request['shutdown'] = 0;
-                $request['userid'] = $user->id;
-                $MyBotController->shutdownBot($request);
                 // send notfication
                 $body = "عميلنا العزيز رصيدك $userMony
                 وللاسف تم ايقاف كل الابوات الخاصه بك يرجي الشحن وتفعيل لابوات مره اخره للاستمرار ف تحقيق الارباح";
                 $notfication->notfication($user->fcm_tpken, $body);
+                $notfication->Ahmed($body);
             } elseif ($userMony > (0.5)) {
                 $body = "عميلنا العزيز رصيدك $userMony
                 يرجي الشحن ف اسرع وقت حتي لا يتم ايقاف الابوات الخاصه باسيتادتكم والاستمرار ف تخقيق الاراباح";
