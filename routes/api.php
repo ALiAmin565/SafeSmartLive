@@ -137,8 +137,7 @@ Route::post('Recommindation', [SubscripPlan::class, 'Recommindation']);
 
 
 
-Route::post('fees_bot', [TabsController::class, 'fees_bot']);
-
+ 
 
 Route::post('all', [HistoryWalteController::class, 'all']);
 

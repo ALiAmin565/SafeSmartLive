@@ -28,10 +28,10 @@ class TransactionUserController extends Controller
 
 
         // Get the authenticated user
-        $user = auth('api')->user();
+         $user = auth('api')->user();
         $affiliateCode = $request->input('affiliateCode'); // Corrected variable name
         $amount = (int)$request->input('amount'); // Make sure it's an integer
-        $receiver = User::where('affiliate_code', $affiliateCode)->first();
+            $receiver = User::where('affiliate_code', $affiliateCode)->first();
 
         if (!$receiver) {
             return response()->json([
@@ -49,13 +49,14 @@ class TransactionUserController extends Controller
         }
 
         // Perform the transaction
-        $user->money -= $amount;
+         $user->money -= $amount;
+         $user->save();
+
         $receiver->money += $amount;
-        $user->save();
         $receiver->save();
         $this->Store($user->id, $receiver->id, $receiver->name, $amount);
 
-
+        return  $user;
 
         // Call the notfication method
         $massageSend = "تم تحويل المبلغ بنجاح الي $receiver->name";

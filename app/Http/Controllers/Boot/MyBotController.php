@@ -26,22 +26,22 @@ class MyBotController extends Controller
 
 
 
-            // Add fake or static data here
-            $fakeBot = new bots_usdt();
-            $fakeBot->bot_id = 1; // Choose a unique ID
-            $fakeBot->user_id = $user->id;
-            $fakeBot->bot_status =$user->is_bot ; // Example status
-            $fakeBot->nameBot = 'Fake Bot';
-            $fakeBot->currency = 'Fake Currency';
-            $fakeBot->profit = '10.0%'; // Example profit
-            $fakeBot->bot_name="Currency_usdt";
-            $botMap[999] = $fakeBot; // Add the fake bot to the map
+        // Add fake or static data here
+        $fakeBot = new bots_usdt();
+        $fakeBot->bot_id = 1; // Choose a unique ID
+        $fakeBot->user_id = $user->id;
+        $fakeBot->bot_status = $user->is_bot; // Example status
+        $fakeBot->nameBot = 'Fake Bot';
+        $fakeBot->currency = 'Fake Currency';
+        $fakeBot->profit = '10.0%'; // Example profit
+        $fakeBot->bot_name = "Currency_usdt";
+        $botMap[999] = $fakeBot; // Add the fake bot to the map
 
-            foreach ($bots as $bot) {
-                if (!isset($botMap[$bot->bot_id]) || $bot->bot_status == 1) {
-                    $botMap[$bot->bot_id] = $bot;
-                }
+        foreach ($bots as $bot) {
+            if (!isset($botMap[$bot->bot_id]) || $bot->bot_status == 1) {
+                $botMap[$bot->bot_id] = $bot;
             }
+        }
         $uniqueBots = collect(array_values($botMap));
 
         $uniqueBots->each(function ($data) {
@@ -59,7 +59,6 @@ class MyBotController extends Controller
         });
 
         return $uniqueBots;
-
     }
 
     public function storeMyBot(StoreMyBotRequest $request)
@@ -102,17 +101,14 @@ class MyBotController extends Controller
 
 
 
-            if ($finletotle >= $blance) {
-                return $this->error("You don't have enough money ");
-            } else {
-                $bot = bots_usdt::create([
-                    'user_id' => $user->id,
-                    'bot_id' => $myBot,
-                    'orders_usdt' => $myusdt,
-                    'bot_status' => 1
-                ]);
-                return $this->success("You have successfully subscribed to the bot");
-            }
+
+            $bot = bots_usdt::create([
+                'user_id' => $user->id,
+                'bot_id' => $myBot,
+                'orders_usdt' => $myusdt,
+                'bot_status' => 1
+            ]);
+            return $this->success("You have successfully subscribed to the bot");
         }
     }
 
@@ -134,17 +130,21 @@ class MyBotController extends Controller
 
 
         $user = auth('api')->user();
-         $bot_id = $request['bot_id'];
+        $bot_id = $request['bot_id'];
 
-         $gethistory = Binance::where('user_id', $user->id)->where('bot_num', $bot_id)->get();
+        $gethistory = Binance::where('user_id', $user->id)->where('bot_num', $bot_id)->orderBy('created_at', 'desc')->get();
         if ($gethistory->isEmpty()) {
             return $this->error('You not  subscribed');
         } else {
+
+
+
+
             $totleSell = $gethistory->where('side', 'sell')->sum('profit_per');
             $totleBuy = $gethistory->where('side', 'buy')->sum('price');
 
-            if ($totleBuy != 0) {
-                $profit = $totleSell;
+            if ($totleSell != 0) {
+                $profit = number_format($totleSell, 2) . "" . "%";;
             } else {
                 $profit = 0; // To avoid division by zero if there are no 'buy' records.
             }
@@ -162,6 +162,8 @@ class MyBotController extends Controller
 
     public function shutdownBot(Request $request)
     {
+
+        return $request;
         $user = auth('api')->user();
         $shutdown = $request['shutdown'];
         $data = [
