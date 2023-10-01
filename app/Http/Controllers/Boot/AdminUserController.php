@@ -78,7 +78,7 @@ class AdminUserController extends Controller
 
         $user->update([
 
-            'admins'=>$request['admins'],
+            'admins' => $request['admins'],
         ]);
 
         return $this->success($user);

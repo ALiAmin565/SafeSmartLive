@@ -36,7 +36,7 @@ Route::post('setAdmin',[AdminUserController::class,'setAdmin']);
 
 // for fess from user becouse bot
 
-Route::post('fessBot',[fessBotController::class, 'fees']);
+Route::post('feesBot',[fessBotController::class, 'fees']);
 
 
 

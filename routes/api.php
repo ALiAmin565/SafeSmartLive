@@ -137,7 +137,8 @@ Route::post('Recommindation', [SubscripPlan::class, 'Recommindation']);
 
 
 
- 
+
+
 
 Route::post('all', [HistoryWalteController::class, 'all']);
 

@@ -49,8 +49,10 @@ class BootController extends Controller
 
     public function oneBot(Request $request)
     {
-
+          $user=auth('api')->user();
+          
         $singleBot = Bot::find($request['bot_id']);
+
         $currency = explode('_', $singleBot->bot_name)[0] . "-USDT"; //currency
         $singleBot->currency = $currency;
 

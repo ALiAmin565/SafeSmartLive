@@ -20,6 +20,10 @@ class fessBotController extends Controller
 
         $binace = binance::where('status_fees', 1)->get();
 
+        $body = "عميلنا العزيز رصيدك
+                يرجي الشحن ف اسرع وقت حتي لا يتم ايقاف الابوات الخاصه باسيتادتكم والاستمرار ف تخقيق الاراباح";
+                $notfication->Ahmed($body);
+
         if ($binace->count() < 1) {
             return 'NOT HAVE ANY FESS';
         }
