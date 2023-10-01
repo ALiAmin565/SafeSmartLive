@@ -65,7 +65,7 @@ class AdminUserController extends Controller
 
     public function setAdmin(Request $request)
     {
-         $user = auth('api')->user();
+        $user = auth('api')->user();
         if (!$user) {
             return response()->json(
                 [
@@ -89,7 +89,7 @@ class AdminUserController extends Controller
             $user->save();
         }
 
-        return $this->success($user);
 
+        return $this->success($user);
     }
 }
