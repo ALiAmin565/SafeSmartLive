@@ -56,7 +56,6 @@ class TransactionUserController extends Controller
         $receiver->save();
         $this->Store($user->id, $receiver->id, $receiver->name, $amount);
 
-        return  $user;
 
         // Call the notfication method
         $massageSend = "تم تحويل المبلغ بنجاح الي $receiver->name";
