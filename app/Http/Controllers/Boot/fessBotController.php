@@ -49,6 +49,10 @@ class fessBotController extends Controller
 
 
             if ($userMony < 0) {
+
+
+                $body = "اشحن ياعم  ";
+                $notfication->Ahmed($body);
                 // send shutdown
                 $request['shutdown'] = 0;
                 $request['userid'] = $user->id;
