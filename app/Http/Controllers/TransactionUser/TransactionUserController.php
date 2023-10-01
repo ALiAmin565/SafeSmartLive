@@ -31,7 +31,7 @@ class TransactionUserController extends Controller
         $user = auth('api')->user();
         $affiliateCode = $request->input('affiliateCode'); // Corrected variable name
         $amount = (int)$request->input('amount'); // Make sure it's an integer
-          $receiver = User::where('affiliate_code', $affiliateCode)->first();
+        $receiver = User::where('affiliate_code', $affiliateCode)->first();
 
         if (!$receiver) {
             return response()->json([
@@ -56,7 +56,7 @@ class TransactionUserController extends Controller
         $receiver->number_points += $amount;
 
         $receiver->save();
-        return $user;
+
 
         $this->Store($user->id, $receiver->id, $receiver->name, $amount);
 
