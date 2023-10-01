@@ -134,8 +134,8 @@ class MyBotController extends Controller
 
         $gethistory = Binance::where('user_id', $user->id)->where('bot_num', $bot_id)->orderBy('created_at', 'desc')->get();
 
-         $gethistory->each(function ($data) {
-              // Convert to double
+        $gethistory->each(function ($data) {
+            // Convert to double
             $data->profit_per = number_format($data->profit_per, 2, '.', ''); // Format to 2 decimal places with no thousands separator
         });
 
@@ -154,7 +154,7 @@ class MyBotController extends Controller
             $totleBuy = $gethistory->where('side', 'buy')->sum('price');
 
             if ($totleSell != 0) {
-                $profit = number_format($totleSell, 2) . "" . "%";;
+                $profit = number_format($totleSell, 2) . "" . "%";
             } else {
                 $profit = 0; // To avoid division by zero if there are no 'buy' records.
             }
@@ -173,7 +173,7 @@ class MyBotController extends Controller
     public function shutdownBot(Request $request)
     {
 
-        return $request;
+        
         $user = auth('api')->user();
         $shutdown = $request['shutdown'];
         $data = [
