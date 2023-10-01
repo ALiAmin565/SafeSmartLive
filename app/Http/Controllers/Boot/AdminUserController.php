@@ -65,7 +65,7 @@ class AdminUserController extends Controller
 
     public function setAdmin(Request $request)
     {
-        $user = auth('api')->user();
+         $user = auth('api')->user();
         if (!$user) {
             return response()->json(
                 [
@@ -76,9 +76,20 @@ class AdminUserController extends Controller
             );
         }
 
-        $user->admins = $request['admins'];
-        $user->save();
+        $requestData = json_decode($request->getContent(), true);
+
+        if (isset($requestData['admins']['boss']) && is_array($requestData['admins']['boss'])) {
+            $intValues = array_map('intval', $requestData['admins']['boss']);
+
+            // Update the values in the original request data
+            $requestData['admins']['boss'] = $intValues;
+
+            // Store the updated request data
+            $user->admins = $requestData['admins'];
+            $user->save();
+        }
 
         return $this->success($user);
+
     }
 }
