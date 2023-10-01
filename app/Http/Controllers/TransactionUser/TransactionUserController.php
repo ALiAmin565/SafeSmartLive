@@ -28,10 +28,10 @@ class TransactionUserController extends Controller
 
 
         // Get the authenticated user
-         $user = auth('api')->user();
+        $user = auth('api')->user();
         $affiliateCode = $request->input('affiliateCode'); // Corrected variable name
         $amount = (int)$request->input('amount'); // Make sure it's an integer
-            $receiver = User::where('affiliate_code', $affiliateCode)->first();
+          $receiver = User::where('affiliate_code', $affiliateCode)->first();
 
         if (!$receiver) {
             return response()->json([
@@ -49,11 +49,15 @@ class TransactionUserController extends Controller
         }
 
         // Perform the transaction
-         $user->money -= $amount;
-         $user->save();
+        $user->money -= $amount;
+        $user->save();
 
-        $receiver->money += $amount;
+
+        $receiver->number_points += $amount;
+
         $receiver->save();
+        return $user;
+
         $this->Store($user->id, $receiver->id, $receiver->name, $amount);
 
 
@@ -102,7 +106,7 @@ class TransactionUserController extends Controller
 
     public function historyTransaction(Request $request)
     {
-         $user = auth('api')->user();
+        $user = auth('api')->user();
 
         $sentTransactions = transactionUser::where('user_id', $user->id)->get();
 
@@ -124,17 +128,13 @@ class TransactionUserController extends Controller
         // for fess Bot it
         $is_Deposits = $user->DepositsBinance->each(function ($define) {
             $define->type = "is_Deposits";
-
         });
         $is_fess = $user->fessBot->each(function ($define) {
             $define->type = "is_fess";
-            if($define->number_bot == null)
-            {
+            if ($define->number_bot == null) {
                 $define->side = "plan";
-
-            }else{
+            } else {
                 $define->side = "bot";
-
             }
         });
 
