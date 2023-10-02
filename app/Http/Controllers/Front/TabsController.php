@@ -101,6 +101,8 @@ class TabsController extends Controller
             ->orderBy('created_at')
             ->get();
 
+            
+
         $post = posts::where('status', 'is_advice', 'planes_id')
             ->where('plan_id', $user->plan_id)
             ->orderBy('created_at')

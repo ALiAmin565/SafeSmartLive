@@ -66,7 +66,7 @@ class BootController extends Controller
         // for totle precantage per day and peer month and peer years
         // check if active bot or not
 
-        $checkActive = bots_usdt::where('user_id', $user->id)->where('bot_id', $request['bot_id'])->first();
+        $checkActive = bots_usdt::where('user_id', $user->id)->where('bot_id', $request['bot_id'])->where('bot_status',1)->first();
         if (!empty($checkActive)) {
             $singleBot->activeBot = 1;
         } else {
