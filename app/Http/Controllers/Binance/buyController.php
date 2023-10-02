@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use GuzzleHttp\Client;
 
 use App\Models\binance;
+use App\Models\binanceUser;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Http;
@@ -30,6 +31,7 @@ class buyController extends Controller
     public function buy(Request $request)
     {
 
+
         try {
 
             $symbol = $request->input('symbol'); // Name of Cruency
@@ -37,18 +39,18 @@ class buyController extends Controller
             $quantity = $request->input('quantity'); //quantity of curency
             $price = $request->input('price'); // CURENT PRICE IS REALTIME from Binance
             $stopPrice = $request->input('stop_price');
-            $recomindation_id=$request->input('recomindation_id');
+            $recomindation_id = $request->input('recomindation_id');
 
 
             $timestamp = $this->timestampBinance();
-            $signature = $this->hashHmac($symbol, $side, $quantity, $price ,$stopPrice ,$timestamp);
+            $signature = $this->hashHmac($symbol, $side, $quantity, $price, $stopPrice, $timestamp);
 
             $responseData = $this->sendOrderRequest($symbol, $side, $quantity, $price, $stopPrice, $timestamp, $signature);
 
 
-              $request['orderID'] = $responseData['orderId'];
-              $request['status'] = $responseData['status'];
-              $test = $this->insertTransaction($request);
+            $request['orderID'] = $responseData['orderId'];
+            $request['status'] = $responseData['status'];
+            $test = $this->insertTransaction($request);
 
 
             return response()->json([
@@ -65,15 +67,9 @@ class buyController extends Controller
         }
     }
 
-
-
-
-
-
-
     protected function timestampBinance()
     {
-     $response = $this->client->get('/api/v3/time');
+        $response = $this->client->get('/api/v3/time');
         $serverTime = json_decode($response->getBody(), true);
         return $serverTime['serverTime'];
     }
@@ -151,7 +147,7 @@ class buyController extends Controller
     {
 
 
-        $insert = binance::create([
+        $insert = binanceUser::create([
             'user_id' => $this->user->id,
             'symbol' => $request['symbol'],
             'side' => $request['side'],
@@ -159,62 +155,62 @@ class buyController extends Controller
             'price' => $request['price'],
             'status' => $request['status'],
             'orderID' => $request['orderID'],
-            'massageError' => $request['massageError']
+            'massageError' => $request['massageError'],
+            'recomondations_id' => $request['recomondations_id']
 
         ]);
     }
 
- public function getAllOrder(Request $request)
-{
-    $user = auth()->user();
-    $binances = binance::where('user_id', $user->id)
-        ->where('status', 'NEW')
-        ->get();
+    public function getAllOrder(Request $request)
+    {
+        $user = auth()->user();
+        $binances = binanceUser::where('user_id', $user->id)
+            ->where('status', 'NEW')
+            ->get();
 
-    foreach ($binances as $binance) {
-        $status = $this->getStatusOrder(
-            $user->binanceApiKey,
-            $user->binanceSecretKey,
-            $binance->symbol,
-            $binance->orderID
-        );
+        foreach ($binances as $binance) {
+            $status = $this->getStatusOrder(
+                $user->binanceApiKey,
+                $user->binanceSecretKey,
+                $binance->symbol,
+                $binance->orderID
+            );
 
-        // Update the status of the binance record in the database
-        $binance->update(['status' => $status]);
+            // Update the status of the binance record in the database
+            $binance->update(['status' => $status]);
+        }
+
+        // Retrieve the updated list of orders for the user
+        $updatedBinances = binanceUser::where('user_id', $user->id)->get();
+
+        return $updatedBinances;
     }
 
-    // Retrieve the updated list of orders for the user
-    $updatedBinances = binance::where('user_id', $user->id)->get();
+    public function getStatusOrder($apiKey, $apiSecret, $symbol, $orderId)
+    {
+        $timestamp = $this->timestampBinance();
+        $signature = hash_hmac('sha256', "symbol=$symbol&orderId=$orderId&timestamp=$timestamp", $apiSecret);
 
-    return $updatedBinances;
-}
+        $response = Http::withHeaders([
+            'X-MBX-APIKEY' => $apiKey,
+        ])->get('https://api.binance.com/api/v3/order', [
+            'symbol' => $symbol,
+            'orderId' => $orderId,
+            'timestamp' => $timestamp,
+            'signature' => $signature,
+        ]);
 
-public function getStatusOrder($apiKey, $apiSecret, $symbol, $orderId)
-{
-    $timestamp = $this->timestampBinance();
-    $signature = hash_hmac('sha256', "symbol=$symbol&orderId=$orderId&timestamp=$timestamp", $apiSecret);
+        $data = $response->json();
 
-    $response = Http::withHeaders([
-        'X-MBX-APIKEY' => $apiKey,
-    ])->get('https://api.binance.com/api/v3/order', [
-        'symbol' => $symbol,
-        'orderId' => $orderId,
-        'timestamp' => $timestamp,
-        'signature' => $signature,
-    ]);
-
-    $data = $response->json();
-
-    // Check if the API response contains a 'status' field
-    if (isset($data['status'])) {
-        // Return the order status
-        return $data['status'];
-    } else {
-        // Handle the case where the API response does not contain a 'status' field
-        return 'Unknown';
+        // Check if the API response contains a 'status' field
+        if (isset($data['status'])) {
+            // Return the order status
+            return $data['status'];
+        } else {
+            // Handle the case where the API response does not contain a 'status' field
+            return 'Unknown';
+        }
     }
-
-}
 
     public function canselOrder()
     {
@@ -229,7 +225,7 @@ public function getStatusOrder($apiKey, $apiSecret, $symbol, $orderId)
 
         $timestamp = $this->timestampBinance();
         $signature = hash_hmac('sha256', "symbol=GLMUSDT&orderId=$orderId&timestamp=$timestamp", $apiSecret);
-         $response = Http::withHeaders([
+        $response = Http::withHeaders([
             'X-MBX-APIKEY' => $apiKey,
         ])->delete('https://api.binance.com/api/v3/order', [
             'symbol' => 'GLMUSDT',

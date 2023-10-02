@@ -119,6 +119,4 @@ Route::middleware('SuperAdmin')->group(function () {
     Route::post('/add-tickers',[TickerController::class,'addTicker']);
     // API ADS Table
     Route::apiResource('ads', AdsController::class);
-    // Affiliate CRUD
-    Route::apiResource('affiliate-default', AffiliateCreationController::class);
 });

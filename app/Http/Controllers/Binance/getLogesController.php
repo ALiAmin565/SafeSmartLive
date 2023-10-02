@@ -10,19 +10,20 @@ class getLogesController extends Controller
 {
     public function index()
     {
-       $binance=binance::with('user')->get();
-       return response()->json($binance);    }
-    
+        $binance = binance::with('user')->get();
+        return response()->json($binance);
+    }
+
     public function deleteLoges($id)
     {
-      $loges = Binance::find($id);
+        $loges = Binance::find($id);
 
-if (!$loges) {
-    return response()->json(['message' => 'Request not found'], 404);
-}
+        if (!$loges) {
+            return response()->json(['message' => 'Request not found'], 404);
+        }
 
-$loges->delete();
+        $loges->delete();
 
-return response()->json(['success' => true, 'message' => 'deleted']);
-}
+        return response()->json(['success' => true, 'message' => 'deleted']);
+    }
 }

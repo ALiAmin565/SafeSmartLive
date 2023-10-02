@@ -11,14 +11,14 @@ use GuzzleHttp\Exception\ClientException;
 
 class WithdrwController extends Controller
 {
-    public function withdraw($address,$mony)
+    public function withdraw($address, $mony)
     {
 
 
 
+        $api_key = env('API_KEY_WITHDRWA');
+        $api_secret = env('KEY_SECRT_WITHDRWA');
 
-        $api_key = 'f0gUx4ukrKXftiay0bihaBaNMYhV9wNUls4T7O4QbHgvr2xJYKeMaaNG8DL9RSP1';
-        $api_secret = 'r9u1KtFzjb5MyFNZgvWqyCMne8xiVuGWfQLK1WapbRyUKnUkNECmbSMwGNcbzbQA';
 
         $base_url = 'https://api.binance.com';
 
@@ -27,7 +27,7 @@ class WithdrwController extends Controller
             'coin' => 'USDT', // The asset symbol you want to withdraw
             'network' => 'TRX', //trc20
             'address' => $address, // Replace with the recipient's external wallet address
-            'amount' =>$mony,
+            'amount' => $mony,
             'timestamp' => $this->timestampBinance() // Timestamp for the request
         ];
 
@@ -49,7 +49,7 @@ class WithdrwController extends Controller
             ]);
 
             // Handle the response as needed
-                $response_data = json_decode($response->getBody(), true);
+            $response_data = json_decode($response->getBody(), true);
             // You can check $response_data to ensure the withdrawal request was successful or handle errors.
 
             // Log the successful withdrawal request

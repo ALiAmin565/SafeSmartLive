@@ -23,6 +23,7 @@ class PlanResource extends JsonResource
             'percentage1'=>$this->percentage1,
             'percentage2'=>$this->percentage2,
             'percentage3'=>$this->percentage3,
+            'number_bot'=>$this->number_bot,
             'plan_desc'=>plane_descResource::collection($this->whenLoaded('plan_desc')),
             'telegram_groups' => TelegremRsource::collection($this->whenLoaded('telegram')),
 

@@ -22,6 +22,7 @@ class plan extends Model
         'percentage1',
         'percentage2',
         'percentage3',
+        'number_bot',
         'created_at'
     ];
 
@@ -45,6 +46,6 @@ class plan extends Model
 
     public function plan_desc()
     {
-        return $this->hasMany(plan_desc::class, 'plan_id','id');
+        return $this->hasMany(plan_desc::class, 'plan_id', 'id');
     }
 }
