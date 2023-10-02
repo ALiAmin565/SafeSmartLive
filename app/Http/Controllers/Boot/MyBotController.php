@@ -17,28 +17,48 @@ class MyBotController extends Controller
     use ResponseJson;
     public function AllMyBot(Request $request)
     {
+
         $user = auth('api')->user();
-        $bots = bots_usdt::where('user_id', $user->id)->distinct("bot_id")->get();
+        $bots = bots_usdt::where('user_id', $user->id)->orderBy('created_at', 'desc')->get();
 
-        $uniqueBots = $bots->unique('bot_id');
-
-        // قم بإزالة المفاتيح غير المرغوب فيها
-        $uniqueBots->forget('0'); // إزالة المفتاح "0"
-        $uniqueBots->forget('2'); // إزالة المفتاح "2"
-
-        $valuesOnly = $uniqueBots->values();
+        $botMap = [];
 
 
-        $valuesOnly->each(function ($data) {
+
+
+        // Add fake or static data here
+        $fakeBot = new bots_usdt();
+        $fakeBot->bot_id = 1; // Choose a unique ID
+        $fakeBot->user_id = $user->id;
+        $fakeBot->bot_status = $user->is_bot; // Example status
+        $fakeBot->nameBot = 'Fake Bot';
+        $fakeBot->currency = 'Fake Currency';
+        $fakeBot->profit = '10.0%'; // Example profit
+        $fakeBot->bot_name = "Currency_usdt";
+        $botMap[999] = $fakeBot; // Add the fake bot to the map
+
+        foreach ($bots as $bot) {
+            if (!isset($botMap[$bot->bot_id]) || $bot->bot_status == 1) {
+                $botMap[$bot->bot_id] = $bot;
+            }
+        }
+        $uniqueBots = collect(array_values($botMap));
+
+        $uniqueBots->each(function ($data) {
+
             $bot = $data->bot;
             $data->nameBot = $bot->bot_name;
             $data->currency = explode('_', $bot->bot_name)[0] . "-USDT";
             //   for profit
-            $data->profit = "12.3%";
+            $binance = binance::where('user_id', $data->user_id)->where('bot_num', $data->bot_id)->where('side', 'sell')->sum('profit_per');
+            $test = $bot->profit = number_format($binance, 2) . "" . "%"; // Approximate to two decimal places
+
+            $data->profit = strval($test);
+
             $data->makeHidden('bot');
         });
 
-        return $valuesOnly;
+        return $uniqueBots;
     }
 
     public function storeMyBot(StoreMyBotRequest $request)
@@ -81,17 +101,14 @@ class MyBotController extends Controller
 
 
 
-            if ($finletotle >= $blance) {
-                return $this->error("You don't have enough money ");
-            } else {
-                $bot = bots_usdt::create([
-                    'user_id' => $user->id,
-                    'bot_id' => $myBot,
-                    'orders_usdt' => $myusdt,
-                    'bot_status' => 1
-                ]);
-                return $this->success("You have successfully subscribed to the bot");
-            }
+
+            $bot = bots_usdt::create([
+                'user_id' => $user->id,
+                'bot_id' => $myBot,
+                'orders_usdt' => $myusdt,
+                'bot_status' => 1
+            ]);
+            return $this->success("You have successfully subscribed to the bot");
         }
     }
 
@@ -115,15 +132,29 @@ class MyBotController extends Controller
         $user = auth('api')->user();
         $bot_id = $request['bot_id'];
 
-        $gethistory = Binance::where('user_id', $user->id)->where('bot_num', $bot_id)->get();
+        $gethistory = Binance::where('user_id', $user->id)->where('bot_num', $bot_id)->orderBy('created_at', 'desc')->get();
+
+        $gethistory->each(function ($data) {
+            // Convert to double
+            $data->profit_per = number_format($data->profit_per, 2, '.', ''); // Format to 2 decimal places with no thousands separator
+        });
+
+        // Now $formattedHistory contains the formatted profit_per values
+
+
+
         if ($gethistory->isEmpty()) {
             return $this->error('You not  subscribed');
         } else {
-            $totleSell = $gethistory->where('side', 'sell')->sum('buy_price_sell');
+
+
+
+
+            $totleSell = $gethistory->where('side', 'sell')->sum('profit_per');
             $totleBuy = $gethistory->where('side', 'buy')->sum('price');
 
-            if ($totleBuy != 0) {
-                $profit = ($totleSell / $totleBuy) * 100;
+            if ($totleSell != 0) {
+                $profit = number_format($totleSell, 2) . "" . "%";
             } else {
                 $profit = 0; // To avoid division by zero if there are no 'buy' records.
             }
@@ -141,6 +172,8 @@ class MyBotController extends Controller
 
     public function shutdownBot(Request $request)
     {
+
+
         $user = auth('api')->user();
         $shutdown = $request['shutdown'];
         $data = [
@@ -151,7 +184,6 @@ class MyBotController extends Controller
 
         $response = Http::post('http://51.161.128.30:5015/shutdown', $data);
         $responseBody = $response->body();
-
-        return $this->success('operation accomplished successfully');
+        return $this->success("operation accomplished successfully");
     }
 }

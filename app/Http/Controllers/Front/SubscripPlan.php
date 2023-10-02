@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Front;
 use auth;
 use App\Models\plan;
 use App\Models\User;
+use App\Models\feesBot;
 use App\Models\Payment;
 use App\Models\BotStatus;
 use App\Models\TargetsRecmo;
@@ -27,7 +28,7 @@ class SubscripPlan extends Controller
     use ResponseJson;
     public function getPlan()
     {
-        return PlanResource::collection(plan::with('plan_desc')->get());
+        return PlanResource::collection(plan::with('plan_desc')->where('id', '!=', 7)->get());
     }
 
     // for user slect plan
@@ -72,7 +73,7 @@ class SubscripPlan extends Controller
         $user->save();
         return response()->json([
             "success" => true,
-            "wallet" => "TLmUhwJQuvGmBfYeURLb39Pwc9LD6REsuA"
+            "wallet" => "TLNaJdkATC5NnmHfnLfskXMG85NtihQT29"
         ]);
     }
 
@@ -193,7 +194,7 @@ class SubscripPlan extends Controller
                 $bodyManger = "تم اشترك شخص جديد";
                 $notfication->notficationManger($bodyManger);
 
-                return $this->success('You have successfully subscribed and the rest has been transferred to your wallet'); 
+                return $this->success('You have successfully subscribed and the rest has been transferred to your wallet');
             }
         }
     }
@@ -252,9 +253,27 @@ class SubscripPlan extends Controller
             $bodyManger = "تم اشترك شخص جديد";
             $notfication->notficationManger($bodyManger);
 
+
+
+
+            $this->storeSubPlan($pricePlan);
+
+
             return $this->success('You have successfully subscribed');
         } else {
             return $this->error("You don't have enough number_points ");
         }
+    }
+
+    public function storeSubPlan($pricePlan)
+    {
+         $user = auth('api')->user();
+        $feesBot=feesBot::create([
+        'user_id'=>$user->id,
+        'fees'=>$pricePlan,
+        'status'=>"success",
+        ]);
+
+
     }
 }

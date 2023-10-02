@@ -50,11 +50,15 @@ class TransactionUserController extends Controller
 
         // Perform the transaction
         $user->money -= $amount;
-        $receiver->money += $amount;
         $user->save();
-        $receiver->save();
-        $this->Store($user->id, $receiver->id, $receiver->name, $amount);
 
+
+        $receiver->number_points += $amount;
+
+        $receiver->save();
+
+
+        $this->Store($user->id, $receiver->id, $receiver->name, $amount);
 
 
         // Call the notfication method
@@ -111,7 +115,7 @@ class TransactionUserController extends Controller
 
         $sentTransactions->each(function ($transaction) {
             $transaction->transaction_type = 'sent';
-            $transaction->send_name = User::find($transaction->user_id)->name;
+            $transaction->send_name = User::find($transaction->recive_id)->name;
         });
 
         $receivedTransactions->each(function ($transaction) {
@@ -121,12 +125,17 @@ class TransactionUserController extends Controller
         $mergedTransactions = $sentTransactions->concat($receivedTransactions);
         $mergedTransactions = $mergedTransactions->sortByDesc('created_at')->values();
 
-        // for fess Bot
+        // for fess Bot it
         $is_Deposits = $user->DepositsBinance->each(function ($define) {
             $define->type = "is_Deposits";
         });
         $is_fess = $user->fessBot->each(function ($define) {
             $define->type = "is_fess";
+            if ($define->number_bot == null) {
+                $define->side = "plan";
+            } else {
+                $define->side = "bot";
+            }
         });
 
         $fess = $is_Deposits->concat($is_fess);

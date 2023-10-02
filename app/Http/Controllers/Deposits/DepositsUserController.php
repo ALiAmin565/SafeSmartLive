@@ -21,8 +21,8 @@ class DepositsUserController extends Controller
 
         if ($existingDeposit) {
             return response()->json([
-                'suucess' => false,
-                "massage" => "The Text ID found or wrong",
+                'success' => false,
+                "message" => "The Text ID found or wrong",
             ]);
         } else {
 
@@ -32,8 +32,8 @@ class DepositsUserController extends Controller
             $existingDeposit = DepositsBinance::where('textId', $textid)->first();
             if (!$existingDeposit) {
                 return response()->json([
-                    'suucess' => false,
-                    "massage" => "The deposit has not been made to Binance, please check this",
+                    'success' => false,
+                    "message" => "The deposit has not been made to Binance, please check this",
                 ]);
             } else {  //found it
 
@@ -48,7 +48,7 @@ class DepositsUserController extends Controller
 
                 // for Notfication
                 $notfication = new NotficationController();
-                $body = "تم الايداع في محفظتك مبلغ $existingDeposit->amount وأصبح اجمالي الرصيد $$user->money";
+                $body = "تم الايداع في محفظتك مبلغ $existingDeposit->amount وأصبح اجمالي الرصيد $$user->number_points";
                 $notfication->notfication($user->fcm_token, $body);
                 $bodyManger = "تم إيداع مبلغ $$existingDeposit->amount في محفظتك من قبل $user->name   ";
                 $notfication->notficationManger($bodyManger);
@@ -56,16 +56,16 @@ class DepositsUserController extends Controller
         }
 
         return response()->json([
-            'suucess' => true,
+            'success' => true,
             "amount" => $existingDeposit->amount,
-            "massage" =>
+            "message" =>
             "operation accomplished successfully"
         ]);
 
         return response()->json([
-            'suucess' => true,
+            'success' => true,
             "amount" => $existingDeposit->amount,
-            "massage" =>
+            "message" =>
             "operation accomplished successfully"
         ]);
     }

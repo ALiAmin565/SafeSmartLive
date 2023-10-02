@@ -16,4 +16,5 @@ class binance extends Model
 
         return $this->belongsTo(user::class, 'user_id', 'id');
     }
+
 }

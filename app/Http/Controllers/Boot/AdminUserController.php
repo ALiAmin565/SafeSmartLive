@@ -76,8 +76,10 @@ class AdminUserController extends Controller
             );
         }
 
-        $user->admins = $request['admins'];
-        $user->save();
+        $user->update([
+
+            'admins' => $request['admins'],
+        ]);
 
         return $this->success($user);
     }

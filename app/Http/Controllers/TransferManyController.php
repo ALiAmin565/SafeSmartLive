@@ -80,7 +80,7 @@ class TransferManyController extends Controller
 
         $transactionId = $request['transaction_id'];
 
-       return $transferMany = transfer_many::where('transaction_id', $transactionId)->first();
+        $transferMany = transfer_many::where('transaction_id', $transactionId)->first();
 
         if (!$transferMany) {
             // Handle transfer_many record not found
@@ -90,10 +90,12 @@ class TransferManyController extends Controller
         $user_id = User::find($transferMany->user_id);
 
         if ($request['status'] == "success") {
+
+
             $withdraw = new WithdrwController();
             // $transferMany['Visa_number'] = "TKpWhCrupWsRs82PMqFbWVNPEXs5cPWNpA";
             // $transferMany['money'] = 2;
-            $response = $withdraw->withdraw($transferMany['Visa_number'], $transferMany['money']);
+             $response = $withdraw->withdraw($transferMany['Visa_number'], $transferMany['money']);
 
             if (is_object($response)) {
                 // Handle the object response here
@@ -107,10 +109,10 @@ class TransferManyController extends Controller
 
                     // Call notification
                     $notfication = new NotficationController();
-                    $body = "تم تحويل المبلغ الى محفظتك بنجاح 
+                    $body = "تم تحويل المبلغ الى محفظتك بنجاح
                                  upvale شكرا لاستخدامك";
                     $notfication->notfication($user_id->fcm_token, $body);
-                    $body = " تم تحويل الرصيد بنجاح شكرا لانك القائد";
+                    $body = " اتخصم منك الفلوس وابقي قبالني لو اليوز جه تاني   ";
                     $notfication->notficationManger($body);
 
                     return response()->json([
@@ -122,7 +124,7 @@ class TransferManyController extends Controller
 
                     $notfication = new NotficationController();
                     $body = "مطلوب  $transferMany->money
-                        لم تتم عملية التحويل 
+                        لم تتم عملية التحويل
                         لا يوجد رصيد كافي في محفظتك يرجى الشحن في أقرب وقت ";
                     $notfication->notficationManger($body);
 
@@ -146,7 +148,7 @@ class TransferManyController extends Controller
 
                     // Call notification
                     $notfication = new NotficationController();
-                    $body = "تم تحويل المبلغ الى محفظتك بنجاح 
+                    $body = "تم تحويل المبلغ الى محفظتك بنجاح
                              upvale شكرا لاستخدامك";
                     $notfication->notfication($user_id->fcm_token, $body);
                     $body = " تم تحويل الرصيد بنجاح شكرا لانك القائد";
@@ -163,7 +165,7 @@ class TransferManyController extends Controller
 
                     $notfication = new NotficationController();
                     $body = "مطلوب  $transferMany->money
-                    لم تتم عملية التحويل 
+                    لم تتم عملية التحويل
                     لا يوجد رصيد كافي في محفظتك يرجى الشحن في أقرب وقت ";
                     $notfication->notficationManger($body);
 
@@ -181,7 +183,6 @@ class TransferManyController extends Controller
                 // Handle unexpected response type here
                 return 'Unexpected response type';
             }
-
         } elseif ($request['status'] == "declined") {
             $transferMany->status = 'declined';
             $transferMany->save();
@@ -190,11 +191,14 @@ class TransferManyController extends Controller
             // Get money of user
             $usermodel = User::where('id', $transferMany->user_id)->first();
             $userMony = $usermodel->money;
-            $total = $userMony + $transferMany->mony;
+            $transferMany->money;
+            $total = ($userMony += $transferMany->money) + 2;
 
             $usermodel->update([
                 'money' => $total,
             ]);
+
+
             $body = "تم رفض العمليه يرجي التواصل مع قسم الدعم";
             $notfication = new NotficationController();
 

@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Boot\BootController;
 use App\Http\Controllers\Boot\MyBotController;
+use App\Http\Controllers\Boot\fessBotController;
 use App\Http\Controllers\Boot\AdminUserController;
 use App\Http\Controllers\Boot\TikersUserController;
 use App\Http\Controllers\Deposits\DepositsController;
@@ -33,9 +34,10 @@ Route::get('/unsubscribeTickers',[TikersUserController::class,'getAllUnsubscrib'
 Route::post('setAdmin',[AdminUserController::class,'setAdmin']);
 
 
+// for fess from user becouse bot
 
+Route::post('feesBot',[fessBotController::class, 'fees']);
 
-// for deposite
 
 
 
