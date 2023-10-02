@@ -170,7 +170,7 @@ return [
 
     }if($request == 'admin')
     {
-        return UserResource::collection(User::with('Role')->where('state',$request)->with(['bot_transfer'])->get());
+        return UserResource::collection(User::where('state',$request)->with(['bot_transfer'])->get());
 
     }
     if($request == 'super_admin')
