@@ -267,13 +267,11 @@ class SubscripPlan extends Controller
 
     public function storeSubPlan($pricePlan)
     {
-         $user = auth('api')->user();
-        $feesBot=feesBot::create([
-        'user_id'=>$user->id,
-        'fees'=>$pricePlan,
-        'status'=>"success",
+        $user = auth('api')->user();
+        $feesBot = feesBot::create([
+            'user_id' => $user->id,
+            'fees' => $pricePlan,
+            'status' => "success",
         ]);
-
-
     }
 }

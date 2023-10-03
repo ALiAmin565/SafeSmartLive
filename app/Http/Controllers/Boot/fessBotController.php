@@ -6,6 +6,7 @@ use App\Models\Bots;
 use App\Models\User;
 use App\Models\binance;
 use App\Models\feesBot;
+use App\Events\recommend;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Http;
@@ -29,6 +30,16 @@ class fessBotController extends Controller
         if ($binace->isEmpty()) {
             return 'NOT HAVE ANY FEES';
         }
+        $data = [
+            'recomondations_id' => 1,
+            "admin" => 1,
+            "ticker" => 1,
+            "targets" => 1,
+            "entry" => 1,
+            "stoplose" => 1,
+            "bot_num" => 1,
+        ];
+
 
         foreach ($binace as $fees) {
             $user = User::find($fees->user_id);

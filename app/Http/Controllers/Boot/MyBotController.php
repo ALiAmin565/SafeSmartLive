@@ -18,8 +18,8 @@ class MyBotController extends Controller
     public function AllMyBot(Request $request)
     {
 
-        $user = auth('api')->user();
-        $bots = bots_usdt::where('user_id', $user->id)->orderBy('created_at', 'desc')->get();
+         $user = auth('api')->user();
+         $bots = bots_usdt::where('user_id', $user->id)->orderBy('created_at', 'desc')->get();
 
         $botMap = [];
 
