@@ -103,6 +103,7 @@ class ChatActions extends Controller
             }
             $user->save();
         }
+        return response()->json(['success'=>true]);
         $eventMassage='1';
                   event(new closeChat($plan->nameChannel,$eventMassage));
 
@@ -127,6 +128,7 @@ foreach ($users as $user) {
     
     $user->save();
 }
+return response()->json(['success' => true]);
  $eventMassage="1";
           event(new closeChat($plan->nameChannel,$eventMassage));
 
