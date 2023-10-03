@@ -132,6 +132,10 @@ class chatAdviceAdminController extends Controller
                             'video' => $filename,
                         ]);
                     }
+                    return response()->json([
+                        'success' => true,
+                        // 'massage' => MassageResource::make($lastMessage),
+                    ]);
                     event(new ChatPlan($massage, $planChannelName->nameChannel));
                     // $lastMessage = Massage::with(['user', 'media'])
                     // ->where('plan_id', $user->plan_id)

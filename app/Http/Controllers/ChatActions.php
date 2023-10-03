@@ -31,7 +31,7 @@ class ChatActions extends Controller
         // Delete the massages
         Massage::where('plan_id',$plan->id)->delete();
                  
-
+        return 'Records deleted successfully.';
         $eventMassage="0";
           event(new closeChat($plan->nameChannel,$eventMassage));
 
