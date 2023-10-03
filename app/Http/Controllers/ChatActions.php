@@ -2,40 +2,40 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Massage;
 use App\Models\plan;
 use App\Models\User;
-use Illuminate\Http\Request;
+use App\Models\Massage;
 use App\Events\closeChat;
+use App\Traits\ResponseJson;
 
 
 
 
+use Illuminate\Http\Request;
 use App\Models\Massage_media;
 use Illuminate\Support\Facades\DB;
 
 class ChatActions extends Controller
 {
-
+    use ResponseJson;
     public function deletePlan(Request $request)
     {
-         $nameChannel=$request['nameChannel'];
-         $plan=plan::where('nameChannel',$nameChannel)->first();
-       
-          $massages = Massage::with('MassageMedia')->where('plan_id', $plan->id)->get();
+        $nameChannel = $request['nameChannel'];
+        $plan = plan::where('nameChannel', $nameChannel)->first();
+
+        $massages = Massage::with('MassageMedia')->where('plan_id', $plan->id)->get();
         // Iterate through each massage and delete its associated media
         foreach ($massages as $massage) {
             $media = $massage->MassageMedia;
             $media->each->delete(); // Delete each associated media record
         }
         // Delete the massages
-        Massage::where('plan_id',$plan->id)->delete();
-                 
-        return 'Records deleted successfully.';
-        $eventMassage="0";
-          event(new closeChat($plan->nameChannel,$eventMassage));
+        Massage::where('plan_id', $plan->id)->delete();
 
-        return 'Records deleted successfully.';
+        $eventMassage = "0";
+        event(new closeChat($plan->nameChannel, $eventMassage));
+
+        return $this->success('ResponseJson');
     }
 
     public function deleteAll()
@@ -78,21 +78,21 @@ class ChatActions extends Controller
         $message = Massage::find($id);
         // Check if the message exists and if the user is the owner
 
-            // Delete the associated message media, if any
-            if ($message->messageMedia) {
-                $messageMediaId = $message->messageMedia->id;
-                $message->messageMedia()->whereIn('id', $messageMediaId)->delete();
-            }
-            // Delete the message
-            $message->delete();
-            return response()->json(['message' => 'Message and associated media deleted successfully.']);
+        // Delete the associated message media, if any
+        if ($message->messageMedia) {
+            $messageMediaId = $message->messageMedia->id;
+            $message->messageMedia()->whereIn('id', $messageMediaId)->delete();
+        }
+        // Delete the message
+        $message->delete();
+        return response()->json(['message' => 'Message and associated media deleted successfully.']);
     }
-    
-    
-        public function banPlan(Request $request)
+
+
+    public function banPlan(Request $request)
     {
-          $nameChannel=$request['nameChannel'];
-         $plan = plan::where('nameChannel', $nameChannel)->first();
+        $nameChannel = $request['nameChannel'];
+        $plan = plan::where('nameChannel', $nameChannel)->first();
         $users = User::where('plan_id', $plan->id)->get();
 
         foreach ($users as $user) {
@@ -103,36 +103,32 @@ class ChatActions extends Controller
             }
             $user->save();
         }
-        return response()->json(['success'=>true]);
-        $eventMassage='1';
-                  event(new closeChat($plan->nameChannel,$eventMassage));
+        $eventMassage = '1';
+        event(new closeChat($plan->nameChannel, $eventMassage));
 
-                    return response()->json(['success'=>true]);
-
+        return response()->json(['success' => true]);
     }
 
     public function unbanPlan(Request $request)
     {
         $nameChannel = $request['nameChannel'];
-$plan = Plan::where('nameChannel', $nameChannel)->first();
-$users = User::where('plan_id', $plan->id)->get();
+        $plan = Plan::where('nameChannel', $nameChannel)->first();
+        $users = User::where('plan_id', $plan->id)->get();
 
-foreach ($users as $user) {
-    if ($user->banned == 1) {
-        // Leave the record as it is
-    } elseif ($user->banned == 2) {
-        $user->banned = 0;
-    } else {
-        continue; // Skip updating if banned is already 0
-    }
-    
-    $user->save();
-}
-return response()->json(['success' => true]);
- $eventMassage="1";
-          event(new closeChat($plan->nameChannel,$eventMassage));
+        foreach ($users as $user) {
+            if ($user->banned == 1) {
+                // Leave the record as it is
+            } elseif ($user->banned == 2) {
+                $user->banned = 0;
+            } else {
+                continue; // Skip updating if banned is already 0
+            }
 
-return response()->json(['success' => true]);
+            $user->save();
+        }
+        $eventMassage = "1";
+        event(new closeChat($plan->nameChannel, $eventMassage));
 
+        return response()->json(['success' => true]);
     }
 }

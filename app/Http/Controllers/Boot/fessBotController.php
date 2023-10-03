@@ -30,15 +30,7 @@ class fessBotController extends Controller
         if ($binace->isEmpty()) {
             return 'NOT HAVE ANY FEES';
         }
-        $data = [
-            'recomondations_id' => 1,
-            "admin" => 1,
-            "ticker" => 1,
-            "targets" => 1,
-            "entry" => 1,
-            "stoplose" => 1,
-            "bot_num" => 1,
-        ];
+
 
 
         foreach ($binace as $fees) {

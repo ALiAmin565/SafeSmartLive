@@ -55,7 +55,7 @@ class PostController extends Controller
             $img = time() . '.' . $request->img->extension();
             $path = $request->img->move(public_path('videosthumbnails'), $img);
         }
-        
+
         // return $img;
 
         posts::create([
@@ -67,11 +67,9 @@ class PostController extends Controller
             "plan_id"=>$request['plan_id'],
             "link"=>$request['link'],
         ]);
-        
+
              $plan = plan::where('id',$request['plan_id'])->first();
-             return response()->json([
-                'Massage' => "Request is Sucess",
-            ]);
+
             event(new recommend($request->except('img'),$plan->nameChannel));
              $this->sendNotification($plan->name,$plan->nameChannel);
 
@@ -79,7 +77,7 @@ class PostController extends Controller
         return response()->json([
             'Massage' => "Request is Sucess",
         ]);
-        
+
     }
 
     /**
@@ -184,13 +182,13 @@ class PostController extends Controller
                 // 'body' => 'يوجد الان بوست جديد',
             ],
         ];
-        
-        
+
+
 
           $response = $client->post('send', [
             'json' => $message,
         ]);
-        
+
         return $response;
 
         if ($response->getStatusCode() === 200) {

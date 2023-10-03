@@ -11,9 +11,9 @@ use App\Models\plan_recommendation;
 use App\Http\Requests\nameChannelRequest;
 use App\Http\Resources\Front\MassageResource;
 use App\Http\Resources\PlanResource;
- 
+
 use App\Events\ChatPlan;
- 
+
 
 
 class chatAdviceAdminController extends Controller
@@ -29,15 +29,15 @@ class chatAdviceAdminController extends Controller
         $massages = Massage::with(['user', 'media'])
             ->where('plan_id', $plan->id)
             ->orderBy('created_at', 'desc')->get();
- 
+
         return response()->json([
             'data' => MassageResource::collection($massages),
-             
+
         ]);
     }
     public function Advice(nameChannelRequest $request)
      {
-  
+
      $plan = Plan::where('nameChannel', $request['nameChannel'])->first();
 
     if ($plan) {
@@ -56,7 +56,7 @@ class chatAdviceAdminController extends Controller
             //     return strtotime($item->created_at);
             // })
             // ->values();
-            
+
                    $combinedResult = collect([$recommendations, $post])
             ->flatten()
                         ->each(function ($item) {
@@ -66,7 +66,7 @@ class chatAdviceAdminController extends Controller
     ->sortBy(function ($item) {
         return strtotime($item->created_at);
     })->values();
-            
+
 
 
             return response()->json([
@@ -87,7 +87,7 @@ class chatAdviceAdminController extends Controller
     public function adminForPlan()
         {
              $user = auth('api')->user();
-    
+
             if ($user && $user->state == 'admin') {
                 $user->load('role');
                 $planIds = $user->role->pluck('pivot')->pluck('plan_id');
@@ -97,10 +97,10 @@ class chatAdviceAdminController extends Controller
             }else{
                return response()->json(['success' => 'false'], 404);
             }
-            
+
         }
-        
-        
+
+
          public function StoreMassageAdmin(Request $request)
     {
 
@@ -132,10 +132,7 @@ class chatAdviceAdminController extends Controller
                             'video' => $filename,
                         ]);
                     }
-                    return response()->json([
-                        'success' => true,
-                        // 'massage' => MassageResource::make($lastMessage),
-                    ]);
+
                     event(new ChatPlan($massage, $planChannelName->nameChannel));
                     // $lastMessage = Massage::with(['user', 'media'])
                     // ->where('plan_id', $user->plan_id)
