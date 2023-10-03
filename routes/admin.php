@@ -47,7 +47,7 @@ Route::middleware(['SuperWithAdmin'])->group(function () {
     Route::post('adminChatPlan', [chatAdviceAdminController::class, 'StoreMassageAdmin']); // FOR SEND MASSAGE ADMIN
     Route::post('adminForPlan', [chatAdviceAdminController::class, 'adminForPlan']);
     Route::apiResource('post', PostController::class);
-    // for chat group Delete MessageS
+    // for chat group Delete MessageS   
     Route::post('messagePlan', [ChatActions::class, 'deletePlan']);
     Route::delete('messageSuper/{id}', [ChatActions::class, 'deleteMessageSuper']);
     Route::post('banPlan', [ChatActions::class, 'banPlan']);

@@ -69,7 +69,9 @@ class PostController extends Controller
         ]);
         
              $plan = plan::where('id',$request['plan_id'])->first();
-        
+             return response()->json([
+                'Massage' => "Request is Sucess",
+            ]);
             event(new recommend($request->except('img'),$plan->nameChannel));
              $this->sendNotification($plan->name,$plan->nameChannel);
 
