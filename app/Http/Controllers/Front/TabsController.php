@@ -8,6 +8,7 @@ use App\Models\User;
 
 use App\Models\posts;
 use App\Models\video;
+use App\Models\expert;
 use App\Models\tagert;
 use GuzzleHttp\Client;
 use App\Models\Archive;
@@ -97,9 +98,28 @@ class TabsController extends Controller
 
         $recom = recommendation::with(['target', 'tragetsRecmo'])
             ->whereIn('id', $recomIds)
-            // ->where('archive', '0')
             ->orderBy('created_at')
             ->get();
+
+        $recomIds = $recom->pluck('id')->toArray();
+
+        $expertIds = expert::select('last_tp', 'recomondations_id')
+            ->whereIn('recomondations_id', $recomIds)
+            ->get();
+
+        $recom->each(function ($targetDone) use ($expertIds) {
+            $expertId = $expertIds->where('recomondations_id', $targetDone->id)->first();
+            if ($expertId) {
+                $targetDone->targetDone = $expertId->last_tp;
+            } else {
+                $targetDone->targetDone = 0;
+            }
+        });
+
+
+
+
+
 
         $post = posts::where('status', 'is_advice', 'planes_id')
             ->where('plan_id', $user->plan_id)

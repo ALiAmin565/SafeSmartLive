@@ -16,7 +16,7 @@ class recommend  implements ShouldBroadcast
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public $data;
-    
+
     public $plan_name;
     /**
      * Create a new event instance.
@@ -27,7 +27,7 @@ class recommend  implements ShouldBroadcast
     {
 
         $this->data= $data;
-        
+
         $this->plan_name = $plan_name;
 
     }
@@ -39,8 +39,7 @@ class recommend  implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        // for channel
-        // dd('recommendation.' .$this->plan_name);
+         // for channel
         return new Channel('recommendation.'.$this->plan_name);
 
         //  dd(150);
@@ -49,8 +48,10 @@ class recommend  implements ShouldBroadcast
 
     public function broadcastAs()
     {
+        return $this->plan_name;
+
         // for listen this
-        // dd('recommendation.'.$this->plan_name);
+        dd('recommendation.'.$this->plan_name);
          return 'recommendation.'.$this->plan_name;
     }
 
@@ -58,6 +59,7 @@ class recommend  implements ShouldBroadcast
     public function broadcastWith()
     {
 
+        return $this->plan_name;
 
             return [
                 'data' => $this->data,
