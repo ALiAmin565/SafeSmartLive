@@ -246,7 +246,9 @@ class RecommendationController extends Controller
 
         //   return 500;
 
-
+        return response()->json([
+            'success' => true,
+        ]);
         foreach ($recom as $value) {
             event(new recommend($test, $value->nameChannel));
             $this->sendNotification($value->nameChannel);
