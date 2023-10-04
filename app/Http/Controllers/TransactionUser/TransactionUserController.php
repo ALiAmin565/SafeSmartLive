@@ -106,42 +106,40 @@ class TransactionUserController extends Controller
 
     public function historyTransaction(Request $request)
     {
-         $user = auth('api')->user();
+           $user = auth('api')->user();
 
-        $sentTransactions = transactionUser::where('user_id', $user->id)->get();
+             $sentTransactions = transactionUser::where('user_id', $user->id)->get();
 
-        $receivedTransactions = transactionUser::where('recive_id', $user->id)->get();
+               $receivedTransactions = transactionUser::where('recive_id', $user->id)->get();
 
 
         $sentTransactions->each(function ($transaction) {
-            $transaction->transaction_type = 'sent';
+             $transaction->transaction_type = 'sent';
             if($transaction->user_id == $transaction->recive_id )
             {
-                $transaction->send_name="ME";
+                $transaction->send_name="me";
             }else{
 
 
-            $transaction->send_name = User::find($transaction->recive_id)->name;
+             $transaction->send_name = User::find($transaction->recive_id)->name;
         }
         });
 
         $receivedTransactions->each(function ($transaction) {
             $transaction->transaction_type = 'received';
-            if($transaction->user_id == $transaction->recive_id )
-            {
-                $transaction->send_name="ME";
-            }else{
-            $transaction->receiver_name = User::find($transaction->user_id)->name;
-            }
+
+
+             $transaction->receiver_name = User::find($transaction->user_id)->name;
+
         });
         $mergedTransactions = $sentTransactions->concat($receivedTransactions);
         $mergedTransactions = $mergedTransactions->sortByDesc('created_at')->values();
 
         // for fess Bot it
-        $is_Deposits = $user->DepositsBinance->each(function ($define) {
+         $is_Deposits = $user->DepositsBinance->each(function ($define) {
             $define->type = "is_Deposits";
         });
-        $is_fess = $user->fessBot->each(function ($define) {
+          $is_fess = $user->fessBot->each(function ($define) {
             $define->type = "is_fess";
             if ($define->number_bot == null) {
                 $define->side = "plan";
