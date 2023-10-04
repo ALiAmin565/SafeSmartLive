@@ -112,7 +112,7 @@ class TabsController extends Controller
             if ($expertId) {
                 $targetDone->targetDone = $expertId->last_tp;
             } else {
-                $targetDone->targetDone = $expertId->last_tp;
+                $targetDone->targetDone = 0;
             }
         });
 
