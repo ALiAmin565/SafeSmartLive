@@ -1,5 +1,6 @@
 <?php
 
+use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Boot\BootController;
 use App\Http\Controllers\Boot\MyBotController;
@@ -8,7 +9,6 @@ use App\Http\Controllers\Boot\AdminUserController;
 use App\Http\Controllers\Boot\TikersUserController;
 use App\Http\Controllers\Deposits\DepositsController;
 use App\Http\Controllers\Boot\ActiveUserBotController;
-
 
 
 
@@ -37,7 +37,5 @@ Route::post('setAdmin',[AdminUserController::class,'setAdmin']);
 // for fess from user becouse bot
 
 Route::post('feesBot',[fessBotController::class, 'fees']);
-
-
 
 

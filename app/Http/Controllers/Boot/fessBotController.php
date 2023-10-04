@@ -4,12 +4,14 @@ namespace App\Http\Controllers\Boot;
 
 use App\Models\Bots;
 use App\Models\User;
+use GuzzleHttp\Client;
 use App\Models\binance;
 use App\Models\feesBot;
 use App\Events\recommend;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Http;
+use GuzzleHttp\Exception\ClientException;
 use App\Http\Controllers\Helper\NotficationController;
 
 class fessBotController extends Controller
@@ -107,4 +109,50 @@ class fessBotController extends Controller
         $body = "عميلنا العزيز رصيدك $userMony يرجى الشحن في أسرع وقت حتى لا يتم إيقاف الأبوات الخاصة بأسيتادتكم والاستمرار في تحقيق الأرباح";
         $this->notfication->notfication($user, $body);
     }
+
+
+private $apiKey = 'l8S2V1wKkLnEp9apRMyyTeiJviizns0OIRzwlQsiPU9I4W7kBLiVzGJl2gPQIXoI';
+ private $apiSecret = 'DufTVrONbL85brTU3Bg4KWoKiAdlDsen0D7l1Gqpizwmz8j9FNEwIjvWDY01XrQO';
+
+ public function checkApiKey(Request $request)
+    {
+        try {
+            $client = new Client();
+            $timestamp = round(microtime(true) * 1000); // Binance requires a timestamp in milliseconds
+            $queryParams = [
+                'timestamp' => $timestamp,
+            ];
+
+            // Create a query string for the request
+            $query = http_build_query($queryParams);
+
+            // Create a signature using your API secret key
+            $signature = hash_hmac('sha256', $query, $this->apiSecret);
+
+            $response = $client->get('https://api.binance.com/api/v3/account', [
+                'query' => $query . "&signature={$signature}",
+                'headers' => [
+                    'X-MBX-APIKEY' => $this->apiKey,
+                ],
+            ]);
+
+            $data = json_decode($response->getBody(), true);
+
+            if (isset($data['msg']) && $data['msg'] === 'Signature verification failed') {
+                return response()->json(['message' => 'API key or secret is invalid.'], 401);
+            } else {
+
+            }
+        } catch (ClientException $e) {
+            if ($e->getResponse() !== null) {
+                $statusCode = $e->getResponse()->getStatusCode();
+                return response()->json(['message' => 'API key and secret may be invalid (HTTP error ' . $statusCode . ').'], 400);
+            } else {
+                return response()->json(['message' => 'Failed to connect to the Binance API.'], 500);
+            }
+        }
+    }
+
+
+
 }
