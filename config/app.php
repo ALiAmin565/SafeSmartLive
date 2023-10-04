@@ -71,7 +71,7 @@ return [
 
   // app/config.php
 
-    "timezone" => 'Africa/Cairo'
+    "timezone" => "Asia/Jerusalem"
 ,
     /*
     |--------------------------------------------------------------------------
