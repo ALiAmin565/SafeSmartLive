@@ -71,8 +71,8 @@ return [
 
   // app/config.php
 
-    "timezone" => "Asia/Jerusalem"
-,
+    "timezone" => "Asia/Jerusalem",
+
     /*
     |--------------------------------------------------------------------------
     | Application Locale Configuration

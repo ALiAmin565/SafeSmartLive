@@ -115,12 +115,24 @@ class TransactionUserController extends Controller
 
         $sentTransactions->each(function ($transaction) {
             $transaction->transaction_type = 'sent';
+            if($transaction->user_id == $transaction->recive_id )
+            {
+                $transaction->send_name="ME";
+            }else{
+
+
             $transaction->send_name = User::find($transaction->recive_id)->name;
+        }
         });
 
         $receivedTransactions->each(function ($transaction) {
             $transaction->transaction_type = 'received';
+            if($transaction->user_id == $transaction->recive_id )
+            {
+                $transaction->send_name="ME";
+            }else{
             $transaction->receiver_name = User::find($transaction->user_id)->name;
+            }
         });
         $mergedTransactions = $sentTransactions->concat($receivedTransactions);
         $mergedTransactions = $mergedTransactions->sortByDesc('created_at')->values();
@@ -160,6 +172,7 @@ class TransactionUserController extends Controller
 
     public function Store($userId, $reciveId, $name, $amount)
     {
+
         $randomString = Str::random(20);
         $randomNumber = mt_rand(1000, 9999);
         $uniqueCode = $randomString . $randomNumber;
@@ -168,7 +181,6 @@ class TransactionUserController extends Controller
             'user_id' => $userId,
             'recive_id' => $reciveId,
             'amount' => $amount,
-
             'transaction_id' => $uniqueCode,
 
         ]);

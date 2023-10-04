@@ -132,13 +132,13 @@ class MyBotController extends Controller
             $user = auth('api')->user();
           $bot_id = $request['bot_id'];
 
-             $gethistory = Binance::where('user_id', 8)->where('bot_num', $bot_id)->orderBy('created_at', 'desc')->get();
+             $gethistory = Binance::where('user_id', $user->id)->where('bot_num', $bot_id)->orderBy('created_at', 'desc')->get();
 
         $gethistory->each(function ($data) {
             // Convert to double
             if($data->status == "FILLED")
             {
-                $data->status='Success';
+                $data->status='success';
             }
             $data->profit_per = number_format($data->profit_per, 2, '.', ''); // Format to 2 decimal places with no thousands separator
         });
