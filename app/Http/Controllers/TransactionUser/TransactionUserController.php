@@ -161,22 +161,21 @@ class TransactionUserController extends Controller
         $buyController = new buyController($client);
 
         // Call the getstatsOrde method
-        $yy = $buyController->getAllOrder($request);
-
-        $ahmed = $user->historypayment = $yy;
+        $buyController->getAllOrder($request);
 
 
-        $user->load(['BuySellBinance', 'DepositsBinance', 'fessBot']);
 
 
-        $responseData = [
+          $user->load(['BuySellBinance', 'DepositsBinance', 'historypayment', 'fessBot']);
+
+
+    return    $responseData = [
             'transactions' => $mergedTransactions,
-            'historypayment' => $ahmed,
+            'historypayment' => $user->historypayment,
             'BuySellBinance' => $user->BuySellBinance,
             'DepositsBinance' => $sendfess,
         ];
 
-        return $responseData;
     }
 
 

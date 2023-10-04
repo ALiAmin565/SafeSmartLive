@@ -47,12 +47,14 @@ Route::middleware(['SuperWithAdmin'])->group(function () {
     Route::post('adminChatPlan', [chatAdviceAdminController::class, 'StoreMassageAdmin']); // FOR SEND MASSAGE ADMIN
     Route::post('adminForPlan', [chatAdviceAdminController::class, 'adminForPlan']);
     Route::apiResource('post', PostController::class);
-    // for chat group Delete MessageS   
+    // for chat group Delete MessageS
     Route::post('messagePlan', [ChatActions::class, 'deletePlan']);
     Route::delete('messageSuper/{id}', [ChatActions::class, 'deleteMessageSuper']);
     Route::post('banPlan', [ChatActions::class, 'banPlan']);
     Route::post('unbanPlan', [ChatActions::class, 'unbanPlan']);
-    
+    Route::get('/all-tickers',[TickerController::class,'getAllTickers']);
+
+
 });
 // routes for super  admin
 
@@ -109,7 +111,6 @@ Route::middleware('SuperAdmin')->group(function () {
     // Add Bot Status For user
     Route::post('add-bot-status-for-user', [BotController::class, 'AddBotStatuForUser']);
     // Get All Tickers
-    Route::get('/all-tickers',[TickerController::class,'getAllTickers']);
     // update Tickers
     Route::post('/update-tickers',[TickerController::class,'updateTicker']);
     // delete Tickers
