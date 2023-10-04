@@ -115,14 +115,11 @@ class TransactionUserController extends Controller
 
         $sentTransactions->each(function ($transaction) {
              $transaction->transaction_type = 'sent';
-            if($transaction->user_id == $transaction->recive_id )
-            {
-                $transaction->send_name="me";
-            }else{
+
 
 
              $transaction->send_name = User::find($transaction->recive_id)->name;
-        }
+
         });
 
         $receivedTransactions->each(function ($transaction) {
