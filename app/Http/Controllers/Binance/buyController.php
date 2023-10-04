@@ -25,7 +25,7 @@ class buyController extends Controller
         $this->client = new Client([
             'base_uri' => 'https://api.binance.com',
         ]);
-        $this->user = auth()->user();
+        $this->user = auth('api')->user();
     }
 
     public function buy(Request $request)

@@ -3,13 +3,14 @@
 namespace App\Http\Controllers\TransactionUser;
 
 use App\Models\User;
-use Guzzle\Http\Client;
+use GuzzleHttp\Client;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Models\transactionUser;
-use App\Http\Controllers\Controller;
-use App\Http\Controllers\Helper\NotficationController;
 use PhpParser\Node\Stmt\Return_;
+use App\Http\Controllers\Controller;
+use App\Http\Controllers\Binance\buyController;
+use App\Http\Controllers\Helper\NotficationController;
 
 class TransactionUserController extends Controller
 {
@@ -106,37 +107,40 @@ class TransactionUserController extends Controller
 
     public function historyTransaction(Request $request)
     {
-           $user = auth('api')->user();
+        $user = auth('api')->user();
 
-             $sentTransactions = transactionUser::where('user_id', $user->id)->get();
+        $sentTransactions = transactionUser::where('user_id', $user->id)->get();
 
-               $receivedTransactions = transactionUser::where('recive_id', $user->id)->get();
+        $receivedTransactions = transactionUser::where('recive_id', $user->id)->get();
 
 
         $sentTransactions->each(function ($transaction) {
-             $transaction->transaction_type = 'sent';
+            $transaction->transaction_type = 'sent';
 
-
-
-             $transaction->send_name = User::find($transaction->recive_id)->name;
-
+            if ($transaction->user_id == $transaction->recive_id) {
+                $transaction->send_name = "Me";
+            } else {
+                $transaction->send_name = User::find($transaction->recive_id)->name;
+            }
         });
 
         $receivedTransactions->each(function ($transaction) {
             $transaction->transaction_type = 'received';
 
-
-             $transaction->receiver_name = User::find($transaction->user_id)->name;
-
+            if ($transaction->user_id == $transaction->recive_id) {
+                $transaction->receiver_name = 'Me';
+            } else {
+                $transaction->receiver_name = User::find($transaction->user_id)->name;
+            }
         });
         $mergedTransactions = $sentTransactions->concat($receivedTransactions);
         $mergedTransactions = $mergedTransactions->sortByDesc('created_at')->values();
 
         // for fess Bot it
-         $is_Deposits = $user->DepositsBinance->each(function ($define) {
+        $is_Deposits = $user->DepositsBinance->each(function ($define) {
             $define->type = "is_Deposits";
         });
-          $is_fess = $user->fessBot->each(function ($define) {
+        $is_fess = $user->fessBot->each(function ($define) {
             $define->type = "is_fess";
             if ($define->number_bot == null) {
                 $define->side = "plan";
@@ -149,12 +153,25 @@ class TransactionUserController extends Controller
         $sendfess = $fess->sortByDesc('created_at')->values();
 
 
-        $user->load(['BuySellBinance', 'DepositsBinance', 'historypayment', 'fessBot']);
+
+        $client = new Client([
+            'base_uri' => 'https://api.binance.com',
+        ]);
+
+        $buyController = new buyController($client);
+
+        // Call the getstatsOrde method
+        $yy = $buyController->getAllOrder($request);
+
+        $ahmed = $user->historypayment = $yy;
+
+
+        $user->load(['BuySellBinance', 'DepositsBinance', 'fessBot']);
 
 
         $responseData = [
             'transactions' => $mergedTransactions,
-            'historypayment' => $user->historypayment,
+            'historypayment' => $ahmed,
             'BuySellBinance' => $user->BuySellBinance,
             'DepositsBinance' => $sendfess,
         ];

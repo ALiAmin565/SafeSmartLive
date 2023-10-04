@@ -93,8 +93,6 @@ Route::post('/users-binance', [TabsController::class, 'binanceTransactionUsers']
 Route::put('accept-image-binance/{ImageSubmissionBinanceId}', [TabsController::class, 'acceptImageBinance']);
 Route::put('cancel-image-binance/{ImageSubmissionBinanceId}', [TabsController::class, 'cancelImageBinance']);
 
-
-
 // form
 Route::post('massage', [ChatGroupController::class, 'Massage']);
 Route::post('sendmassage', [ChatGroupController::class, 'StoreMassage']);
