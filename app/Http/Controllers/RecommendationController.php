@@ -245,7 +245,7 @@ class RecommendationController extends Controller
             ->get();
 
         //   return 500;
-
+        // But Return Before Send Notification
         return response()->json([
             'success' => true,
         ]);
