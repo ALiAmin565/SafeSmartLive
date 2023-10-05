@@ -33,18 +33,15 @@ class buyController extends Controller
 
 
 
+
         try {
+            // Retrieve input data
             $symbol = $request->input('symbol'); // Name of Currency
             $side = $request->input('side');    // Buy Or sell
             $quantity = $request->input('quantity'); // Quantity of currency
             $price = $request->input('price'); // Current price from Binance
             $stopPrice = $request->input('stop_price');
             $recomindation_id = $request->input('recomindation_id');
-
-            // Validate the inputs (optional but recommended)
-
-
-
 
             // Fetch exchange info from Binance
             $exchangeInfo = Http::get('https://api.binance.com/api/v3/exchangeInfo')->json();
@@ -61,23 +58,31 @@ class buyController extends Controller
                 ]);
             }
 
-            $priceFilter = collect($symbolInfo['filters'])->first(function ($filter) {
-                return $filter['filterType'] === 'PRICE_FILTER';
-            });
-
+            // Extract the quantity filter (LOT_SIZE) and price filter (PRICE_FILTER)
             $quantityFilter = collect($symbolInfo['filters'])->first(function ($filter) {
                 return $filter['filterType'] === 'LOT_SIZE';
             });
 
+            $priceFilter = collect($symbolInfo['filters'])->first(function ($filter) {
+                return $filter['filterType'] === 'PRICE_FILTER';
+            });
+
+            // Get the minimum and maximum allowed prices and quantities
             $minPrice = $priceFilter['minPrice'];
             $maxPrice = $priceFilter['maxPrice'];
             $minQuantity = $quantityFilter['minQty'];
             $maxQuantity = $quantityFilter['maxQty'];
 
+            // Validate the price and quantity against the filters
             if ($price < $minPrice || $price > $maxPrice) {
                 return response()->json(['success' => false, 'message' => 'Price is out of range']);
             }
 
+            // Adjust the quantity to meet the LOT_SIZE constraints
+            $stepSize = $quantityFilter['stepSize'];
+            $quantity = max($minQuantity, ceil($quantity / $stepSize) * $stepSize);
+
+            // Validate the adjusted quantity against the minimum and maximum allowed values
             if ($quantity < $minQuantity || $quantity > $maxQuantity) {
                 return response()->json(['success' => false, 'message' => 'Quantity is out of range']);
             }
@@ -102,6 +107,8 @@ class buyController extends Controller
             return $this->handleInternalError($e, $request);
         }
     }
+
+
     public function placeOrder(Request $request)
     {
         $symbol = $request->input('symbol'); // Symbol (e.g., "BTCUSDT")
