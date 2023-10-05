@@ -20,7 +20,7 @@ class videoController extends Controller
         //
     }
 
-    public function store(StoreVideosRequest $request)
+    public function store(Request $request)
     {
         $img = null;
         $video = null;
