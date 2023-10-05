@@ -74,9 +74,9 @@ class buyController extends Controller
             $maxQuantity = $quantityFilter['maxQty'];
 
             // Validate the price and quantity against the filters
-            if ($price < $minPrice || $price > $maxPrice) {
-                return response()->json(['success' => false, 'message' => 'Price is out of range']);
-            }
+            // if ($price < $minPrice || $price > $maxPrice) {
+            //     return response()->json(['success' => false, 'message' => 'Price is out of range']);
+            // }
 
             // Adjust the quantity to meet the LOT_SIZE constraints
             $stepSize = $quantityFilter['stepSize'];
@@ -236,8 +236,8 @@ class buyController extends Controller
             'user_id' => $this->user->id,
             'symbol' => $request['symbol'],
             'side' => $request['side'],
-            'quantity' => $request['quantity'],
-            'price' => $request['price'],
+            'quantity' => doubleval($request['quantity']),
+            'price' => doubleval($request['price']),
             'status' => $request['status'],
             'orderID' => $request['orderID'],
             'massageError' => $request['massageError'],
