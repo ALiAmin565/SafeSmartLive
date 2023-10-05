@@ -414,6 +414,12 @@ class AuthController extends Controller
         }])->get();
         $user->token = $header;
 
+
+        if($user->binanceApiKey == 0)
+        {
+            $user->binanceApiKey=null;
+            $user->binanceSecretKey=null;
+        }
         return response()->json([
             'success' => true,
             "user" => $user
