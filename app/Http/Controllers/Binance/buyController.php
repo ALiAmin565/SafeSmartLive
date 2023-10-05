@@ -32,41 +32,119 @@ class buyController extends Controller
     {
 
 
-        try {
 
-            $symbol = $request->input('symbol'); // Name of Cruency
+        try {
+            $symbol = $request->input('symbol'); // Name of Currency
             $side = $request->input('side');    // Buy Or sell
-            $quantity = $request->input('quantity'); //quantity of curency
-            $price = $request->input('price'); // CURENT PRICE IS REALTIME from Binance
+            $quantity = $request->input('quantity'); // Quantity of currency
+            $price = $request->input('price'); // Current price from Binance
             $stopPrice = $request->input('stop_price');
             $recomindation_id = $request->input('recomindation_id');
 
+            // Validate the inputs (optional but recommended)
 
+
+
+
+            // Fetch exchange info from Binance
+            $exchangeInfo = Http::get('https://api.binance.com/api/v3/exchangeInfo')->json();
+
+            // Find the filters for the specified symbol
+            $symbolInfo = collect($exchangeInfo['symbols'])->first(function ($item) use ($symbol) {
+                return $item['symbol'] === $symbol;
+            });
+
+            if (!$symbolInfo) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Symbol not found.',
+                ]);
+            }
+
+            $priceFilter = collect($symbolInfo['filters'])->first(function ($filter) {
+                return $filter['filterType'] === 'PRICE_FILTER';
+            });
+
+            $quantityFilter = collect($symbolInfo['filters'])->first(function ($filter) {
+                return $filter['filterType'] === 'LOT_SIZE';
+            });
+
+            $minPrice = $priceFilter['minPrice'];
+            $maxPrice = $priceFilter['maxPrice'];
+            $minQuantity = $quantityFilter['minQty'];
+            $maxQuantity = $quantityFilter['maxQty'];
+
+            if ($price < $minPrice || $price > $maxPrice) {
+                return response()->json(['success' => false, 'message' => 'Price is out of range']);
+            }
+
+            if ($quantity < $minQuantity || $quantity > $maxQuantity) {
+                return response()->json(['success' => false, 'message' => 'Quantity is out of range']);
+            }
+
+            // Continue with your order placement logic here
             $timestamp = $this->timestampBinance();
             $signature = $this->hashHmac($symbol, $side, $quantity, $price, $stopPrice, $timestamp);
 
             $responseData = $this->sendOrderRequest($symbol, $side, $quantity, $price, $stopPrice, $timestamp, $signature);
 
-
             $request['orderID'] = $responseData['orderId'];
             $request['status'] = $responseData['status'];
             $test = $this->insertTransaction($request);
 
-
             return response()->json([
                 'success' => true,
                 'responseData' => $responseData,
-                // 'time' => $diffInSeconds,
             ]);
         } catch (ClientException $e) {
-
-
             return $this->handleBinanceError($e, $request);
         } catch (\Exception $e) {
             return $this->handleInternalError($e, $request);
         }
     }
+    public function placeOrder(Request $request)
+    {
+        $symbol = $request->input('symbol'); // Symbol (e.g., "BTCUSDT")
+        $side = $request->input('side'); // "BUY" or "SELL"
+        $quantity = $request->input('quantity'); // Quantity of the asset
+        $price = $request->input('price'); // Price at which to buy or sell
 
+        // Retrieve trading pair information
+        $exchangeInfo = Http::get('https://api.binance.com/api/v3/exchangeInfo')->json();
+
+        // Find the filters for the specified symbol
+        $symbolInfo = collect($exchangeInfo['symbols'])->first(function ($item) use ($symbol) {
+            return $item['symbol'] === $symbol;
+        });
+
+        // Verify price and quantity against the filters
+        $priceFilter = collect($symbolInfo['filters'])->first(function ($filter) {
+            return $filter['filterType'] === 'PRICE_FILTER';
+        });
+
+        $quantityFilter = collect($symbolInfo['filters'])->first(function ($filter) {
+            return $filter['filterType'] === 'LOT_SIZE';
+        });
+
+        // Check if the price and quantity are within acceptable limits
+        $minPrice = $priceFilter['minPrice'];
+        $maxPrice = $priceFilter['maxPrice'];
+        $minQuantity = $quantityFilter['minQty'];
+        $maxQuantity = $quantityFilter['maxQty'];
+
+        if ($price < $minPrice || $price > $maxPrice) {
+            return response()->json(['success' => false, 'message' => 'Price is out of range']);
+        }
+
+        if ($quantity < $minQuantity || $quantity > $maxQuantity) {
+            return response()->json(['success' => false, 'message' => 'Quantity is out of range']);
+        }
+
+        // Continue with placing the order
+        // ...
+
+        return response()->json(['success' => true, 'message' => 'Order placed successfully']);
+    }
     protected function timestampBinance()
     {
         $response = $this->client->get('/api/v3/time');
