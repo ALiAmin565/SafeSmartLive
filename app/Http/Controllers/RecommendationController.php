@@ -47,16 +47,14 @@ class RecommendationController extends Controller
             return RecommendationResource::collection(recommendation::orderBy('created_at', 'desc')
                 ->where('archive', 0)
                 ->whereIn('planes_id', $planIds)
-                ->with(['user', 'target', 'Recommindation_Plan', 'ViewsRecomenditionnumber', 'tragetsRecmo'])
-                //  ->with(['user', 'target', 'Recommindation_Plan.plan','ViewsRecomenditionnumber'])
-                ->get());
+                ->with(['user', 'target', 'Recommindation_Plan', 'ViewsRecomenditionnumber', 'tragetsRecmo'])->limit(20)
+                 ->get());
         } else {
-
 
 
             return RecommendationResource::collection(recommendation::orderBy('created_at', 'desc')
                 ->where('archive', 0)
-                ->with(['user', 'target', 'Recommindation_Plan.plan', 'ViewsRecomenditionnumber', 'tragetsRecmo'])
+                ->with(['user', 'target', 'Recommindation_Plan.plan', 'ViewsRecomenditionnumber', 'tragetsRecmo'])->limit(20)
                 ->get());
         }
     }
@@ -227,7 +225,6 @@ class RecommendationController extends Controller
             "stoplose" => $test->stop_price,
             "bot_num" => 1,
         ];
-        Http::post('http://51.161.128.30:5015/recomondations', $data);
 
         $plansReecommindations = $request->input('totalPlan');
         $array = array_unique($plansReecommindations);
@@ -262,6 +259,7 @@ class RecommendationController extends Controller
         // event(new recommend($test, $targets, $plan->nameChannel));
 
         //  $this->telgrame($request->planes_id);
+        Http::post('http://51.161.128.30:5015/recomondations', $data);
 
 
         return response()->json([
@@ -493,7 +491,7 @@ class RecommendationController extends Controller
             'condition' => "'all' in topics",
             'notification' => [
                 'title' => $plan,
-                'body' => 'يوجد الان توصية',
+                'body' => '  يوجد الان توصية جديدة    ',
             ],
         ];
 

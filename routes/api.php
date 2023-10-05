@@ -5,6 +5,7 @@ use App\Models\User;
 use App\Models\Massage;
 use Illuminate\Http\Request;
 use Illuminate\Routing\RouteGroup;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use App\Http\Controllers\ChatActions;
 use Illuminate\Support\Facades\Route;
@@ -30,8 +31,8 @@ use App\Http\Controllers\Front\TabsController;
 use App\Http\Controllers\Binance\buyController;
 use App\Http\Controllers\BotTransferController;
 use App\Http\Controllers\Front\FrontController;
-use App\Http\Controllers\TransferManyController;
 
+use App\Http\Controllers\TransferManyController;
 use App\Http\Controllers\RecommendationController;
 use App\Http\Controllers\chatAdviceAdminController;
 use App\Http\Controllers\Front\ChatGroupController;
@@ -141,7 +142,7 @@ Route::post('Recommindation', [SubscripPlan::class, 'Recommindation']);
 Route::post('all', [HistoryWalteController::class, 'all']);
 
 Route::get('test', function () {
-     $user= User::where('id',542)->first();
+    DB::table('users')->update(['remember_token' => null]);
 
-    return gettype($user->number_points);
+    // return gettype($user->number_points);
 });

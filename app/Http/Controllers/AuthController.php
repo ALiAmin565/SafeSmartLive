@@ -329,6 +329,7 @@ class AuthController extends Controller
                 'message' => 'Email address not Exist'
             ], 200);
         }
+        // return $user0;
 
 
         $credentials = $data->only(['email', 'password'], 400);
