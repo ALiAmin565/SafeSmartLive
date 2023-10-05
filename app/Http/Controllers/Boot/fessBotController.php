@@ -25,16 +25,29 @@ class fessBotController extends Controller
     }
     public function fees(Request $request)
     {
-
-
         $binace = binance::where('status_fees', 1)->get();
 
         if ($binace->isEmpty()) {
+
+            $binacetwo = binance::where('status_fees', 2)->get();
+
+            if ($binacetwo->isEmpty()) {
+                return 'NOT HAVE ANY BUY';
+            } else {
+
+                foreach ($binacetwo as $binance) {
+                    if ($binance->status_fees = 2) {
+
+                        $user = User::find($binance->user_id);
+                        $binance->status_fees = 0;
+                        $binance->save();
+                        $this->NotficationBuy($user->fcm_token, $binance->symbol);
+                    }
+                }
+            }
+
             return 'NOT HAVE ANY FEES';
         }
-
-
-
         foreach ($binace as $fees) {
             $user = User::find($fees->user_id);
             $botMony = $fees->fees;
@@ -110,6 +123,9 @@ class fessBotController extends Controller
         $this->notfication->notfication($user, $body);
     }
 
-
-
+    public function NotficationBuy($user, $tiker)
+    {
+        $body = "$tiker قام البوت  بشراء  لك عمله ";
+        $this->notfication->notfication($user, $body);
+    }
 }

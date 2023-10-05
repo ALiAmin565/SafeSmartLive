@@ -18,8 +18,8 @@ class MyBotController extends Controller
     public function AllMyBot(Request $request)
     {
 
-         $user = auth('api')->user();
-         $bots = bots_usdt::where('user_id', $user->id)->orderBy('created_at', 'desc')->get();
+        $user = auth('api')->user();
+        $bots = bots_usdt::where('user_id', $user->id)->orderBy('created_at', 'desc')->get();
 
         $botMap = [];
 
@@ -66,49 +66,54 @@ class MyBotController extends Controller
 
         $user = auth('api')->user();
 
+        // check fess > 2 $
 
-        //  info plan bots
-        $planid = $user->plan_id;
-        $plan = plan::where('id', $planid)->first();
-        $numberBpt = $plan->number_bot;
+        if ($user->number_points > 2) {
+            //  info plan bots
+            $planid = $user->plan_id;
+            $plan = plan::where('id', $planid)->first();
+            $numberBpt = $plan->number_bot;
 
-        // get all my bots
-        $myBot = $request['bot_id'];
-        $myusdt = $request['usdt'];
-        $blance = $request['blance'];
-        $count = bots_usdt::where([
-            ['user_id', '=', $user->id],
-            ['bot_status', '=', '1'],
-        ])->count();
-
-        if ($count >= $numberBpt) {
-            return $this->error("You subscribe to everything available to you");
-        } else {
-            $checkSubscription = bots_usdt::where([
+            // get all my bots
+            $myBot = $request['bot_id'];
+            $myusdt = $request['usdt'];
+            $blance = $request['blance'];
+            $count = bots_usdt::where([
                 ['user_id', '=', $user->id],
-                ['bot_id', '=', $myBot],
                 ['bot_status', '=', '1'],
-            ])->first();
+            ])->count();
+
+            if ($count >= $numberBpt) {
+                return $this->error("You subscribe to everything available to you");
+            } else {
+                $checkSubscription = bots_usdt::where([
+                    ['user_id', '=', $user->id],
+                    ['bot_id', '=', $myBot],
+                    ['bot_status', '=', '1'],
+                ])->first();
 
 
-            if ($checkSubscription) {
-                return $this->error("You are already subscribed");
+                if ($checkSubscription) {
+                    return $this->error("You are already subscribed");
+                }
+                // get totle binanace
+                $totleNumberOrder = $user->num_orders * $user->orders_usdt;
+                $totleUsdMyBot = bots_usdt::where('user_id', $user->id)->where('bot_status', '1')->sum('orders_usdt');
+                $finletotle = $totleUsdMyBot + $totleNumberOrder + $myusdt;
+
+
+
+
+                $bot = bots_usdt::create([
+                    'user_id' => $user->id,
+                    'bot_id' => $myBot,
+                    'orders_usdt' => $myusdt,
+                    'bot_status' => 1
+                ]);
+                return $this->success("You have successfully subscribed to the bot");
             }
-            // get totle binanace
-            $totleNumberOrder = $user->num_orders * $user->orders_usdt;
-            $totleUsdMyBot = bots_usdt::where('user_id', $user->id)->where('bot_status', '1')->sum('orders_usdt');
-            $finletotle = $totleUsdMyBot + $totleNumberOrder + $myusdt;
-
-
-
-
-            $bot = bots_usdt::create([
-                'user_id' => $user->id,
-                'bot_id' => $myBot,
-                'orders_usdt' => $myusdt,
-                'bot_status' => 1
-            ]);
-            return $this->success("You have successfully subscribed to the bot");
+        } else {
+            return $this->error("You do not have enough money in your Visa wallet");
         }
     }
 
@@ -129,16 +134,15 @@ class MyBotController extends Controller
     {
 
 
-            $user = auth('api')->user();
-          $bot_id = $request['bot_id'];
+        $user = auth('api')->user();
+        $bot_id = $request['bot_id'];
 
-             $gethistory = Binance::where('user_id', $user->id)->where('bot_num', $bot_id)->orderBy('created_at', 'desc')->get();
+        $gethistory = Binance::where('user_id', $user->id)->where('bot_num', $bot_id)->orderBy('created_at', 'desc')->get();
 
         $gethistory->each(function ($data) {
             // Convert to double
-            if($data->status == "FILLED")
-            {
-                $data->status='success';
+            if ($data->status == "FILLED") {
+                $data->status = 'success';
             }
             $data->profit_per = number_format($data->profit_per, 2, '.', ''); // Format to 2 decimal places with no thousands separator
         });

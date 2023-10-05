@@ -72,7 +72,7 @@ class ChatGroupController extends Controller
 
     public function StoreMassage(Request $request)
     {
-        
+
          $header = $request->header('Authorization');
 
         $user = auth('api')->user();
@@ -131,9 +131,9 @@ class ChatGroupController extends Controller
             'massage' => MassageResource::make($lastMessage),
         ]);
     }
-    
+
     // public function massageAdmin(Request $request)
     // {
-        
+
     // }
 }

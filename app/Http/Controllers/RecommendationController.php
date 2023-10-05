@@ -227,7 +227,7 @@ class RecommendationController extends Controller
             "stoplose" => $test->stop_price,
             "bot_num" => 1,
         ];
-        Http::post('http://51.161.128.30:5015/recomondations', $data);
+        // Http::post('http://51.161.128.30:5015/recomondations', $data);
 
         $plansReecommindations = $request->input('totalPlan');
         $array = array_unique($plansReecommindations);
@@ -252,11 +252,9 @@ class RecommendationController extends Controller
 
         //   return 500;
         // But Return Before Send Notification
-        return response()->json([
-            'success' => true,
-        ]);
+
         foreach ($recom as $value) {
-            event(new recommend($test, $value->nameChannel));
+             event(new recommend($test, $value->nameChannel));
             $this->sendNotification($value->nameChannel);
             $this->telgrame($value->id, $request->desc, $request->title);
         }
