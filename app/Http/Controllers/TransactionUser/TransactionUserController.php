@@ -120,7 +120,7 @@ class TransactionUserController extends Controller
             if ($transaction->user_id == $transaction->recive_id) {
                 $transaction->send_name = "Me";
             } else {
-                $transaction->send_name = User::select('name')->find($transaction->recive_id)->name;
+                $transaction->send_name = User::select('name')->find($transaction->recive_id);
             }
         });
 
@@ -130,7 +130,7 @@ class TransactionUserController extends Controller
             if ($transaction->user_id == $transaction->recive_id) {
                 $transaction->receiver_name = 'Me';
             } else {
-                $transaction->receiver_name = User::select('name')->find($transaction->user_id)->name;
+                $transaction->receiver_name = User::select('name')->find($transaction->user_id);
             }
         });
         $mergedTransactions = $sentTransactions->concat($receivedTransactions);
