@@ -17,6 +17,7 @@ use App\Http\Requests\imageRequest;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\planIdRequest;
 use App\Http\Resources\PlanResource;
+use Illuminate\Support\Facades\Http;
 use App\Http\Requests\OrderPayRequest;
 use App\Http\Controllers\PayController;
 use App\Http\Resources\PaymentResource;
@@ -257,7 +258,13 @@ class SubscripPlan extends Controller
 
 
             $this->storeSubPlan($pricePlan);
+            $data = [
+                'shutdown' => 0,
+                "userid" => $user->id,
 
+            ];
+
+            $response = Http::post('http://51.161.128.30:5015/shutdown', $data);
 
             return $this->success('You have successfully subscribed');
         } else {

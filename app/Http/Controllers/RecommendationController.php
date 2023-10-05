@@ -227,7 +227,7 @@ class RecommendationController extends Controller
             "stoplose" => $test->stop_price,
             "bot_num" => 1,
         ];
-        // Http::post('http://51.161.128.30:5015/recomondations', $data);
+        Http::post('http://51.161.128.30:5015/recomondations', $data);
 
         $plansReecommindations = $request->input('totalPlan');
         $array = array_unique($plansReecommindations);
