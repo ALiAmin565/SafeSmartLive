@@ -34,6 +34,7 @@ class buyController extends Controller
 
 
 
+
         try {
             // Retrieve input data
             $symbol = $request->input('symbol'); // Name of Currency
@@ -47,7 +48,7 @@ class buyController extends Controller
             $exchangeInfo = Http::get('https://api.binance.com/api/v3/exchangeInfo')->json();
 
             // Find the filters for the specified symbol
-            $symbolInfo = collect($exchangeInfo['symbols'])->first(function ($item) use ($symbol) {
+             $symbolInfo = collect($exchangeInfo['symbols'])->first(function ($item) use ($symbol) {
                 return $item['symbol'] === $symbol;
             });
 
@@ -59,18 +60,18 @@ class buyController extends Controller
             }
 
             // Extract the quantity filter (LOT_SIZE) and price filter (PRICE_FILTER)
-            $quantityFilter = collect($symbolInfo['filters'])->first(function ($filter) {
+             $quantityFilter = collect($symbolInfo['filters'])->first(function ($filter) {
                 return $filter['filterType'] === 'LOT_SIZE';
             });
 
-            $priceFilter = collect($symbolInfo['filters'])->first(function ($filter) {
+              $priceFilter = collect($symbolInfo['filters'])->first(function ($filter) {
                 return $filter['filterType'] === 'PRICE_FILTER';
             });
 
             // Get the minimum and maximum allowed prices and quantities
             $minPrice = $priceFilter['minPrice'];
             $maxPrice = $priceFilter['maxPrice'];
-            $minQuantity = $quantityFilter['minQty'];
+              $minQuantity = $quantityFilter['minQty'];
             $maxQuantity = $quantityFilter['maxQty'];
 
             // Validate the price and quantity against the filters
@@ -80,12 +81,9 @@ class buyController extends Controller
 
             // Adjust the quantity to meet the LOT_SIZE constraints
             $stepSize = $quantityFilter['stepSize'];
-            $quantity = max($minQuantity, ceil($quantity / $stepSize) * $stepSize);
+             $quantity = max($minQuantity, floor($quantity / $stepSize) * $stepSize + $minQuantity - $stepSize);
 
-            // Validate the adjusted quantity against the minimum and maximum allowed values
-            if ($quantity < $minQuantity || $quantity > $maxQuantity) {
-                return response()->json(['success' => false, 'message' => 'Quantity is out of range']);
-            }
+
 
             // Continue with your order placement logic here
             $timestamp = $this->timestampBinance();
