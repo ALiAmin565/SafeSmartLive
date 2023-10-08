@@ -28,6 +28,7 @@ class UserResource extends JsonResource
             'comming_afflite' => $this->comming_afflite,
             'binanceApiKey'=>$this->binanceApiKey,
             'binanceSecretKey'=>$this->binanceSecretKey,
+            'number_points' => $this->number_points,
             'Role' => UserNameResource::collection($this->whenLoaded('Role')),
              'bot_transfer'=>BotResources::collection($this->whenLoaded('bot_transfer')),
 
