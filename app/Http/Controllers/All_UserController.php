@@ -14,6 +14,7 @@ use App\Http\Requests\ChekRequestUser;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\updatedUserRequest;
 use Illuminate\Support\Facades\Hash;
+use App\Models\binance;
 
 
 class All_UserController extends Controller
