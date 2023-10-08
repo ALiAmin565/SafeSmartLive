@@ -31,7 +31,6 @@ class UserResource extends JsonResource
             'number_points' => $this->number_points,
             'Role' => UserNameResource::collection($this->whenLoaded('Role')),
             'bot_transfer'=>BotResources::collection($this->whenLoaded('bot_transfer')),
-            'binanceloges'=>$this->binanceloges,
 
         ];
     }
