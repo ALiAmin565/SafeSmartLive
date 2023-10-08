@@ -85,7 +85,7 @@ class All_UserController extends Controller
         }
         
         
-        return $request;
+        // return $request;
         return UserResource::make($request);
     }
 
