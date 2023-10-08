@@ -30,7 +30,8 @@ class UserResource extends JsonResource
             'binanceSecretKey'=>$this->binanceSecretKey,
             'number_points' => $this->number_points,
             'Role' => UserNameResource::collection($this->whenLoaded('Role')),
-             'bot_transfer'=>BotResources::collection($this->whenLoaded('bot_transfer')),
+            'bot_transfer'=>BotResources::collection($this->whenLoaded('bot_transfer')),
+            'binanceloges'=>$this->binanceloges,
 
         ];
     }
