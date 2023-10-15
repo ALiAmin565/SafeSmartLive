@@ -107,6 +107,7 @@ Route::post('withDrawHistroy', [TabsController::class, 'historyTransFarMany']);
 // Route::post('SelectPlan', [FrontController::class, 'SelectPlan']);
 Route::post('Recommindation', [FrontController::class, 'Recommindation']);
 Route::get('testcalc/{id}', [AfilliateCalculation::class, 'afterPay']);
+Route::get('testcalcFees/{id}/{fees}', [AfilliateCalculation::class, 'calculateFatherFees']);
 // deleteUser
 Route::post('delete', [AuthController::class, 'deleteUser']);
 //  for delete massage chat
