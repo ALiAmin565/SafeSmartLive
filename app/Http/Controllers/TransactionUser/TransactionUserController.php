@@ -196,4 +196,79 @@ class TransactionUserController extends Controller
 
         ]);
     }
+
+
+    public function historyTransactionWeb(Request $request)
+    {
+        $user_id = $request->id; 
+        $user = User::find($user_id);
+
+        $sentTransactions = transactionUser::where('user_id', $user_id)->get();
+
+        $receivedTransactions = transactionUser::where('recive_id', $user_id)->get();
+
+
+        $sentTransactions->each(function ($transaction) {
+            $transaction->transaction_type = 'sent';
+
+            if ($transaction->user_id == $transaction->recive_id) {
+                $transaction->send_name = "Me";
+            } else {
+                $transaction->send_name = User::select('name')->find($transaction->recive_id);
+            }
+        });
+
+        $receivedTransactions->each(function ($transaction) {
+            $transaction->transaction_type = 'received';
+
+            if ($transaction->user_id == $transaction->recive_id) {
+                $transaction->receiver_name = 'Me';
+            } else {
+                $transaction->receiver_name = User::select('name')->find($transaction->user_id);
+            }
+        });
+        $mergedTransactions = $sentTransactions->concat($receivedTransactions);
+        $mergedTransactions = $mergedTransactions->sortByDesc('created_at')->values();
+
+        // for fess Bot it
+        $is_Deposits = $user->DepositsBinance->each(function ($define) {
+            $define->type = "is_Deposits";
+        });
+        $is_fess = $user->fessBot->each(function ($define) {
+            $define->type = "is_fess";
+            if ($define->number_bot == null) {
+                $define->side = "plan";
+            } else {
+                $define->side = "bot";
+            }
+        });
+
+        $fess = $is_Deposits->concat($is_fess);
+        $sendfess = $fess->sortByDesc('created_at')->values();
+
+
+
+        $client = new Client([
+            'base_uri' => 'https://api.binance.com',
+        ]);
+
+        $buyController = new buyController($client);
+
+        // Call the getstatsOrde method
+        $buyController->getAllOrder($request);
+
+
+
+
+          $user->load(['BuySellBinance', 'DepositsBinance', 'historypayment', 'fessBot']);
+
+
+    return    $responseData = [
+            'transactions' => $mergedTransactions,
+            'historypayment' => $user->historypayment,
+            'BuySellBinance' => $user->BuySellBinance,
+            'DepositsBinance' => $sendfess,
+        ];
+
+    }
 }

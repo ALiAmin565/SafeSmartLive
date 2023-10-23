@@ -505,4 +505,17 @@ class RecommendationController extends Controller
             return response()->json(['error' => 'Failed to send notification.'], $response->getStatusCode());
         }
     }
+
+// getAllRecomendationPlan
+    public function getAllRecomendationPlan($id)
+    {
+        $user = auth('api')->user()->load('role');
+
+        if ($user->state == 'super_admin') {
+            return RecommendationResource::collection(recommendation::orderBy('created_at', 'desc')
+                ->where('planes_id', $id)
+                ->with(['user', 'target'])
+                ->get());
+        } 
+    }
 }

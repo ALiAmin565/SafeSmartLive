@@ -37,6 +37,8 @@ use App\Http\Controllers\Front\ChatGroupController;
 use App\Http\Controllers\Binance\getLogesController;
 use App\Http\Controllers\NotificationPlansController;
 use App\Http\Controllers\Binance\transactionController;
+use App\Http\Controllers\Deposits\DepositsUserController;
+use App\Http\Controllers\TransactionUser\TransactionUserController;
 
 // routes for super with admin
 Route::middleware(['SuperWithAdmin'])->group(function () {
@@ -54,7 +56,8 @@ Route::middleware(['SuperWithAdmin'])->group(function () {
     Route::post('unbanPlan', [ChatActions::class, 'unbanPlan']);
     Route::get('/all-tickers',[TickerController::class,'getAllTickers']);
 
-
+    Route::POST('historyDepositWeb',[DepositsUserController::class,'historyDepositWeb']);
+    Route::post('historyTransactionWeb',[TransactionUserController::class,'historyTransactionWeb']);
 });
 // routes for super  admin
 
@@ -121,4 +124,8 @@ Route::middleware('SuperAdmin')->group(function () {
     Route::apiResource('ads', AdsController::class);
     // API To Get All Bots
     Route::get('/get-all-bots',[BotController::class,'getAllHavingBots']);
+
+
+    //Route Get all Recomendation for  determined plane 
+    Route::get('/get-all-recomendation_plan/{plan_id}',[RecommendationController::class,'getAllRecomendationPlan']);
 });

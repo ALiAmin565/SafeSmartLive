@@ -17,8 +17,15 @@ class UserNameResource extends JsonResource
      */
     public function toArray($request)
     {
-        $getIds=$this->allsendandrecive->pluck('recive_id')->toArray(); 
-        $this->namesUsersReceiveMoney=User::whereIn('id',$getIds)->pluck('name')->toArray();
+        if($this->allsendandrecive != null)
+        {     
+            $getIds=$this->allsendandrecive->pluck('recive_id')->toArray(); 
+            $this->namesUsersReceiveMoney=User::whereIn('id',$getIds)->pluck('name')->toArray();
+        }else
+        {
+            $this->namesUsersReceiveMoney=[];
+        }
+
         return [
             'id'=>$this->id,
             'name'=>$this->name,

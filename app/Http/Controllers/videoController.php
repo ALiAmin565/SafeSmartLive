@@ -35,11 +35,19 @@ class videoController extends Controller
             $video = $this->uploadFile($request->file('video'), 'Videos');
         }
 
+        $request->validate([
+            'title' => 'required',
+            'desc' => 'required',
+            'img' => 'required',
+            'video' => 'required',
+        ]);
+
         $videos = video::create([
             'title' => $request['title'],
             'img' => $img,
             'desc' => $request['desc'],
             'video' => $video,
+            'video_link' => $request['video_link'],
         ]);
 
         return response()->json([
@@ -87,6 +95,7 @@ class videoController extends Controller
             'desc' => $request['desc'],
             'video' => $video,
             'title' => $request->title,
+            'video_link' => $request->video_link,
         ]);
 
         return response()->json([

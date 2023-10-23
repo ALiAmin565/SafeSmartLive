@@ -77,4 +77,12 @@ class DepositsUserController extends Controller
 
         return $existingDeposit = DepositsBinance::where('user_id', $user->id)->get();
     }
+
+
+    public function historyDepositWeb(Request $request)
+    {
+        $user_id = $request->id;
+        return  DepositsBinance::where('user_id', $user_id)->get();
+    }
+    
 }
