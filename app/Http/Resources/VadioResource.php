@@ -21,6 +21,7 @@ class VadioResource extends JsonResource
             'img' => $this->img,
             'desc' => $this->desc,
             'video' => $this->video,
+            'video_link' => $this->video_link,
         ];
     }
 }

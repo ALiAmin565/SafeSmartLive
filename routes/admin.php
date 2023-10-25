@@ -37,6 +37,8 @@ use App\Http\Controllers\Front\ChatGroupController;
 use App\Http\Controllers\Binance\getLogesController;
 use App\Http\Controllers\NotificationPlansController;
 use App\Http\Controllers\Binance\transactionController;
+use App\Http\Controllers\Deposits\DepositsUserController;
+use App\Http\Controllers\TransactionUser\TransactionUserController;
 
 // routes for super with admin
 Route::middleware(['SuperWithAdmin'])->group(function () {
@@ -54,7 +56,8 @@ Route::middleware(['SuperWithAdmin'])->group(function () {
     Route::post('unbanPlan', [ChatActions::class, 'unbanPlan']);
     Route::get('/all-tickers',[TickerController::class,'getAllTickers']);
 
-
+    Route::POST('historyDepositWeb',[DepositsUserController::class,'historyDepositWeb']);
+    Route::post('historyTransactionWeb',[TransactionUserController::class,'historyTransactionWeb']);
 });
 // routes for super  admin
 
@@ -68,7 +71,7 @@ Route::middleware('SuperAdmin')->group(function () {
     // Route::apiResource('Recommendation', RecommendationController::class);
     // for User in admin
     Route::apiResource('User', All_UserController::class);
-    Route::get('get_user/{id}', [All_UserController::class, 'get_user'])->name('get_user');
+    Route::get('get_user', [All_UserController::class, 'get_user'])->name('get_user');
     Route::get('search/{id}', [All_UserController::class, 'serach'])->name('serach');
     Route::get('selectUserFromPlan/{id}', [All_UserController::class, 'selectUserFromPlan'])->name('selectUserFromPlan');
     Route::get('get_all_subscrib/{id}', [All_UserController::class, 'get_all_subscrib']);
@@ -121,4 +124,8 @@ Route::middleware('SuperAdmin')->group(function () {
     Route::apiResource('ads', AdsController::class);
     // API To Get All Bots
     Route::get('/get-all-bots',[BotController::class,'getAllHavingBots']);
+
+
+    //Route Get all Recomendation for  determined plane 
+    Route::get('/get-all-recomendation_plan/{plan_id}',[RecommendationController::class,'getAllRecomendationPlan']);
 });

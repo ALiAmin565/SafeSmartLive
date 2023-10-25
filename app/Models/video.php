@@ -15,6 +15,7 @@ class video extends Model
         'img',
         'desc',
         'video',
+        'video_link',
         'created_at'
     ];
 }

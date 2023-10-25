@@ -11,6 +11,7 @@ use App\Http\Controllers\TransactionUser\TransactionUserController;
 Route::post('sendMony',[TransactionUserController::class,'oneToOne']);
 Route::post('mySelf',[TransactionUserController::class,'mySelf']);
 Route::get('historyTransaction',[TransactionUserController::class,'historyTransaction']);
+Route::post('historyTransactionWeb',[TransactionUserController::class,'historyTransactionWeb']);
 
 
 Route::get('getDeposits',[DepositsController::class,'getDeposits']);
@@ -25,6 +26,9 @@ Route::get('getUSDTBalance',[WithdrwController::class,'getUSDTBalance']);
 // Deopsite for user
 Route::POST('checkTextID',[DepositsUserController::class,'cheakTextID']);
 Route::POST('historyDeposit',[DepositsUserController::class,'historyDeposit']);
+
+
+
 
 
 // subscrib to plan by feez
