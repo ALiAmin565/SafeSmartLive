@@ -71,7 +71,7 @@ Route::middleware('SuperAdmin')->group(function () {
     // Route::apiResource('Recommendation', RecommendationController::class);
     // for User in admin
     Route::apiResource('User', All_UserController::class);
-    Route::get('get_user/{id}', [All_UserController::class, 'get_user'])->name('get_user');
+    Route::get('get_user', [All_UserController::class, 'get_user'])->name('get_user');
     Route::get('search/{id}', [All_UserController::class, 'serach'])->name('serach');
     Route::get('selectUserFromPlan/{id}', [All_UserController::class, 'selectUserFromPlan'])->name('selectUserFromPlan');
     Route::get('get_all_subscrib/{id}', [All_UserController::class, 'get_all_subscrib']);

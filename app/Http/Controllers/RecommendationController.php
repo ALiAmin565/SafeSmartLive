@@ -33,32 +33,47 @@ class RecommendationController extends Controller
         // $this->user = $user;
     }
 
-    public function index()
+    public function index(Request $request)
     {
-
-
         $user = auth('api')->user()->load('role');
+        $page = $request->input('page', 1); // Get the requested page from the request parameters
+    
         if ($user->state == 'admin') {
             $planIds = $user->role->pluck('pivot')->pluck('plan_id');
-
-
-
-
-            return RecommendationResource::collection(recommendation::orderBy('created_at', 'desc')
+    
+            $recommendations = recommendation::orderBy('created_at', 'desc')
                 ->where('archive', 0)
                 ->whereIn('planes_id', $planIds)
-                ->with(['user', 'target', 'Recommindation_Plan', 'ViewsRecomenditionnumber', 'tragetsRecmo'])->limit(20)
-                 ->get());
+                ->with(['user', 'target', 'Recommindation_Plan', 'ViewsRecomenditionnumber', 'tragetsRecmo'])
+                ->paginate(20, ['*'], 'page', $page);
+    
+            return response()->json([
+                'data' => RecommendationResource::collection($recommendations),
+                'meta' => [
+                    'current_page' => $recommendations->currentPage(),
+                    'last_page' => $recommendations->lastPage(),
+                    'total' => $recommendations->total(),
+                    'next_page_url' => $recommendations->nextPageUrl(),
+                ],
+            ]);
         } else {
-
-
-            return RecommendationResource::collection(recommendation::orderBy('created_at', 'desc')
+            $recommendations = recommendation::orderBy('created_at', 'desc')
                 ->where('archive', 0)
-                ->with(['user', 'target', 'Recommindation_Plan.plan', 'ViewsRecomenditionnumber', 'tragetsRecmo'])->limit(20)
-                ->get());
+                ->with(['user', 'target', 'Recommindation_Plan.plan', 'ViewsRecomenditionnumber', 'tragetsRecmo'])
+                ->paginate(20, ['*'], 'page', $page);
+    
+            return response()->json([
+                'data' => RecommendationResource::collection($recommendations),
+                'meta' => [
+                    'current_page' => $recommendations->currentPage(),
+                    'last_page' => $recommendations->lastPage(),
+                    'total' => $recommendations->total(),
+                    'next_page' => $recommendations->nextPageUrl(),
+                ],
+            ]);
         }
     }
-
+    
 
     public function storeApiRequest(Request $request)
     {
