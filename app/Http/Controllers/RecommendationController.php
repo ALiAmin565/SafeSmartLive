@@ -37,16 +37,16 @@ class RecommendationController extends Controller
     {
         $user = auth('api')->user()->load('role');
         $page = $request->input('page', 1); // Get the requested page from the request parameters
-    
+
         if ($user->state == 'admin') {
             $planIds = $user->role->pluck('pivot')->pluck('plan_id');
-    
+
             $recommendations = recommendation::orderBy('created_at', 'desc')
                 ->where('archive', 0)
                 ->whereIn('planes_id', $planIds)
                 ->with(['user', 'target', 'Recommindation_Plan', 'ViewsRecomenditionnumber', 'tragetsRecmo'])
                 ->paginate(20, ['*'], 'page', $page);
-    
+
             return response()->json([
                 'data' => RecommendationResource::collection($recommendations),
                 'meta' => [
@@ -61,7 +61,7 @@ class RecommendationController extends Controller
                 ->where('archive', 0)
                 ->with(['user', 'target', 'Recommindation_Plan.plan', 'ViewsRecomenditionnumber', 'tragetsRecmo'])
                 ->paginate(20, ['*'], 'page', $page);
-    
+
             return response()->json([
                 'data' => RecommendationResource::collection($recommendations),
                 'meta' => [
@@ -73,7 +73,7 @@ class RecommendationController extends Controller
             ]);
         }
     }
-    
+
 
     public function storeApiRequest(Request $request)
     {
@@ -217,21 +217,21 @@ class RecommendationController extends Controller
         }
 
         // Rami API Request
-               $rangeString = $test->entry_price;
+        $rangeString = $test->entry_price;
 
-            // Split the range string by the '-' delimiter and trim whitespace
-            $rangeArray = explode('-', $rangeString);
-            $rangeArray = array_map('trim', $rangeArray);
+        // Split the range string by the '-' delimiter and trim whitespace
+        $rangeArray = explode('-', $rangeString);
+        $rangeArray = array_map('trim', $rangeArray);
 
-            // Convert the range values to a JSON array
-            $rangeJson = json_encode($rangeArray);
+        // Convert the range values to a JSON array
+        $rangeJson = json_encode($rangeArray);
 
-            // Convert the range values to floats (if needed)
-            $rangeArray = array_map('floatval', $rangeArray);
+        // Convert the range values to floats (if needed)
+        $rangeArray = array_map('floatval', $rangeArray);
         $targets = TargetsRecmo::where('recomondations_id', $test->id)->pluck('target')->toArray();
         // Use map to convert string values to floats
         $targets = array_map('floatval', $targets);
-         $data = [
+        $data = [
             'recomondations_id' => $test->id,
             "admin" => $test->user_id,
             "ticker" => $test->currency,
@@ -266,7 +266,7 @@ class RecommendationController extends Controller
         // But Return Before Send Notification
 
         foreach ($recom as $value) {
-             event(new recommend($test, $value->nameChannel));
+            event(new recommend($test, $value->nameChannel));
             $this->sendNotification($value->nameChannel);
             $this->telgrame($value->id, $request->desc, $request->title);
         }
@@ -521,16 +521,28 @@ class RecommendationController extends Controller
         }
     }
 
-// getAllRecomendationPlan
+    // getAllRecomendationPlan
     public function getAllRecomendationPlan($id)
     {
         $user = auth('api')->user()->load('role');
 
         if ($user->state == 'super_admin') {
-            return RecommendationResource::collection(recommendation::orderBy('created_at', 'desc')
-                ->where('planes_id', $id)
-                ->with(['user', 'target'])
-                ->get());
-        } 
+            $plan_recmo_ids = plan_recommendation::where('planes_id', $id)->get()->pluck('recomondations_id')->toArray();
+
+            $recom = RecommendationResource::collection(recommendation::orderBy('created_at', 'desc')
+                ->whereIn('id', $plan_recmo_ids)
+                ->with(['user', 'target', 'Recommindation_Plan'])
+                ->paginate(20));
+
+            return response()->json([
+                'data' => $recom,
+                'meta' => [
+                    'current_page' => $recom->currentPage(),
+                    'last_page' => $recom->lastPage(),
+                    'total' => $recom->total(),
+                    'next_page' => $recom->nextPageUrl(),
+                ],
+            ]);
+        }
     }
 }

@@ -127,5 +127,7 @@ Route::middleware('SuperAdmin')->group(function () {
 
 
     //Route Get all Recomendation for  determined plane 
-    Route::get('/get-all-recomendation_plan/{plan_id}',[RecommendationController::class,'getAllRecomendationPlan']);
+    Route::post('/get-all-recomendation_plan/{plan_id}',[RecommendationController::class,'getAllRecomendationPlan']);
+    // getSumMoney
+    Route::get('getSumMoney', [All_UserController::class, 'getSumMoney']);
 });
