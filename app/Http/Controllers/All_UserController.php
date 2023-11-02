@@ -152,69 +152,71 @@ class All_UserController extends Controller
 
 
 
-public function get_user(Request $request)
-{
-    $page = $request->input('page', 1); // Get the requested page from the request parameters
+    public function get_user(Request $request)
+    {
+        $page = $request->input('page', 1); // Get the requested page from the request parameters
 
-    if ($request->input('state') == 'user') {
-        $users = User::where('state', 'user')
-            ->with(['bot_transfer'])
-            ->paginate(15, ['*'], 'page', $page);
+        if ($request->input('state') == 'user') {
+            $users = User::where('state', 'user')
+                ->with(['bot_transfer', 'Role'])
+                ->paginate(15, ['*'], 'page', $page);
 
-        return response()->json([
-            'data' => UserResource::collection($users),
-            'meta' => [
-                'current_page' => $users->currentPage(),
-                'last_page' => $users->lastPage(),
-                'next_page' => $users->nextPageUrl(),
-                'total' => $users->total(),
-            ],
-        ]);
-    } if ($request->input('state') == 'admin') {
-        $users = User::where('state', 'admin')
-            ->with(['bot_transfer'])
-            ->paginate(15, ['*'], 'page', $page);
+            return response()->json([
+                'data' => UserResource::collection($users),
+                'meta' => [
+                    'current_page' => $users->currentPage(),
+                    'last_page' => $users->lastPage(),
+                    'next_page' => $users->nextPageUrl(),
+                    'total' => $users->total(),
+                ],
+            ]);
+        }
+        if ($request->input('state') == 'admin') {
+            $users = User::where('state', 'admin')
+                ->with(['bot_transfer', 'Role'])
+                ->paginate(15, ['*'], 'page', $page);
 
-        return response()->json([
-            'data' => UserResource::collection($users),
-            'meta' => [
-                'current_page' => $users->currentPage(),
-                'last_page' => $users->lastPage(),
-                'next_page' => $users->nextPageUrl(),
-                'total' => $users->total(),
-            ],
-        ]);
-    } if ($request->input('state') == 'super_admin') {
-        $users = User::where('state', 'super_admin')
-            ->with(['bot_transfer'])
-            ->paginate(15, ['*'], 'page', $page);
+            return response()->json([
+                'data' => UserResource::collection($users),
+                'meta' => [
+                    'current_page' => $users->currentPage(),
+                    'last_page' => $users->lastPage(),
+                    'next_page' => $users->nextPageUrl(),
+                    'total' => $users->total(),
+                ],
+            ]);
+        }
+        if ($request->input('state') == 'super_admin') {
+            $users = User::where('state', 'super_admin')
+                ->with(['bot_transfer', 'Role'])
+                ->paginate(15, ['*'], 'page', $page);
 
-        return response()->json([
-            'data' => UserResource::collection($users),
-            'meta' => [
-                'current_page' => $users->currentPage(),
-                'last_page' => $users->lastPage(),
-                'next_page' => $users->nextPageUrl(),
-                'total' => $users->total(),
-            ],
-        ]);
+            return response()->json([
+                'data' => UserResource::collection($users),
+                'meta' => [
+                    'current_page' => $users->currentPage(),
+                    'last_page' => $users->lastPage(),
+                    'next_page' => $users->nextPageUrl(),
+                    'total' => $users->total(),
+                ],
+            ]);
+        }
+        if ($request->input('state') == 'support') {
+            $users = User::where('state', 'support')
+                ->with(['bot_transfer', 'Role'])
+                ->paginate(15, ['*'], 'page', $page);
+
+            return response()->json([
+                'data' => UserResource::collection($users),
+                'meta' => [
+                    'current_page' => $users->currentPage(),
+                    'last_page' => $users->lastPage(),
+                    'next_page' => $users->nextPageUrl(),
+                    'total' => $users->total(),
+                ],
+            ]);
+        }
     }
-    if ($request->input('state') == 'support') {
-        $users = User::where('state', 'support')
-            ->with(['bot_transfer'])
-            ->paginate(15, ['*'], 'page', $page);
-
-        return response()->json([
-            'data' => UserResource::collection($users),
-            'meta' => [
-                'current_page' => $users->currentPage(),
-                'last_page' => $users->lastPage(),
-                'next_page' => $users->nextPageUrl(),
-                'total' => $users->total(),
-            ],
-        ]);
-    }
-}
 
 
     public function serach($query)
@@ -246,5 +248,26 @@ public function get_user(Request $request)
         $user = User::where('plan_id', $id)->get();
 
         return $user;
+    }
+
+    // Get Sum Money From All Users 
+    public function getSumMoney(Request $request)
+    {
+        $user = auth('api')->user();
+        // Check if user is admin
+        if ($user->state == 'super_admin') {
+            $users = User::all();
+            $sum = 0;
+            foreach ($users as $user) {
+                $sum += $user->money;
+            }
+            // MAke sum Double floot 
+            $sum = number_format($sum, 2, '.', '');
+            return response()->json([
+                'sum' => $sum,
+            ]);
+        }
+       
+
     }
 }

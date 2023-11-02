@@ -28,7 +28,7 @@ class RecommendationResource extends JsonResource
             'planes_id '=>$this->planes_id ,
             'created_at' => $this->created_at->format('Y-m-d H:i:s'),
             'user'=>UserNameResource::make(($this->whenLoaded('user'))),
-             'ViewsRecomenditionnumber'=>count($this->ViewsRecomenditionnumber),
+            'ViewsRecomenditionnumber'=>count($this->ViewsRecomenditionnumber),
             'target'=>Recommindation_targetResource::collection($this->whenLoaded('target')),
             'plan'=>PlanWithRecomindation::collection($this->whenLoaded('Recommindation_Plan')),
             'tragetsRecmo'=>$this->tragetsRecmo
