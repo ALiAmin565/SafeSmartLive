@@ -2,6 +2,7 @@
 
 use App\Models\plan;
 use App\Models\Massage;
+use App\Models\marktingFess;
 use Illuminate\Http\Request;
 use Illuminate\Routing\RouteGroup;
 use App\Http\Controllers\ChatActions;
@@ -39,6 +40,7 @@ use App\Http\Controllers\NotificationPlansController;
 use App\Http\Controllers\Binance\transactionController;
 use App\Http\Controllers\Deposits\DepositsUserController;
 use App\Http\Controllers\TransactionUser\TransactionUserController;
+use App\Models\User;
 
 // routes for super with admin
 Route::middleware(['SuperWithAdmin'])->group(function () {
@@ -54,10 +56,10 @@ Route::middleware(['SuperWithAdmin'])->group(function () {
     Route::delete('messageSuper/{id}', [ChatActions::class, 'deleteMessageSuper']);
     Route::post('banPlan', [ChatActions::class, 'banPlan']);
     Route::post('unbanPlan', [ChatActions::class, 'unbanPlan']);
-    Route::get('/all-tickers',[TickerController::class,'getAllTickers']);
+    Route::get('/all-tickers', [TickerController::class, 'getAllTickers']);
 
-    Route::POST('historyDepositWeb',[DepositsUserController::class,'historyDepositWeb']);
-    Route::post('historyTransactionWeb',[TransactionUserController::class,'historyTransactionWeb']);
+    Route::POST('historyDepositWeb', [DepositsUserController::class, 'historyDepositWeb']);
+    Route::post('historyTransactionWeb', [TransactionUserController::class, 'historyTransactionWeb']);
 });
 // routes for super  admin
 
@@ -115,19 +117,72 @@ Route::middleware('SuperAdmin')->group(function () {
     Route::post('add-bot-status-for-user', [BotController::class, 'AddBotStatuForUser']);
     // Get All Tickers
     // update Tickers
-    Route::post('/update-tickers',[TickerController::class,'updateTicker']);
+    Route::post('/update-tickers', [TickerController::class, 'updateTicker']);
     // delete Tickers
-    Route::post('/delete-tickers',[TickerController::class,'deleteTicker']);
+    Route::post('/delete-tickers', [TickerController::class, 'deleteTicker']);
     // add Tickers
-    Route::post('/add-tickers',[TickerController::class,'addTicker']);
+    Route::post('/add-tickers', [TickerController::class, 'addTicker']);
     // API ADS Table
     Route::apiResource('ads', AdsController::class);
     // API To Get All Bots
-    Route::get('/get-all-bots',[BotController::class,'getAllHavingBots']);
+    Route::get('/get-all-bots', [BotController::class, 'getAllHavingBots']);
 
 
     //Route Get all Recomendation for  determined plane 
-    Route::post('/get-all-recomendation_plan/{plan_id}',[RecommendationController::class,'getAllRecomendationPlan']);
+    Route::post('/get-all-recomendation_plan/{plan_id}', [RecommendationController::class, 'getAllRecomendationPlan']);
     // getSumMoney
     Route::get('getSumMoney', [All_UserController::class, 'getSumMoney']);
 });
+
+
+// Route::get('get-user/{id}', function ($id) {
+
+//     $getAllUsers = User::pluck('id')->toArray();
+//     // Exclude users from 1 to 32 
+//     $usersIds = array_diff($getAllUsers, range(1, 32));
+
+//     // dd($usersIds);
+
+//     $startDate = '2023-11-06 21:00:00'; // Replace with your desired start date and time
+//     $endDate = '2023-11-07 05:00:00';   // Replace with your desired end date and time
+
+//     foreach ($usersIds as $id) {
+//         $marketingFees = marktingFess::whereIn('markting_id', $id)
+//             ->where('created_at', '>=', $startDate)
+//             ->where('created_at', '<=', $endDate)
+//             ->with('user')
+//             ->pluck('amount')
+//             ->toArray();
+
+//         $user = User::where('id', $id)->first();
+//         $userName = $user->name;
+//         $user->update(
+//             [
+//                 'money' => $user->money - array_sum($marketingFees)
+//             ]
+//         );
+//         $user->save();
+//         $marketingFeesSum = array_sum($marketingFees);
+
+
+//         $marketingFeesUSERTEST = marktingFess::where('markting_id', $id)
+//             ->pluck('amount')
+//             ->toArray();
+
+//         $sum = array_sum($marketingFeesUSERTEST);
+//     }
+
+
+//     return response()->json([
+//       'success' => true,
+//     ]);
+// });
+
+
+// Route::get('negative_fees',function(){
+//     $getAllUsers = User::where('number_points' , '<' , 0)->pluck('number_points')->toArray();
+//     return response()->json([
+//         'success' => true,
+//         'data' => $getAllUsers
+//     ]);
+// });

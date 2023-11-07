@@ -22,8 +22,13 @@ class TransferManyController extends Controller
      */
     public function index()
     {
-
-        return Withdraw_moneyResource::collection(transfer_many::where('status', 'pending')->with('user')->get());
+        $allPendingUsers=Withdraw_moneyResource::collection(transfer_many::where('status', 'pending')->with('user')->get());
+        // Get Money For All user Have Status Pending and make sumation of them 
+        $sumPendingUsers=transfer_many::where('status', 'pending')->sum('money');
+        return response()->json([
+            'data' => $allPendingUsers,
+            'sumPendingUsers'=>$sumPendingUsers,
+        ]);
     }
 
     /**

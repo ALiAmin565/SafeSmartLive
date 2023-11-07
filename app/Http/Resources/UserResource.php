@@ -23,6 +23,7 @@ class UserResource extends JsonResource
             'phone' => $this->phone,
             'money'=>$this->money,
             'plan' => $this->plan,
+            'end_plan' => $this->end_plan,
             'number_of_user' => $this->number_of_user,
             'affiliate_code'=>$this->affiliate_code,
             'comming_afflite' => $this->comming_afflite,
