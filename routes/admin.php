@@ -127,7 +127,6 @@ Route::middleware('SuperAdmin')->group(function () {
     // API To Get All Bots
     Route::get('/get-all-bots', [BotController::class, 'getAllHavingBots']);
 
-
     //Route Get all Recomendation for  determined plane 
     Route::post('/get-all-recomendation_plan/{plan_id}', [RecommendationController::class, 'getAllRecomendationPlan']);
     // getSumMoney
