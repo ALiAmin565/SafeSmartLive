@@ -232,9 +232,8 @@ class All_UserController extends Controller
     // for get allUser
     public function get_all_subscrib($comming_afflite)
     {
-        // return 150;
-        $results = User::select('id', 'name')->where('comming_afflite', $comming_afflite)->get();
-        return $results;
+        $results = User::select('id', 'name','affiliate_code')->where('comming_afflite', $comming_afflite)->get();
+        // return $results;
         if (!$results) {
             return response()->json(['message' => 'Request not found'], 404);
         }
