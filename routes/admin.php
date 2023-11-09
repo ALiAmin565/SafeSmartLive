@@ -131,6 +131,14 @@ Route::middleware('SuperAdmin')->group(function () {
     Route::post('/get-all-recomendation_plan/{plan_id}', [RecommendationController::class, 'getAllRecomendationPlan']);
     // getSumMoney
     Route::get('getSumMoney', [All_UserController::class, 'getSumMoney']);
+
+    Route::get('get-all-user-admin-data', [All_UserController::class, 'getAllUserAdminData']);
+    Route::get('get-all-user-admin', [All_UserController::class, 'getAllUserAdmin']);
+    Route::get('get-all-user-admin-recommendation/{id}', [All_UserController::class, 'getAllUserAdminRecommendation']);
+    Route::get('get_user_parent', [All_UserController::class, 'get_user_parent']);
+    // get_money_user_transaction
+    Route::get('get_money_user_transaction', [All_UserController::class, 'get_money_user_transaction']);
+
 });
 
 
