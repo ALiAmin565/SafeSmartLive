@@ -3,18 +3,22 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Admin;
+use App\Models\binance;
 use Illuminate\Http\Request;
+use App\Models\recommendation;
+use App\Models\transactionUser;
 use PhpParser\Node\Stmt\Return_;
 use App\Http\Resources\UserResource;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
 use App\Http\Requests\ChekRequestUser;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Validator;
 use App\Http\Requests\StoreUserRequest;
+use Illuminate\Database\Eloquent\Model;
 use App\Http\Requests\updatedUserRequest;
-use Illuminate\Support\Facades\Hash;
-use App\Models\binance;
+use App\Http\Resources\UserResourceAdmin;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 
 class All_UserController extends Controller
@@ -232,8 +236,17 @@ class All_UserController extends Controller
     // for get allUser
     public function get_all_subscrib($comming_afflite)
     {
-        $results = User::select('id', 'name','affiliate_code')->where('comming_afflite', $comming_afflite)->get();
+        $results = User::select('id', 'name', 'affiliate_code')->where('comming_afflite', $comming_afflite)->get();
         // return $results;
+        if (!$results) {
+            return response()->json(['message' => 'Request not found'], 404);
+        }
+        return response()->json($results);
+    }
+    // Waiting 
+    public function get_user_parent($comming_afflite)
+    {
+        $results = User::select('id', 'name', 'affiliate_code')->where('affiliate_code', $comming_afflite)->get();
         if (!$results) {
             return response()->json(['message' => 'Request not found'], 404);
         }
@@ -266,7 +279,78 @@ class All_UserController extends Controller
                 'sum' => $sum,
             ]);
         }
-       
+    }
 
+    public function getAllUserAdminData(Request $request)
+    {
+        $user = auth('api')->user();
+        if ($user->state == 'super_admin') {
+            $usersId = Admin::pluck('user_id')->toArray();
+            $users = User::where('state', 'admin')->whereIn('id', $usersId)->get();
+            return response()->json([
+                'users' => UserResourceAdmin::collection($users),
+            ]);
+        }
+        return response()->json([
+            'message' => 'You are not allowed to access this resource',
+        ]);
+    }
+
+    public function getAllUserAdmin(Request $request)
+    {
+        $user = auth('api')->user();
+        if ($user->state == 'super_admin') {
+            $usersId = Admin::pluck('user_id')->toArray();
+            $users = User::select('id', 'name')->where('state', 'admin')->whereIn('id', $usersId)->get();
+            return response()->json([
+                'users' => $users,
+            ]);
+        }
+        return response()->json([
+            'message' => 'You are not allowed to access this resource',
+        ]);
+    }
+
+    public function getAllUserAdminRecommendation($id)
+    {
+        $user = auth('api')->user();
+        if ($user->state == 'super_admin') {
+            $user = User::find($id);
+            if (!$user) {
+                return response()->json([
+                    'message' => 'This user not found',
+                ]);
+            }
+            $allRecommendation = $user->recommendation;
+            return response()->json([
+                'userName' => $user->name,
+                'countRecommendation' => count($allRecommendation),
+                'allRecommendation' => $allRecommendation,
+            ]);
+        }
+        return response()->json([
+            'message' => 'You are not allowed to access this resource',
+        ]);
+    }
+
+
+    // get_money_user_transaction
+    public function get_money_user_transaction(Request $request)
+    {
+        $user = auth('api')->user();
+        if ($user->state == 'super_admin') {
+            $money = transactionUser::pluck('amount')->toArray();
+            $sum = array_sum($money);
+            $lastMonth = date('Y-m-d', strtotime('-1 month'));
+            $moneyLastMonth = transactionUser::where('created_at', '>=', $lastMonth)->pluck('amount')->toArray();
+            $sumLastMonth = array_sum($moneyLastMonth);
+            return response()->json([
+                'sum' => $sum,
+                'sumLastMonth' => $sumLastMonth,
+            ]);
+        }
+        return response()->json([
+            'message' => 'You are not allowed to access this resource',
+        ]);
     }
 }
